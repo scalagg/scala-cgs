@@ -29,8 +29,6 @@ class CgsGamePlayer(
 
     override fun save(): CompletableFuture<Void>
     {
-        CgsGameEngine.INSTANCE
-
         return CgsPlayerHandler.handle.saveEntry(uniqueId.toString(), this)
     }
 }

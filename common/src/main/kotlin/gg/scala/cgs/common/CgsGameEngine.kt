@@ -16,12 +16,6 @@ import kotlin.reflect.KClass
  * @author GrowlyX
  * @since 11/30/2021
  */
-
-// PS - profile statistics
-// S - state enum (specific)
-
-// LP - local player - for anything
-// related to this specific game
 abstract class CgsGameEngine<S : GameSpecificStatistics>(
     val plugin: ExtendedJavaPlugin,
     val gameInfo: CgsGameInfo,
