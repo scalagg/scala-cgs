@@ -20,7 +20,6 @@ rebel.xml
 # Keep libs
 #!lib/*.jar
 
-gradle
 .gradle
 **/build/
 !src/**/build/
