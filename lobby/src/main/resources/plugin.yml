@@ -1,0 +1,15 @@
+name: cgs-lobby
+version: 1.0.0
+main: gg.scala.cgs.lobby.CgsLobbyPlugin
+
+author: Scala
+website: https://scala.gg
+
+depend:
+  - Cubed
+  - helper
+  - Lemon
+  - Tangerine
+
+softdepend:
+  - spark

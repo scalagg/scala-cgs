@@ -1,0 +1,14 @@
+name: cgs-engine
+version: 1.0.0
+main: gg.scala.cgs.engine.CgsEnginePlugin
+
+author: Scala
+website: https://scala.gg
+
+depend:
+  - Cubed
+  - helper
+  - Lemon
+
+softdepend:
+  - spark
