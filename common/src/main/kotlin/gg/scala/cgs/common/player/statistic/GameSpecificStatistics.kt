@@ -8,10 +8,10 @@ import net.evilblock.cubed.serializers.impl.AbstractTypeSerializable
  */
 abstract class GameSpecificStatistics : AbstractTypeSerializable
 {
-    abstract var kills: Int
-    abstract var deaths: Int
+    abstract var kills: CgsGameStatistic
+    abstract var deaths: CgsGameStatistic
 
-    abstract var played: Int
-    abstract var wins: Int
-    abstract var losses: Int
+    abstract var played: CgsGameStatistic
+    abstract var wins: CgsGameStatistic
+    abstract var losses: CgsGameStatistic
 }
