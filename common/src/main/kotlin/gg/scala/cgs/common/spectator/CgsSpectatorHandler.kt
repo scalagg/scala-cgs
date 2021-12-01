@@ -1,4 +1,4 @@
-package gg.scala.cgs.game.spectator
+package gg.scala.cgs.common.spectator
 
 import java.util.*
 

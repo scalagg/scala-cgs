@@ -1,5 +1,6 @@
 package gg.scala.cgs.common.information.arena
 
+import org.bukkit.Location
 import org.bukkit.Material
 import java.io.File
 
@@ -17,5 +18,5 @@ interface CgsGameArena
 
     // load through SlimeWorldManager
     fun getDirectory(): File
-    fun getSpawnCoordinates(): Triple<Float, Float, Float>
+    fun getSpawnCoordinates(): Location
 }

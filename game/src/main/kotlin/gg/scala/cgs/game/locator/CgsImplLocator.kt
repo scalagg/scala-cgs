@@ -13,13 +13,17 @@ import org.bukkit.scheduler.BukkitRunnable
 object CgsImplLocator : BukkitRunnable()
 {
     var found = false
-    private var attempts = -1
 
-    fun initialLoad()
+    private var attempts = -1
+    private var lambda = {}
+
+    fun initialLoad(lambda: () -> Unit)
     {
         Schedulers.sync().runRepeating(
             this, 0L, 20L
         )
+
+        this.lambda = lambda
     }
 
     override fun run()
@@ -45,6 +49,7 @@ object CgsImplLocator : BukkitRunnable()
             )
 
             found = true
+            lambda.invoke()
 
             cancel()
         } catch (ignored: Exception)

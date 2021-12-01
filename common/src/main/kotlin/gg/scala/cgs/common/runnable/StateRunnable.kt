@@ -25,6 +25,10 @@ abstract class StateRunnable(
         try
         {
             onTick()
+
+            CgsGameEngine.INSTANCE.onTick(
+                gameState, currentTick
+            )
         } catch (exception: Exception)
         {
             CgsGameEngine.INSTANCE.plugin.logger.info(

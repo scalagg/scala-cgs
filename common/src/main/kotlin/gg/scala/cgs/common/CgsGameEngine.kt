@@ -7,10 +7,20 @@ import gg.scala.cgs.common.information.mode.CgsGameMode
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.renderer.CgsGameScoreboardRenderer
+import gg.scala.cgs.common.spectator.CgsSpectatorHandler
+import gg.scala.cgs.common.teams.CgsGameTeamEngine
 import me.lucko.helper.plugin.ExtendedJavaPlugin
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
+import net.evilblock.cubed.util.bukkit.FancyMessage
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+import org.bukkit.event.Cancellable
+import org.bukkit.event.Event
+import org.bukkit.event.HandlerList
+import org.spigotmc.AsyncCatcher
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
@@ -45,7 +55,9 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     fun initialResourceLoad()
     {
         INSTANCE = this
+
         CgsPlayerHandler.initialLoad()
+        CgsGameTeamEngine.initialLoad(this)
 
         Serializers.useGsonBuilderThenRebuild {
             it.registerTypeAdapter(GameSpecificStatistics::class.java, AbstractTypeSerializer<GameSpecificStatistics>())
@@ -59,63 +71,76 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     {
         return cgsGamePlayer.gameSpecificStatistics[statisticType.simpleName]!! as S
     }
-    
-    abstract fun onTick(state: CgsGameState): Boolean
-    
-    @Deprecated(
-        "Please use the new Bukkit EVENTs.", 
-        level = DeprecationLevel.ERROR
-    )
-    open fun onGameEnterStarting()
-    {
-        
-    }
 
-    @Deprecated(
-        "Please use the new Bukkit EVENTs.", 
-        level = DeprecationLevel.ERROR
-    )
-    open fun onGameCancelStarting()
+    fun sendMessage(message: String)
     {
-        
-    }
-    
-    @Deprecated(
-        "Please use the new Bukkit EVENTs.", 
-        level = DeprecationLevel.ERROR
-    )
-    open fun onGameStart()
-    {
-
-    }
-
-    @Deprecated(
-        "Please use the new Bukkit EVENTs.", 
-        level = DeprecationLevel.ERROR
-    )
-    open fun onGameEnding()
-    {
-
-    }
-
-    // this method hot for real
-    protected fun onStateChange(oldState: CgsGameState)
-    {
-        if (compare(oldState, CgsGameState.WAITING, CgsGameState.STARTING))
+        for (team in CgsGameTeamEngine.teams.values)
         {
-            onGameEnterStarting()
-        } else if (compare(oldState, CgsGameState.STARTING, CgsGameState.WAITING))
-        {
-            onGameCancelStarting()
-        } else if (compare(oldState, CgsGameState.STARTING, CgsGameState.STARTED))
-        {
-            onGameStart()
-        } else if (compare(oldState, CgsGameState.STARTED, CgsGameState.ENDED))
-        {
-            onGameEnding()
+            team.participants.forEach { uuid ->
+                val bukkitPlayer = Bukkit.getPlayer(uuid)
+                    ?: return@forEach
+
+                bukkitPlayer.sendMessage(message)
+            }
         }
 
-        // TODO: 11/30/2021 update instance to redis after this
+        for (spectator in CgsSpectatorHandler.spectators)
+        {
+            val bukkitPlayer = Bukkit.getPlayer(spectator)
+                ?: continue
+
+            bukkitPlayer.sendMessage(message)
+        }
+    }
+
+    fun sendMessage(fancyMessage: FancyMessage)
+    {
+        for (team in CgsGameTeamEngine.teams.values)
+        {
+            team.participants.forEach { uuid ->
+                val bukkitPlayer = Bukkit.getPlayer(uuid)
+                    ?: return@forEach
+
+                fancyMessage.sendToPlayer(bukkitPlayer)
+            }
+        }
+
+        for (spectator in CgsSpectatorHandler.spectators)
+        {
+            val bukkitPlayer = Bukkit.getPlayer(spectator)
+                ?: continue
+
+            fancyMessage.sendToPlayer(bukkitPlayer)
+        }
+    }
+
+    /**
+     * The method which is called in addition to the [onTick]
+     * method within the [StateRunnable] instance.
+     */
+    abstract fun onTick(state: CgsGameState, tickOfState: Int): Boolean
+
+    protected fun onStateChange(oldState: CgsGameState)
+    {
+        var event: CgsGameEvent? = null
+
+        if (compare(oldState, CgsGameState.WAITING, CgsGameState.STARTING))
+        {
+            event = CgsGamePreStartEvent()
+        } else if (compare(oldState, CgsGameState.STARTING, CgsGameState.WAITING))
+        {
+            event = CgsGamePreStartCancelEvent()
+        } else if (compare(oldState, CgsGameState.STARTING, CgsGameState.STARTED))
+        {
+            event = CgsGameStartEvent()
+        } else if (compare(oldState, CgsGameState.STARTED, CgsGameState.ENDED))
+        {
+            event = CgsGameEndEvent()
+        }
+
+        Tasks.sync {
+            event?.callNow()
+        }
     }
 
     private fun compare(oldState: CgsGameState, expected: CgsGameState, newState: CgsGameState): Boolean
@@ -124,7 +149,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     }
 
     abstract fun getScoreboardRenderer(): CgsGameScoreboardRenderer
-    
+
     // Display a Congratulations title to the winner/winning team
 
     // Give a random ranged coin amount to both
@@ -135,8 +160,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     // Start a new StateRunnable which will run for 10 ticks
     // At the last tick, do bukkit.shutdown
-    class CgsGameEndEvent
-    
+    class CgsGameEndEvent : CgsGameEvent()
+
     // Send a nice "GAME STARTED" title
 
     // Track starting participants in a map
@@ -149,7 +174,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     // Possibly handle cage logic or unfreeze
     // logic in subclasses of BedWars and SkyWars?
-    class CgsGameStartEvent
+    class CgsGameStartEvent : CgsGameEvent()
 
     // start runnable for starting ticks...
     // The game will start in 10 seconds.
@@ -161,74 +186,123 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     // use startingTicks from CgsGameInfo
     // when it is at 0, set state to STARTED
-    class CgsGamePreStartEvent
-    
+    class CgsGamePreStartEvent : CgsGameEvent()
+
     // Send a special message indicating that this user/console has
     // force started the game to the STARTING state.
-    
+
     // We will not be going directly to STARTED as we need STARTING checks to be called.
-    class CgsGameForceStartEvent
-    
+    class CgsGameForceStartEvent(
+        val starter: CommandSender
+    ) : CgsGameEvent()
+
     // teleport everyone back to the
     // LOBBY the CgsGameArena spawn location
 
     // Make sure to clear everyones titles through
     // KyoriBridge, and teleport possible spectators back
-    class CgsGamePreStartCancelEvent
+    class CgsGamePreStartCancelEvent : CgsGameEvent()
 
     // Possibly check if the game is already running
-    // If it is, and the player's not eliminated/last 
+    // If it is, and the player's not eliminated/last
     // game is this current instance, call the reconnect event
-    
-    // If the game allows spectating, and the game is 
+
+    // If the game allows spectating, and the game is
     // running + player is elim'd, call spectator handler add
-    
+
     // IF GAME IS STARTING/WAITING:
-    // Allocate the player to a team, if they have a PARTY and there is a 
-    // team with the player amount of that party, allocate all players to 
+    // Allocate the player to a team, if they have a PARTY and there is a
+    // team with the player amount of that party, allocate all players to
     // that team, or else select random teams for them.
-    
-    // Teleport the player through PaperLib.teleportAsync() 
+
+    // Teleport the player through PaperLib.teleportAsync()
     // to the LOBBY arena if the game is in WAITING state
 
     // Send the `Player has joined! (1/12)` message
-    class CgsGameParticipantConnectEvent
-    
-    // If the player's team is considered "disqualified", 
+    class CgsGameParticipantConnectEvent(
+        val participant: Player
+    ) : CgsGameEvent()
+
+    // If the player's team is considered "disqualified",
     // continue to handle spectator checks, or else re-add the player
-    
+
     // IF IT HAS BEEN 5+ minutes since disconnection, set to spectator
-    class CgsGameParticipantReconnectEvent
-    
-    // (PLAYING) Save the player's disconnection epoch timestamp to redis 
+    class CgsGameParticipantReconnectEvent(
+        val participant: Player
+    ) : CgsGameEvent()
+
+    // (PLAYING) Save the player's disconnection epoch timestamp to redis
     // (WAITING) Send the `Player has left! (0/12)` message
-    
+
     // Make sure to CLEAR the player on logout, especially spectator metadata.
-    // IF THERE is only 1 participant left other than this participant, call 
+    // IF THERE is only 1 participant left other than this participant, call
     // end event with the last participant being the WINNER.
-    
+
     // IF THERE are multiple players who are on the SAME TEAM, call their team as the winner.
-    class CgsGameParticipantDisconnectEvent
+    class CgsGameParticipantDisconnectEvent(
+        val participant: Player
+    ) : CgsGameEvent()
 
     // (WAITING) Check if this game allows players to enter spectator mode
     // (PLAYING) If the player is a contestant in this game, do not allow them to continue spectator checks
-    class CgsGameSpectatorPreAddEvent
-    
-    // Set spectators to be invisible to 
+    class CgsGameSpectatorPreAddEvent(
+        val spectator: Player
+    ) : CgsGameEvent()
+
+    // Set spectators to be invisible to
     // contestants, but a "ghost" to other spectators.
-    
+
     // Send the player a "You've been made a spectator: <reason>"
     // Apply spectator item set to player and reload nametag, tablist, and visibility
-    class CgsGameSpectatorAddEvent
-    class CgsGameSpectatorRemoveEvent
-    
+    class CgsGameSpectatorAddEvent(
+        val spectator: Player
+    ) : CgsGameEvent()
+
+    class CgsGameSpectatorRemoveEvent(
+        val spectator: Player
+    ) : CgsGameEvent()
+
     // Set a custom death message within implementations.
-    // IF THERE is only 1 participant left other than this participant, call 
+    // IF THERE is only 1 participant left other than this participant, call
     // end event with the last participant being the WINNER.
-    
+
     // IF THERE are multiple players who are on the SAME TEAM, call their team as the winner.
-    class CgsGameParticipantDeathEvent
-    
+    class CgsGameParticipantDeathEvent(
+        val participant: Player
+    ) : CgsGameEvent()
+
+    abstract class CgsGameEvent : Event(), Cancellable
+    {
+        companion object
+        {
+            @JvmStatic
+            val HANDLERS = HandlerList()
+        }
+
+        private var internalCancelled = false
+
+        override fun getHandlers() = HANDLERS
+        override fun isCancelled() = internalCancelled
+
+        override fun setCancelled(new: Boolean)
+        {
+            internalCancelled = new
+        }
+
+        fun callNow(): Boolean
+        {
+            if (!Bukkit.isPrimaryThread())
+            {
+                AsyncCatcher.catchOp("Cannot call event asynchronously")
+                return true
+            }
+
+            Bukkit.getPluginManager().callEvent(this)
+
+            return internalCancelled
+        }
+    }
+
     private inner class SmartCgsState : ReadWriteProperty<Any, CgsGameState>
     {
         private var value = CgsGameState.WAITING
