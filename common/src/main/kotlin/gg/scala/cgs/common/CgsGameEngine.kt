@@ -59,6 +59,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     {
         return cgsGamePlayer.gameSpecificStatistics[statisticType.simpleName]!! as S
     }
+    
+    // TODO: SWITCH TO BUKKIT EVENTS
 
     // super class will call these methods
     // and add its own logic too
