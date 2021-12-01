@@ -6,6 +6,7 @@ import gg.scala.cgs.common.information.arena.CgsGameArena
 import gg.scala.cgs.common.information.mode.CgsGameMode
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
+import gg.scala.cgs.common.renderer.CgsGameScoreboardRenderer
 import me.lucko.helper.plugin.ExtendedJavaPlugin
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
@@ -138,6 +139,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     {
         return oldState == expected && newState == gameState
     }
+
+    abstract fun getScoreboardRenderer(): CgsGameScoreboardRenderer
 
     private inner class SmartCgsState : ReadWriteProperty<Any, CgsGameState>
     {

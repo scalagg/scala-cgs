@@ -8,6 +8,7 @@ import gg.scala.cgs.common.information.mode.CgsGameMode
  */
 data class CgsGameGeneralInfo(
     val fancyNameRender: String,
+    val gameVersion: Float,
     val minimumPlayers: Int,
     val startingCountdownSec: Int,
     val disqualifyOnDeath: Boolean,
