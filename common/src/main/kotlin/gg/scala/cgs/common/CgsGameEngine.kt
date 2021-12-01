@@ -114,7 +114,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         // At the last tick, do bukkit.shutdown
     }
 
-    // this method hot for real kids
+    // this method hot for real
     protected fun onStateChange(oldState: CgsGameState)
     {
         if (compare(oldState, CgsGameState.WAITING, CgsGameState.STARTING))
@@ -153,7 +153,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             val oldValue = this.value
             this.value = value
 
-            onStateChange(this.value)
+            onStateChange(oldValue)
         }
     }
 }
