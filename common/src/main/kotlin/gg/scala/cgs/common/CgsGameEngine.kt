@@ -60,61 +60,42 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         return cgsGamePlayer.gameSpecificStatistics[statisticType.simpleName]!! as S
     }
     
-    // TODO: SWITCH TO BUKKIT EVENTS
-
-    // super class will call these methods
-    // and add its own logic too
+    abstract fun onTick(state: CgsGameState): Boolean
+    
+    @Deprecated(
+        "Please use the new Bukkit EVENTs.", 
+        level = DeprecationLevel.ERROR
+    )
     open fun onGameEnterStarting()
     {
-        // start runnable for starting ticks...
-        // The game will start in 10 seconds.
-
-        // USE StateRunnable FOR THIS
-
-        // at important numbers use adventure from KyoriBridge in Cookie to display titles
-        // to player with a base title of Component.text(CC.SOMETHING + int) and subtitle of Component.empty()
-
-        // use startingTicks from CgsGameInfo
-        // when it is at 0, set state to STARTED
+        
     }
 
+    @Deprecated(
+        "Please use the new Bukkit EVENTs.", 
+        level = DeprecationLevel.ERROR
+    )
     open fun onGameCancelStarting()
     {
-        // teleport everyone back to the
-        // LOBBY the CgsGameArena spawn location
-
-        // Make sure to clear everyones titles through
-        // KyoriBridge, and teleport possible spectators back
+        
     }
-
+    
+    @Deprecated(
+        "Please use the new Bukkit EVENTs.", 
+        level = DeprecationLevel.ERROR
+    )
     open fun onGameStart()
     {
-        // Send a nice "GAME STARTED" title
 
-        // Track starting participants in a map
-        // Track starting TIME
-
-        // Set PREVIOUSLY PLAYED GAME id for all PARTICIPANTS
-        // We will add rejoin support here
-
-        // REFRESH ALL VISIBILITY, NAMETAG, Etc
-
-        // Possibly handle cage logic or unfreeze
-        // logic in subclasses of BedWars and SkyWars?
     }
 
+    @Deprecated(
+        "Please use the new Bukkit EVENTs.", 
+        level = DeprecationLevel.ERROR
+    )
     open fun onGameEnding()
     {
-        // Display a Congratulations title to the winner/winning team
 
-        // Give a random ranged coin amount to both
-        // participants IF AWARDS ARE ENABLED
-
-        // MAKE SURE TO CHECK FOR AWARD BECAUSE
-        // WE MAY HAVE PRIVATE MATCHES
-
-        // Start a new StateRunnable which will run for 10 ticks
-        // At the last tick, do bukkit.shutdown
     }
 
     // this method hot for real
@@ -143,7 +124,111 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     }
 
     abstract fun getScoreboardRenderer(): CgsGameScoreboardRenderer
+    
+    // Display a Congratulations title to the winner/winning team
 
+    // Give a random ranged coin amount to both
+    // participants IF AWARDS ARE ENABLED
+
+    // MAKE SURE TO CHECK FOR AWARD BECAUSE
+    // WE MAY HAVE PRIVATE MATCHES
+
+    // Start a new StateRunnable which will run for 10 ticks
+    // At the last tick, do bukkit.shutdown
+    class CgsGameEndEvent
+    
+    // Send a nice "GAME STARTED" title
+
+    // Track starting participants in a map
+    // Track starting TIME
+
+    // Set PREVIOUSLY PLAYED GAME id for all PARTICIPANTS
+    // We will add rejoin support here
+
+    // REFRESH ALL VISIBILITY, NAMETAG, Etc
+
+    // Possibly handle cage logic or unfreeze
+    // logic in subclasses of BedWars and SkyWars?
+    class CgsGameStartEvent
+
+    // start runnable for starting ticks...
+    // The game will start in 10 seconds.
+
+    // USE StateRunnable FOR THIS
+
+    // at important numbers use adventure from KyoriBridge in Cookie to display titles
+    // to player with a base title of Component.text(CC.SOMETHING + int) and subtitle of Component.empty()
+
+    // use startingTicks from CgsGameInfo
+    // when it is at 0, set state to STARTED
+    class CgsGamePreStartEvent
+    
+    // Send a special message indicating that this user/console has
+    // force started the game to the STARTING state.
+    
+    // We will not be going directly to STARTED as we need STARTING checks to be called.
+    class CgsGameForceStartEvent
+    
+    // teleport everyone back to the
+    // LOBBY the CgsGameArena spawn location
+
+    // Make sure to clear everyones titles through
+    // KyoriBridge, and teleport possible spectators back
+    class CgsGamePreStartCancelEvent
+
+    // Possibly check if the game is already running
+    // If it is, and the player's not eliminated/last 
+    // game is this current instance, call the reconnect event
+    
+    // If the game allows spectating, and the game is 
+    // running + player is elim'd, call spectator handler add
+    
+    // IF GAME IS STARTING/WAITING:
+    // Allocate the player to a team, if they have a PARTY and there is a 
+    // team with the player amount of that party, allocate all players to 
+    // that team, or else select random teams for them.
+    
+    // Teleport the player through PaperLib.teleportAsync() 
+    // to the LOBBY arena if the game is in WAITING state
+
+    // Send the `Player has joined! (1/12)` message
+    class CgsGameParticipantConnectEvent
+    
+    // If the player's team is considered "disqualified", 
+    // continue to handle spectator checks, or else re-add the player
+    
+    // IF IT HAS BEEN 5+ minutes since disconnection, set to spectator
+    class CgsGameParticipantReconnectEvent
+    
+    // (PLAYING) Save the player's disconnection epoch timestamp to redis 
+    // (WAITING) Send the `Player has left! (0/12)` message
+    
+    // Make sure to CLEAR the player on logout, especially spectator metadata.
+    // IF THERE is only 1 participant left other than this participant, call 
+    // end event with the last participant being the WINNER.
+    
+    // IF THERE are multiple players who are on the SAME TEAM, call their team as the winner.
+    class CgsGameParticipantDisconnectEvent
+
+    // (WAITING) Check if this game allows players to enter spectator mode
+    // (PLAYING) If the player is a contestant in this game, do not allow them to continue spectator checks
+    class CgsGameSpectatorPreAddEvent
+    
+    // Set spectators to be invisible to 
+    // contestants, but a "ghost" to other spectators.
+    
+    // Send the player a "You've been made a spectator: <reason>"
+    // Apply spectator item set to player and reload nametag, tablist, and visibility
+    class CgsGameSpectatorAddEvent
+    class CgsGameSpectatorRemoveEvent
+    
+    // Set a custom death message within implementations.
+    // IF THERE is only 1 participant left other than this participant, call 
+    // end event with the last participant being the WINNER.
+    
+    // IF THERE are multiple players who are on the SAME TEAM, call their team as the winner.
+    class CgsGameParticipantDeathEvent
+    
     private inner class SmartCgsState : ReadWriteProperty<Any, CgsGameState>
     {
         private var value = CgsGameState.WAITING
