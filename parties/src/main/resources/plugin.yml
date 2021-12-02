@@ -1,0 +1,14 @@
+name: parties
+version: 1.0.0
+main: gg.scala.parties.PartySpigotPlugin
+
+author: Scala
+website: https://scala.gg
+
+depend:
+  - Cubed
+  - helper
+  - Lemon
+
+softdepend:
+  - spark
