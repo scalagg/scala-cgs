@@ -68,7 +68,7 @@ object CgsSpectatorHandler
             player refresh (true to GameMode.CREATIVE)
             player.addPotionEffect(invisibility, true)
 
-            player.sendMessage("${CC.D_RED}✘ ${CC.RED}You've been made a spectator!")
+            player.sendMessage("${CC.D_RED}✘ ${CC.RED}You've been made a spectator.")
 
             if (sendTitle)
             {

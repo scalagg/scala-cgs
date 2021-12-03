@@ -65,12 +65,7 @@ object CgsPlayerHandler
                     return@handler
                 }
 
-                // Calling the participant connection event which
-                // will handle everything which is not seen here.
-                val cgsParticipantConnect = CgsGameEngine
-                    .CgsGameParticipantConnectEvent(it.player)
-
-                cgsParticipantConnect.callNow()
+                var calledReconnectEvent = false
 
                 // Checking if the last played game is this current game instance.
                 // If this is true, we will call the reconnect event for bukkit to handle.
@@ -90,8 +85,15 @@ object CgsPlayerHandler
                     val cgsParticipantReconnect = CgsGameEngine
                         .CgsGameParticipantReconnectEvent(it.player, withinTimeframe)
 
-                    cgsParticipantReconnect.callNow()
+                    cgsParticipantReconnect.callNow(); calledReconnectEvent = true
                 }
+
+                // Calling the participant connection event which
+                // will handle everything which is not seen here.
+                val cgsParticipantConnect = CgsGameEngine
+                    .CgsGameParticipantConnectEvent(it.player, calledReconnectEvent)
+
+                cgsParticipantConnect.callNow()
             }
 
             // Making sure this event handler is invoked BEFORE the

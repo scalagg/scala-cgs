@@ -1,5 +1,7 @@
 package gg.scala.cgs.common
 
+import gg.scala.grape.GrapeSpigotPlugin
+import net.evilblock.cubed.util.CC
 import net.kyori.adventure.audience.Audience
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
@@ -44,4 +46,18 @@ infix fun Player.adventure(lambda: (Audience) -> Unit)
 {
     CgsGameEngine.INSTANCE.audience
         .player(this).apply(lambda)
+}
+
+infix fun Player.giveCoins(
+    information: Pair<Int, String>
+)
+{
+    val grapePlayer = GrapeSpigotPlugin.getInstance()
+        .playerHandler.getByPlayer(this)
+
+    if (grapePlayer != null)
+    {
+        grapePlayer.coins += information.first
+        sendMessage("${CC.GOLD}+${information.first} coins (${information.second})!")
+    }
 }

@@ -24,7 +24,9 @@ import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.visibility.VisibilityHandler
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
+import net.kyori.adventure.title.Title
 import org.bukkit.Bukkit
+import org.bukkit.Sound
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
@@ -57,6 +59,9 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     val uniqueId = UUID.randomUUID()
     var gameState by SmartCgsState()
+
+    var gameStart = 0L
+    var originalRemaining = 0
 
     val audience = BukkitAudiences.create(plugin)
 
@@ -129,6 +134,54 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         }
     }
 
+    fun sendTitle(title: Title)
+    {
+        for (team in CgsGameTeamEngine.teams.values)
+        {
+            team.participants.forEach { uuid ->
+                val bukkitPlayer = Bukkit.getPlayer(uuid)
+                    ?: return@forEach
+
+                bukkitPlayer adventure {
+                    it.showTitle(title)
+                }
+            }
+        }
+
+        for (spectator in Bukkit.getOnlinePlayers()
+            .filter { it.hasMetadata("spectator") }
+        )
+        {
+            spectator adventure {
+                it.showTitle(title)
+            }
+        }
+    }
+
+    fun playSound(sound: Sound)
+    {
+        for (team in CgsGameTeamEngine.teams.values)
+        {
+            team.participants.forEach { uuid ->
+                val bukkitPlayer = Bukkit.getPlayer(uuid)
+                    ?: return@forEach
+
+                bukkitPlayer.playSound(
+                    bukkitPlayer.location, sound, 1F, 1F
+                )
+            }
+        }
+
+        for (spectator in Bukkit.getOnlinePlayers()
+            .filter { it.hasMetadata("spectator") }
+        )
+        {
+            spectator.playSound(
+                spectator.location, sound, 1F, 1F
+            )
+        }
+    }
+
     fun sendMessage(fancyMessage: FancyMessage)
     {
         for (team in CgsGameTeamEngine.teams.values)
@@ -155,6 +208,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
      */
     abstract fun onTick(state: CgsGameState, tickOfState: Int): Boolean
 
+    lateinit var winningTeam: CgsGameTeam
+
     protected fun onStateChange(oldState: CgsGameState)
     {
         var event: CgsGameEvent? = null
@@ -170,7 +225,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             event = CgsGameStartEvent()
         } else if (compare(oldState, CgsGameState.STARTED, CgsGameState.ENDED))
         {
-            event = CgsGameEndEvent()
+            event = CgsGameEndEvent(winningTeam)
         }
 
         Tasks.sync {
@@ -188,6 +243,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     abstract fun getVisibilityAdapter(): CgsGameVisibilityAdapter
     abstract fun getNametagAdapter(): CgsGameNametagAdapter
 
+    abstract fun getExtraWinInformation(): List<String>
+
     // Display a Congratulations title to the winner/winning team
 
     // Give a random ranged coin amount to both
@@ -198,32 +255,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     // Start a new StateRunnable which will run for 10 ticks
     // At the last tick, do bukkit.shutdown
-    class CgsGameEndEvent : CgsGameEvent()
+    class CgsGameEndEvent(
+        val cgsGameTeam: CgsGameTeam
+    ) : CgsGameEvent()
 
-    // Send a nice "GAME STARTED" title
-
-    // Track starting participants in a map
-    // Track starting TIME
-
-    // Set PREVIOUSLY PLAYED GAME id for all PARTICIPANTS
-    // We will add rejoin support here
-
-    // REFRESH ALL VISIBILITY, NAMETAG, Etc
-
-    // Possibly handle cage logic or unfreeze
-    // logic in subclasses of BedWars and SkyWars?
     class CgsGameStartEvent : CgsGameEvent()
-
-    // start runnable for starting ticks...
-    // The game will start in 10 seconds.
-
-    // USE StateRunnable FOR THIS
-
-    // at important numbers use adventure from KyoriBridge in Cookie to display titles
-    // to player with a base title of Component.text(CC.SOMETHING + int) and subtitle of Component.empty()
-
-    // use startingTicks from CgsGameInfo
-    // when it is at 0, set state to STARTED
     class CgsGamePreStartEvent : CgsGameEvent()
 
     // Send a special message indicating that this user/console has
@@ -241,30 +277,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     // KyoriBridge, and teleport possible spectators back
     class CgsGamePreStartCancelEvent : CgsGameEvent()
 
-    // Possibly check if the game is already running
-    // If it is, and the player's not eliminated/last
-    // game is this current instance, call the reconnect event
-
-    // If the game allows spectating, and the game is
-    // running + player is elim'd, call spectator handler add
-
-    // IF GAME IS STARTING/WAITING:
-    // Allocate the player to a team, if they have a PARTY and there is a
-    // team with the player amount of that party, allocate all players to
-    // that team, or else select random teams for them.
-
-    // Teleport the player through PaperLib.teleportAsync()
-    // to the LOBBY arena if the game is in WAITING state
-
-    // Send the `Player has joined! (1/12)` message
     class CgsGameParticipantConnectEvent(
-        val participant: Player
+        val participant: Player, val reconnectCalled: Boolean
     ) : CgsGameEvent()
 
-    // If the player's team is considered "disqualified",
-    // continue to handle spectator checks, or else re-add the player
-
-    // IF IT HAS BEEN 5+ minutes since disconnection, set to spectator
     class CgsGameParticipantReconnectEvent(
         val participant: Player, val connectedWithinTimeframe: Boolean
     ) : CgsGameEvent()
@@ -273,33 +289,12 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         val participant: Player, val gameTeam: CgsGameTeam
     ) : CgsGameEvent()
 
-    // (PLAYING) Save the player's disconnection epoch timestamp to redis
-
-    // Make sure to CLEAR the player on logout, especially spectator metadata.
-    // IF THERE is only 1 participant left other than this participant, call
-    // end event with the last participant being the WINNER.
-
-    // IF THERE are multiple players who are on the SAME TEAM, call their team as the winner.
     class CgsGameParticipantDisconnectEvent(
         val participant: Player
     ) : CgsGameEvent()
 
-    // Set spectators to be invisible to
-    // contestants, but a "ghost" to other spectators.
-
-    // Send the player a "You've been made a spectator: <reason>"
-    // Apply spectator item set to player and reload nametag, tablist, and visibility
     class CgsGameSpectatorAddEvent(
         val spectator: Player
-    ) : CgsGameEvent()
-
-    // Set a custom death message within implementations.
-    // IF THERE is only 1 participant left other than this participant, call
-    // end event with the last participant being the WINNER.
-
-    // IF THERE are multiple players who are on the SAME TEAM, call their team as the winner.
-    class CgsGameParticipantDeathEvent(
-        val participant: Player
     ) : CgsGameEvent()
 
     abstract class CgsGameEvent : Event(), Cancellable

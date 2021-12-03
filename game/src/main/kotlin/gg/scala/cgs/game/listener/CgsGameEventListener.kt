@@ -5,10 +5,14 @@ import gg.scala.cgs.common.CgsGameState
 import gg.scala.cgs.common.disqualify.CgsGameDisqualificationHandler
 import gg.scala.cgs.common.handler.CgsDeathHandler
 import gg.scala.cgs.common.handler.CgsPlayerHandler
+import gg.scala.cgs.common.runnable.state.EndedStateRunnable
+import gg.scala.cgs.common.runnable.state.StartedStateRunnable
+import gg.scala.cgs.common.runnable.state.StartingStateRunnable
 import gg.scala.cgs.common.spectator.CgsSpectatorHandler
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
 import gg.scala.lemon.disguise.update.event.PreDisguiseEvent
 import gg.scala.lemon.util.QuickAccess.coloredName
+import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants.HEART_SYMBOL
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -16,10 +20,11 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Arrow
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
+import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
-import org.bukkit.event.player.PlayerPickupItemEvent
 import org.bukkit.potion.PotionEffectType
 import org.bukkit.scoreboard.DisplaySlot
 import kotlin.math.ceil
@@ -57,7 +62,12 @@ object CgsGameEventListener : Listener
             event.participant.teleport(
                 engine.gameArena.getPreLobbyLocation()
             )
-        } else
+
+            if (Bukkit.getOnlinePlayers().size >= engine.gameInfo.minimumPlayers)
+            {
+                engine.gameState = CgsGameState.STARTING
+            }
+        } else if (!event.reconnectCalled)
         {
             CgsSpectatorHandler.setSpectator(event.participant)
 
@@ -107,7 +117,7 @@ object CgsGameEventListener : Listener
 
     @EventHandler
     fun onCgsParticipantDisconnect(
-        event: CgsGameEngine.CgsGameParticipantConnectEvent
+        event: CgsGameEngine.CgsGameParticipantDisconnectEvent
     )
     {
         if (engine.gameState == CgsGameState.WAITING || engine.gameState == CgsGameState.STARTING)
@@ -189,6 +199,90 @@ object CgsGameEventListener : Listener
             CgsGameDisqualificationHandler.disqualifyPlayer(
                 player = player, broadcastNotification = false, setSpectator = true
             )
+        }
+    }
+
+    @EventHandler
+    fun onCgsGameStart(
+        event: CgsGameEngine.CgsGameStartEvent
+    )
+    {
+        val participants = Bukkit.getOnlinePlayers()
+            .filter { !it.hasMetadata("spectator") }
+
+        engine.gameStart = System.currentTimeMillis()
+        engine.originalRemaining = participants.size
+
+        participants.forEach {
+            val scoreboard = it.scoreboard ?: return@forEach
+
+            val objective = scoreboard.registerNewObjective("tabHealth", "health")
+            objective.displaySlot = DisplaySlot.PLAYER_LIST
+
+            val healthObjective = scoreboard.registerNewObjective("nameHealth", "health")
+            healthObjective.displaySlot = DisplaySlot.BELOW_NAME
+            healthObjective.displayName = "${CC.D_RED}${HEART_SYMBOL}"
+
+            NametagHandler.reloadPlayer(it)
+        }
+
+        Tasks.asyncTimer(
+            StartedStateRunnable,
+            0L, 20L
+        )
+    }
+
+    @EventHandler
+    fun onCgsGamePreStart(
+        event: CgsGameEngine.CgsGamePreStartEvent
+    )
+    {
+        Tasks.timer(
+            0L, 20L,
+            StartingStateRunnable
+        )
+    }
+
+    @EventHandler
+    fun onCgsGameEnd(
+        event: CgsGameEngine.CgsGameEndEvent
+    )
+    {
+        Tasks.timer(
+            0L, 20L,
+            EndedStateRunnable
+        )
+    }
+
+    @EventHandler
+    fun onEntityDamageNormal(event: EntityDamageEvent)
+    {
+        if (event.entity is Player)
+        {
+            updateTabHealth(event.entity as Player)
+        }
+    }
+
+    @EventHandler(
+        priority = EventPriority.LOW
+    )
+    fun onEntityDamage(event: EntityDamageByEntityEvent)
+    {
+        val entity = event.entity
+        val damagedBy = event.damager
+
+        if (entity is Player && damagedBy is Player)
+        {
+            val cgsGameTeam = CgsGameTeamEngine
+                .getTeamOf(damagedBy)!!
+
+            if (cgsGameTeam.participants.contains(entity.uniqueId))
+            {
+                event.isCancelled = true
+                event.damager.sendMessage(
+                    "${CC.RED}You're unable to hurt ${CC.ITALIC}${entity.name}${CC.RED}."
+                )
+            }
         }
     }
 

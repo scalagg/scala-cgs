@@ -2,9 +2,12 @@ package gg.scala.cgs.game.listener
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.CgsGameState
+import gg.scala.cgs.common.menu.CgsGameSpectateMenu
+import org.bukkit.Material
 import org.bukkit.entity.ItemFrame
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
@@ -14,6 +17,7 @@ import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent
 import org.bukkit.event.hanging.HangingPlaceEvent
 import org.bukkit.event.player.PlayerDropItemEvent
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerPickupItemEvent
 import org.bukkit.event.vehicle.VehicleEnterEvent
 import org.bukkit.event.weather.WeatherChangeEvent
@@ -109,12 +113,39 @@ object CgsGameGeneralListener : Listener
         }
     }
 
-    @EventHandler
+    @EventHandler(
+        priority = EventPriority.HIGHEST
+    )
     fun onEntityDamageByEntity(event: EntityDamageByEntityEvent)
     {
         if (event.damager is Player && shouldCancel(event.damager as Player))
         {
             event.isCancelled = true
+        }
+    }
+
+    @EventHandler
+    fun onInteract(event: PlayerInteractEvent)
+    {
+        if (shouldCancel(event.player))
+        {
+            event.isCancelled = true
+
+            if (event.item != null)
+            {
+                when (event.item.type)
+                {
+                    Material.BED ->
+                    {
+                        event.player.kickPlayer("")
+                    }
+                    Material.COMPASS ->
+                    {
+                        CgsGameSpectateMenu().openMenu(event.player)
+                    }
+                    else -> {}
+                }
+            }
         }
     }
 
