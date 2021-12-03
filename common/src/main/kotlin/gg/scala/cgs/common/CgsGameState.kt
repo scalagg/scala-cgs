@@ -15,4 +15,9 @@ enum class CgsGameState
     {
         return ordinal >= state.ordinal
     }
+
+    fun isBefore(state: CgsGameState): Boolean
+    {
+        return ordinal <= state.ordinal
+    }
 }
