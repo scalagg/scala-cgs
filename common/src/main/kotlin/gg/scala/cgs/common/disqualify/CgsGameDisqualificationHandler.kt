@@ -1,4 +1,4 @@
-package gg.scala.cgs.common.disqualification
+package gg.scala.cgs.common.disqualify
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.spectator.CgsSpectatorHandler

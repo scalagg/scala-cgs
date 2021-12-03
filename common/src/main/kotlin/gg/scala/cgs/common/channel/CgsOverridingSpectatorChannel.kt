@@ -1,4 +1,4 @@
-package gg.scala.cgs.common
+package gg.scala.cgs.common.channel
 
 import gg.scala.lemon.player.channel.ChannelOverride
 import gg.scala.lemon.player.rank.Rank

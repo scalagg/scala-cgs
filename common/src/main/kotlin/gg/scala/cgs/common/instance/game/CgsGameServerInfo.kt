@@ -8,5 +8,8 @@ import java.util.*
  */
 class CgsGameServerInfo(
     val uniqueId: UUID
-    // TODO: 11/30/2021 Add all other basic data
 )
+{
+    var participants = mutableListOf<UUID>()
+    var spectators = mutableListOf<UUID>()
+}

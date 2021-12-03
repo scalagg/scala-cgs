@@ -1,20 +1,27 @@
 package gg.scala.cgs.common
 
+import gg.scala.cgs.common.channel.CgsOverridingSpectatorChannel
 import gg.scala.cgs.common.handler.CgsPlayerHandler
 import gg.scala.cgs.common.information.CgsGameGeneralInfo
 import gg.scala.cgs.common.information.arena.CgsGameArena
 import gg.scala.cgs.common.information.mode.CgsGameMode
+import gg.scala.cgs.common.nametag.CgsGameNametag
+import gg.scala.cgs.common.nametag.CgsGameNametagAdapter
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.renderer.CgsGameScoreboardRenderer
-import gg.scala.cgs.common.spectator.CgsSpectatorHandler
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
+import gg.scala.cgs.common.visibility.CgsGameVisibility
+import gg.scala.cgs.common.visibility.CgsGameVisibilityAdapter
+import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.lemon.handler.ChatHandler
 import me.lucko.helper.plugin.ExtendedJavaPlugin
+import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
+import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -33,7 +40,7 @@ import kotlin.reflect.KProperty
  * @since 11/30/2021
  */
 abstract class CgsGameEngine<S : GameSpecificStatistics>(
-    val plugin: ExtendedJavaPlugin,
+    val plugin: ExtendedScalaPlugin,
     val gameInfo: CgsGameGeneralInfo,
     val gameMode: CgsGameMode
 )
@@ -50,27 +57,33 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     val uniqueId = UUID.randomUUID()
     var gameState by SmartCgsState()
 
-    inline fun <reified T : GameSpecificStatistics> setStatisticType()
-    {
-        statisticType = T::class
-    }
-
-    fun initialResourceLoad()
+    inline fun <reified T : GameSpecificStatistics> initialResourceLoad()
     {
         INSTANCE = this
+        statisticType = T::class
 
-        CgsPlayerHandler.initialLoad()
-        CgsGameTeamEngine.initialLoad(this)
+        plugin.invokeTrackedTask("initial loading CGS resources") {
+            CgsPlayerHandler.initialLoad()
+            CgsGameTeamEngine.initialLoad(this)
 
-        Serializers.useGsonBuilderThenRebuild {
-            it.registerTypeAdapter(GameSpecificStatistics::class.java, AbstractTypeSerializer<GameSpecificStatistics>())
+            Serializers.useGsonBuilderThenRebuild {
+                it.registerTypeAdapter(GameSpecificStatistics::class.java, AbstractTypeSerializer<GameSpecificStatistics>())
+            }
+
+            ChatHandler.registerChannelOverride(
+                CgsOverridingSpectatorChannel
+            )
+
+            VisibilityHandler.registerAdapter(
+                "cgs", CgsGameVisibility
+            )
+
+            NametagHandler.registerProvider(
+                CgsGameNametag
+            )
+
+            Bukkit.getServer().maxPlayers = gameMode.getMaxTeams() * gameMode.getTeamSize()
         }
-
-        ChatHandler.registerChannelOverride(
-            CgsOverridingSpectatorChannel
-        )
-
-        Bukkit.getServer().maxPlayers = gameMode.getMaxTeams() * gameMode.getTeamSize()
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -91,12 +104,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             }
         }
 
-        for (spectator in CgsSpectatorHandler.spectators)
+        for (spectator in Bukkit.getOnlinePlayers()
+            .filter { it.hasMetadata("spectator") }
+        )
         {
-            val bukkitPlayer = Bukkit.getPlayer(spectator)
-                ?: continue
-
-            bukkitPlayer.sendMessage(message)
+            spectator.sendMessage(message)
         }
     }
 
@@ -112,12 +124,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             }
         }
 
-        for (spectator in CgsSpectatorHandler.spectators)
+        for (spectator in Bukkit.getOnlinePlayers()
+            .filter { it.hasMetadata("spectator") }
+        )
         {
-            val bukkitPlayer = Bukkit.getPlayer(spectator)
-                ?: continue
-
-            fancyMessage.sendToPlayer(bukkitPlayer)
+            fancyMessage.sendToPlayer(spectator)
         }
     }
 
@@ -156,6 +167,9 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     }
 
     abstract fun getScoreboardRenderer(): CgsGameScoreboardRenderer
+
+    abstract fun getVisibilityAdapter(): CgsGameVisibilityAdapter
+    abstract fun getNametagAdapter(): CgsGameNametagAdapter
 
     // Display a Congratulations title to the winner/winning team
 

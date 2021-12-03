@@ -2,11 +2,9 @@ package gg.scala.cgs.game.listener
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.CgsGameState
-import gg.scala.cgs.common.disqualification.CgsGameDisqualificationHandler
+import gg.scala.cgs.common.disqualify.CgsGameDisqualificationHandler
 import gg.scala.cgs.common.handler.CgsPlayerHandler
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
-import gg.scala.lemon.handler.PlayerHandler
-import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks

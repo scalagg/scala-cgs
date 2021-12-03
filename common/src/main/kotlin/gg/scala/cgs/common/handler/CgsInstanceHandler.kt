@@ -1,7 +1,9 @@
 package gg.scala.cgs.common.handler
 
+import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.instance.CgsServerInstance
 import gg.scala.cgs.common.instance.CgsServerType
+import gg.scala.cgs.common.instance.game.CgsGameServerInfo
 import gg.scala.lemon.Lemon
 
 /**
@@ -17,5 +19,12 @@ object CgsInstanceHandler
         current = CgsServerInstance(
             Lemon.instance.settings.id, type
         )
+
+        if (type == CgsServerType.GAME_SERVER)
+        {
+            current.gameServerInfo = CgsGameServerInfo(
+                CgsGameEngine.INSTANCE.uniqueId
+            )
+        }
     }
 }
