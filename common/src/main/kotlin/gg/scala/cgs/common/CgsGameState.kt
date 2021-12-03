@@ -11,7 +11,7 @@ enum class CgsGameState
     STARTED,
     ENDED;
 
-    fun isPast(state: CgsGameState): Boolean
+    fun isAfter(state: CgsGameState): Boolean
     {
         return ordinal >= state.ordinal
     }

@@ -7,6 +7,7 @@ import gg.scala.cgs.common.handler.CgsDeathHandler
 import gg.scala.cgs.common.handler.CgsPlayerHandler
 import gg.scala.cgs.common.spectator.CgsSpectatorHandler
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
+import gg.scala.lemon.disguise.update.event.PreDisguiseEvent
 import gg.scala.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants.HEART_SYMBOL
@@ -117,7 +118,7 @@ object CgsGameEventListener : Listener
                     })"
                 )
             }
-        } else if (engine.gameState.isPast(CgsGameState.STARTED))
+        } else if (engine.gameState.isAfter(CgsGameState.STARTED))
         {
             val cgsGamePlayer = CgsPlayerHandler
                 .find(event.participant) ?: return
@@ -146,6 +147,16 @@ object CgsGameEventListener : Listener
                 cgsGamePlayer.lastPlayedGameId = engine.uniqueId
                 cgsGamePlayer.lastPlayedGameDisconnectionTimestamp = System.currentTimeMillis()
             }
+        }
+    }
+
+    @EventHandler
+    fun onPreDisguise(event: PreDisguiseEvent)
+    {
+        if (engine.gameState.isAfter(CgsGameState.STARTED))
+        {
+            event.isCancelled = true
+            event.player.sendMessage("${CC.RED}You are not allowed to disguise at this time.")
         }
     }
 
