@@ -18,7 +18,6 @@ import org.bukkit.event.player.PlayerPickupItemEvent
 import org.bukkit.event.vehicle.VehicleEnterEvent
 import org.bukkit.event.weather.WeatherChangeEvent
 
-
 /**
  * @author GrowlyX
  * @since 12/2/2021

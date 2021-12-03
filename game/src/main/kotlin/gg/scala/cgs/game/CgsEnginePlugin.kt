@@ -25,7 +25,7 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
     override fun enable()
     {
         INSTANCE = this
-        logger.info("*** Attempting location of CGS Game implementation! ***")
+        logger.info("*** Attempting to find CGS Game implementation! ***")
 
         CgsImplLocator.initialLoad {
             Bukkit.getPluginManager().registerEvents(

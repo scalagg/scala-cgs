@@ -45,9 +45,7 @@ object CgsSpectatorHandler
     private val returnToLobby = ItemBuilder(Material.BED)
         .name(CC.B_RED + "Return to Lobby")
         .addToLore(
-            CC.RED + "Return to the ${
-                engine.gameInfo.fancyNameRender
-            } lobby."
+            CC.RED + "Return to the ${engine.gameInfo.fancyNameRender} lobby."
         ).build()
 
     private val spectateTitle = Title.title(

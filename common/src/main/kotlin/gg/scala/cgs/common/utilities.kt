@@ -38,8 +38,6 @@ infix fun Player.refresh(
     {
         removePotionEffect(potionEffect.type)
     }
-
-
 }
 
 infix fun Player.adventure(lambda: (Audience) -> Unit)

@@ -28,7 +28,7 @@ object PlayerPartyChannel : Channel
     @Deprecated(
         message = "Please use PlayerPartyChannel#hasPermission",
         replaceWith = ReplaceWith(
-            "brandon yi"
+            "hasPermission()"
         )
     )
     override fun getPermission() =

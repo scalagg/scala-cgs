@@ -38,14 +38,14 @@ object CgsImplLocator : BukkitRunnable()
             println(
                 """
                     *** IMPLEMENTATION WAS FOUND! INFORMATION BELOW ***
-                    *** MiniGame: ${engine.gameInfo.fancyNameRender} v${engine.gameInfo.gameVersion} ***
+                    *** Mini-game: ${engine.gameInfo.fancyNameRender} v${engine.gameInfo.gameVersion} ***
                     *** Game Mode: ${engine.gameMode.getName()} ***
                     *** Map: Not yet initialized... ***
                 """.trimIndent()
             )
 
             CgsEnginePlugin.INSTANCE.logger.info(
-                "CGS Game Server found an implementation. Now booting into the WAITING state..."
+                "CGS found an implementation, now booting into the WAITING state..."
             )
 
             found = true
