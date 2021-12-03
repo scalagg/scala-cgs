@@ -21,6 +21,7 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import org.spigotmc.AsyncCatcher
+import java.util.*
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
@@ -45,6 +46,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     lateinit var statisticType: KClass<*>
     lateinit var gameArena: CgsGameArena
 
+    val uniqueId = UUID.randomUUID()
     var gameState by SmartCgsState()
 
     inline fun <reified T : GameSpecificStatistics> setStatisticType()
@@ -232,7 +234,6 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     ) : CgsGameEvent()
 
     // (PLAYING) Save the player's disconnection epoch timestamp to redis
-    // (WAITING) Send the `Player has left! (0/12)` message
 
     // Make sure to CLEAR the player on logout, especially spectator metadata.
     // IF THERE is only 1 participant left other than this participant, call

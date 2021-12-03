@@ -8,5 +8,5 @@ import java.util.*
  */
 object CgsSpectatorHandler
 {
-    val spectators = mutableSetOf<UUID>()
+
 }

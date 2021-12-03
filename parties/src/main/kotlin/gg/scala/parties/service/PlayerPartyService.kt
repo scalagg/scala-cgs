@@ -14,7 +14,8 @@ import kotlin.properties.Delegates
  */
 object PlayerPartyService
 {
-    private var service by Delegates.notNull<RedisStorageLayer<PlayerParty>>()
+    var service by Delegates.notNull<RedisStorageLayer<PlayerParty>>()
+
     private val loadedParties = mutableMapOf<UUID, PlayerParty>()
 
     fun initialLoad()
@@ -29,6 +30,25 @@ object PlayerPartyService
     {
         return loadedParties.values.firstOrNull {
             it.members.containsKey(player.uniqueId)
+        }
+    }
+
+    fun reloadPartyByUniqueId(uniqueId: UUID)
+    {
+        if (loadedParties[uniqueId] == null)
+            return
+
+        service.fetchAllEntries().thenAccept {
+            val found = it.values.firstOrNull { playerParty ->
+                playerParty.uniqueId == uniqueId
+            }
+
+            if (found != null)
+            {
+                kotlin.run {
+                    loadedParties[found.uniqueId] = found
+                }
+            }
         }
     }
 

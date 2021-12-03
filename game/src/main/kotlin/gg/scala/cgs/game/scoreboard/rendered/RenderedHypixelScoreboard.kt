@@ -31,6 +31,7 @@ object RenderedHypixelScoreboard : CgsGameScoreboardRenderer
     override fun render(lines: LinkedList<String>, player: Player, state: CgsGameState)
     {
         val boardLines = mutableListOf<String>()
+        val singleGameMode = CgsGameEngine.INSTANCE.gameInfo.gameModes.size == 1
 
         when (state)
         {
@@ -50,22 +51,28 @@ object RenderedHypixelScoreboard : CgsGameScoreboardRenderer
                 boardLines.add("")
                 boardLines.add("")
 
-                boardLines.add("Mode: ${CC.GREEN}${
-                    CgsGameEngine.INSTANCE.gameMode.getName()
-                }")
-                boardLines.add("Version: ${CC.GRAY}${
-                    CgsGameEngine.INSTANCE.gameInfo.gameVersion
-                }")
+                if (singleGameMode)
+                {
+                    if (state == CgsGameState.WAITING)
+                    {
+                        boardLines[4] = "Waiting..."
+                    } else if (state == CgsGameState.STARTING)
+                    {
+                        boardLines[4] = "Starting in ${CC.GREEN}10s"
+                    }
+                } else
+                {
+                    boardLines.add("Mode: ${CC.GREEN}${
+                        CgsGameEngine.INSTANCE.gameMode.getName()
+                    }")
+                    boardLines.add("Version: ${CC.GRAY}${
+                        CgsGameEngine.INSTANCE.gameInfo.gameVersion
+                    }")
+                }
+
+
             }
             else -> boardLines.add("")
-        }
-
-        if (state == CgsGameState.WAITING)
-        {
-            boardLines[4] = "Waiting..."
-        } else if (state == CgsGameState.STARTING)
-        {
-            boardLines[4] = "Starting in ${CC.GREEN}10s"
         }
     }
 }

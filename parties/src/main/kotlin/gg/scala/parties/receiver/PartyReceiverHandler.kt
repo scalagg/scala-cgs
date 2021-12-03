@@ -3,6 +3,8 @@ package gg.scala.parties.receiver
 import gg.scala.banana.annotate.Subscribe
 import gg.scala.banana.message.Message
 import gg.scala.banana.subscribe.marker.BananaHandler
+import gg.scala.parties.service.PlayerPartyService
+import java.util.*
 
 /**
  * @author GrowlyX
@@ -13,6 +15,10 @@ object PartyReceiverHandler : BananaHandler
     @Subscribe("party-update")
     fun onPartyUpdate(message: Message)
     {
+        val uniqueId = UUID.fromString(
+            message["uniqueId"]
+        )
 
+        PlayerPartyService.reloadPartyByUniqueId(uniqueId)
     }
 }

@@ -18,6 +18,8 @@ class CgsGamePlayer(
 ) : Savable
 {
     var lastPlayedGameId: UUID? = null
+    var lastPlayedGameDisconnectionTimestamp: Long? = null
+
     val gameSpecificStatistics = mutableMapOf<String, GameSpecificStatistics>()
 
     val username: String
