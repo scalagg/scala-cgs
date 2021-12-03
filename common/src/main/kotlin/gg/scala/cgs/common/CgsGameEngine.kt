@@ -22,6 +22,7 @@ import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.visibility.VisibilityHandler
+import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -56,6 +57,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     val uniqueId = UUID.randomUUID()
     var gameState by SmartCgsState()
+
+    val audience = BukkitAudiences.create(plugin)
 
     inline fun <reified T : GameSpecificStatistics> initialResourceLoad()
     {

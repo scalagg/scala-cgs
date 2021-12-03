@@ -18,5 +18,7 @@ interface CgsGameArena
 
     // load through SlimeWorldManager
     fun getDirectory(): File
-    fun getSpawnCoordinates(): Location
+
+    fun getPreLobbyLocation(): Location
+    fun getSpectatorLocation(): Location
 }

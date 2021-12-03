@@ -7,7 +7,9 @@ import java.util.*
  * @since 11/30/2021
  */
 class CgsGameServerInfo(
-    val uniqueId: UUID
+    val uniqueId: UUID,
+    var arenaId: String,
+    var gameMode: String
 )
 {
     var participants = mutableListOf<UUID>()

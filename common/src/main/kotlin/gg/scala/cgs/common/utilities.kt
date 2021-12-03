@@ -1,5 +1,6 @@
 package gg.scala.cgs.common
 
+import net.kyori.adventure.audience.Audience
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 
@@ -37,4 +38,12 @@ infix fun Player.refresh(
     {
         removePotionEffect(potionEffect.type)
     }
+
+
+}
+
+infix fun Player.adventure(lambda: (Audience) -> Unit)
+{
+    CgsGameEngine.INSTANCE.audience
+        .player(this).apply(lambda)
 }

@@ -40,7 +40,7 @@ object CgsGameEventListener : Listener
             })")
 
             event.participant.teleport(
-                engine.gameArena.getSpawnCoordinates()
+                engine.gameArena.getPreLobbyLocation()
             )
         }
     }

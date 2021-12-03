@@ -1,128 +1,130 @@
 package gg.scala.cgs.common.handler
 
-import net.evilblock.cubed.util.CC;
-import net.minecraft.server.v1_8_R3.EntityLiving;
-import org.apache.commons.lang.WordUtils;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
+import net.evilblock.cubed.util.CC
+import org.apache.commons.lang.WordUtils
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
+import org.bukkit.entity.Entity
+import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Player
+import org.bukkit.event.entity.EntityDamageEvent
+import kotlin.math.ceil
 
 
 /**
  * @author GrowlyX
  * @since 12/2/2021
  */
-class CgsDeathHandler
+object CgsDeathHandler
 {
-
-    fun getDeathMessage(entity: LivingEntity, killer: Entity?): String
+    fun formDeathMessage(entity: LivingEntity, killer: Entity?): String
     {
         var output = getEntityName(entity) + CC.SEC
+        val cause = entity.lastDamageCause
 
-        if (entity.getLastDamageCause() != null)
+        if (cause != null)
         {
             val killerName = getEntityName(killer)
 
-            when (entity.getLastDamageCause().getCause())
+            when (cause.cause!!)
             {
-                BLOCK_EXPLOSION, ENTITY_EXPLOSION -> output += " was blown to smithereens"
-                CONTACT -> output += " was pricked to death"
-                DROWNING -> output += if (killer != null)
+                Cause.BLOCK_EXPLOSION, Cause.ENTITY_EXPLOSION -> output += " was blown to smithereens"
+                Cause.CONTACT -> output += " was pricked to death"
+                Cause.DROWNING -> output += if (killer != null)
                 {
                     " drowned while fighting $killerName"
                 } else
                 {
                     " drowned"
                 }
-                ENTITY_ATTACK -> if (killer != null)
+                Cause.ENTITY_ATTACK -> if (killer != null)
                 {
                     output += " was slain by $killerName"
+
                     if (killer is Player)
                     {
-                        val hand: ItemStack? = (killer as Player).itemInHand
+                        val hand = killer.itemInHand
                         val handString =
-                            if (hand == null) "their fists" else if (hand.hasItemMeta() && hand.getItemMeta()
+                            if (hand == null) "their fists" else if (hand.hasItemMeta() && hand.itemMeta
                                     .hasDisplayName()
-                            ) hand.getItemMeta().getDisplayName() else WordUtils.capitalizeFully(
-                                hand.getType().name().replace("_", " ")
+                            ) hand.itemMeta.displayName else WordUtils.capitalizeFully(
+                                hand.type.name.replace("_", " ")
                             )
+
                         output += CC.SEC + " using " + CC.RED + handString
                     }
                 }
-                FALL -> output += if (killer != null)
+                Cause.FALL -> output += if (killer != null)
                 {
                     " hit the ground too hard thanks to $killerName"
                 } else
                 {
                     " hit the ground too hard"
                 }
-                FALLING_BLOCK ->
+                Cause.FALLING_BLOCK ->
                 {
                 }
-                FIRE_TICK, FIRE -> output += if (killer != null)
+                Cause.FIRE_TICK, Cause.FIRE -> output += if (killer != null)
                 {
                     " burned to death thanks to $killerName"
                 } else
                 {
                     " burned to death"
                 }
-                LAVA -> output += if (killer != null)
+                Cause.LAVA -> output += if (killer != null)
                 {
                     " tried to swim in lava while fighting $killerName"
                 } else
                 {
                     " tried to swim in lava"
                 }
-                MAGIC -> output += " died"
-                MELTING -> output += " died of melting"
-                POISON -> output += " was poisoned"
-                LIGHTNING -> output += " was struck by lightning"
-                PROJECTILE -> if (killer != null)
+                Cause.MAGIC -> output += " died"
+                Cause.MELTING -> output += " died of melting"
+                Cause.POISON -> output += " was poisoned"
+                Cause.LIGHTNING -> output += " was struck by lightning"
+                Cause.PROJECTILE -> if (killer != null)
                 {
                     output += " was shot to death by $killerName"
                 }
-                STARVATION -> output += " starved to death"
-                SUFFOCATION -> output += " suffocated in a wall"
-                SUICIDE -> output += " committed suicide"
-                THORNS -> output += " died whilst trying to kill $killerName"
-                VOID -> output += if (killer != null)
+                Cause.STARVATION -> output += " starved to death"
+                Cause.SUFFOCATION -> output += " suffocated in a wall"
+                Cause.SUICIDE -> output += " committed suicide"
+                Cause.THORNS -> output += " died whilst trying to kill $killerName"
+                Cause.VOID -> output += if (killer != null)
                 {
                     " fell into the void thanks to $killerName"
                 } else
                 {
                     " fell into the void"
                 }
-                WITHER -> output += " withered away"
-                CUSTOM -> output += " died "
+                Cause.WITHER -> output += " withered away"
+                Cause.CUSTOM -> output += " died "
             }
         } else
         {
             output += " died"
         }
+
         return output + CC.SEC.toString() + " died."
     }
 
     private fun getEntityName(entity: Entity?): String
     {
-        if (entity == null)
+        entity ?: return ""
+
+        val output: String = if (entity is Player)
         {
-            return ""
-        }
-        val output: String
-        output = if (entity is Player)
-        {
-            val player = entity
-            val gamePlayer: GamePlayer = Meetup.getInstance().getPlayerHandler().getByPlayer(player)
-            player.displayName + " " + CC.GRAY + "[" + CC.RED + gamePlayer.getGameKills() + CC.GRAY + "]"
+            val health = ceil(entity.health) / 2.0
+
+            "${entity.displayName} ${CC.D_RED}[${health}❤]"
         } else
         {
-            val entityName: String =
-                if (entity.getCustomName() != null) entity.getCustomName() else entity.getType().name()
+            val entityName: String = if (entity.customName != null)
+                entity.customName else entity.type.name
+
             CC.SEC + "a " + CC.RED + WordUtils.capitalizeFully(entityName.replace("_", ""))
         }
+
         return output
     }
 
@@ -132,3 +134,5 @@ class CgsDeathHandler
         return lastAttacker?.bukkitEntity
     }
 }
+
+typealias Cause = EntityDamageEvent.DamageCause
