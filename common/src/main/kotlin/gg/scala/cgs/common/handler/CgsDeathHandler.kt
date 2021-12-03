@@ -5,7 +5,6 @@ import org.apache.commons.lang.WordUtils
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.entity.Entity
-import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.EntityDamageEvent
 import kotlin.math.ceil
@@ -17,9 +16,9 @@ import kotlin.math.ceil
  */
 object CgsDeathHandler
 {
-    fun formDeathMessage(entity: LivingEntity, killer: Entity?): String
+    fun formDeathMessage(entity: Player, killer: Entity?): String
     {
-        var output = getEntityName(entity) + CC.SEC
+        var output = getEntityName(entity, true) + CC.SEC
         val cause = entity.lastDamageCause
 
         if (cause != null)
@@ -98,17 +97,17 @@ object CgsDeathHandler
                     " fell into the void"
                 }
                 Cause.WITHER -> output += " withered away"
-                Cause.CUSTOM -> output += " died "
+                Cause.CUSTOM -> output += " died"
             }
         } else
         {
-            output += " died"
+            output += " died for unknown reasons"
         }
 
-        return output + CC.SEC.toString() + " died."
+        return "$output${CC.SEC}."
     }
 
-    private fun getEntityName(entity: Entity?): String
+    private fun getEntityName(entity: Entity?, doNotAddHealth: Boolean = false): String
     {
         entity ?: return ""
 
@@ -116,7 +115,12 @@ object CgsDeathHandler
         {
             val health = ceil(entity.health) / 2.0
 
-            "${entity.displayName} ${CC.D_RED}[${health}❤]"
+            "${entity.displayName}${
+                if (!doNotAddHealth)
+                    " ${CC.D_RED}[${health}❤]"
+                else 
+                    ""
+            }"
         } else
         {
             val entityName: String = if (entity.customName != null)

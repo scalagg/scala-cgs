@@ -10,12 +10,13 @@ import gg.scala.cgs.common.nametag.CgsGameNametagAdapter
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.renderer.CgsGameScoreboardRenderer
+import gg.scala.cgs.common.teams.CgsGameTeam
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
 import gg.scala.cgs.common.visibility.CgsGameVisibility
 import gg.scala.cgs.common.visibility.CgsGameVisibilityAdapter
 import gg.scala.commons.ExtendedScalaPlugin
+import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.ChatHandler
-import me.lucko.helper.plugin.ExtendedJavaPlugin
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
@@ -29,7 +30,6 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
-import org.spigotmc.AsyncCatcher
 import java.util.*
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
@@ -60,17 +60,27 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     val audience = BukkitAudiences.create(plugin)
 
-    inline fun <reified T : GameSpecificStatistics> initialResourceLoad()
+    inline fun <reified T : GameSpecificStatistics> withStatistics()
+    {
+        statisticType = T::class
+    }
+
+    fun initialLoad()
     {
         INSTANCE = this
-        statisticType = T::class
+    }
 
+    fun initialResourceLoad()
+    {
         plugin.invokeTrackedTask("initial loading CGS resources") {
             CgsPlayerHandler.initialLoad()
             CgsGameTeamEngine.initialLoad(this)
 
             Serializers.useGsonBuilderThenRebuild {
-                it.registerTypeAdapter(GameSpecificStatistics::class.java, AbstractTypeSerializer<GameSpecificStatistics>())
+                it.registerTypeAdapter(
+                    GameSpecificStatistics::class.java,
+                    AbstractTypeSerializer<GameSpecificStatistics>()
+                )
             }
 
             ChatHandler.registerChannelOverride(
@@ -85,7 +95,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
                 CgsGameNametag
             )
 
-            Bukkit.getServer().maxPlayers = gameMode.getMaxTeams() * gameMode.getTeamSize()
+            Lemon.instance.localInstance
+                .metaData["game-server"] = "true"
+
+            Bukkit.getServer().maxPlayers =
+                gameMode.getMaxTeams() * gameMode.getTeamSize()
         }
     }
 
@@ -252,7 +266,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     // IF IT HAS BEEN 5+ minutes since disconnection, set to spectator
     class CgsGameParticipantReconnectEvent(
-        val participant: Player
+        val participant: Player, val connectedWithinTimeframe: Boolean
+    ) : CgsGameEvent()
+
+    class CgsGameParticipantReinstateEvent(
+        val participant: Player, val gameTeam: CgsGameTeam
     ) : CgsGameEvent()
 
     // (PLAYING) Save the player's disconnection epoch timestamp to redis
@@ -266,22 +284,12 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         val participant: Player
     ) : CgsGameEvent()
 
-    // (WAITING) Check if this game allows players to enter spectator mode
-    // (PLAYING) If the player is a contestant in this game, do not allow them to continue spectator checks
-    class CgsGameSpectatorPreAddEvent(
-        val spectator: Player
-    ) : CgsGameEvent()
-
     // Set spectators to be invisible to
     // contestants, but a "ghost" to other spectators.
 
     // Send the player a "You've been made a spectator: <reason>"
     // Apply spectator item set to player and reload nametag, tablist, and visibility
     class CgsGameSpectatorAddEvent(
-        val spectator: Player
-    ) : CgsGameEvent()
-
-    class CgsGameSpectatorRemoveEvent(
         val spectator: Player
     ) : CgsGameEvent()
 
@@ -316,7 +324,9 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         {
             if (!Bukkit.isPrimaryThread())
             {
-                AsyncCatcher.catchOp("Cannot call event asynchronously")
+                Tasks.sync {
+                    Bukkit.getPluginManager().callEvent(this)
+                }
                 return true
             }
 

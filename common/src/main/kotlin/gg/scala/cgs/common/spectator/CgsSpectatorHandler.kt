@@ -92,6 +92,11 @@ object CgsSpectatorHandler
 
             VisibilityHandler.update(player)
             NametagHandler.reloadPlayer(player)
+
+            val cgsSpectatorAdd = CgsGameEngine
+                .CgsGameSpectatorAddEvent(player)
+
+            cgsSpectatorAdd.callNow()
         }
     }
 }

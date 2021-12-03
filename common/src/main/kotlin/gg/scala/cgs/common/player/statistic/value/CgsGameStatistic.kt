@@ -1,4 +1,4 @@
-package gg.scala.cgs.common.player.statistic
+package gg.scala.cgs.common.player.statistic.value
 
 /**
  * @author GrowlyX

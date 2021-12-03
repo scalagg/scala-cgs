@@ -11,9 +11,10 @@ data class CgsGameGeneralInfo(
     val gameVersion: Float,
     val minimumPlayers: Int,
     val startingCountdownSec: Int,
-    val disqualifyOnDeath: Boolean,
     val persistence: CgsGamePersistenceInfo,
     val awards: CgsGameAwardInfo,
-    val spectatable: Boolean,
+    val disqualifyOnLogout: Boolean,
+    val spectateOnDeath: Boolean,
+    val showTabHearts: Boolean,
     val gameModes: List<CgsGameMode>
 )

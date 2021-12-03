@@ -1,5 +1,6 @@
 package gg.scala.cgs.common.player.statistic
 
+import gg.scala.cgs.common.player.statistic.value.CgsGameStatistic
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializable
 
 /**
@@ -8,6 +9,8 @@ import net.evilblock.cubed.serializers.impl.AbstractTypeSerializable
  */
 abstract class GameSpecificStatistics : AbstractTypeSerializable
 {
+    abstract var gameKills: CgsGameStatistic
+
     abstract var kills: CgsGameStatistic
     abstract var deaths: CgsGameStatistic
 
