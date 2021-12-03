@@ -1,6 +1,8 @@
 package gg.scala.cgs.common.disqualify
 
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.CgsGameState
+import gg.scala.cgs.common.giveCoins
 import gg.scala.cgs.common.spectator.CgsSpectatorHandler
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
 import net.evilblock.cubed.util.CC
@@ -24,11 +26,15 @@ object CgsGameDisqualificationHandler
         if (CgsGameEngine.INSTANCE.gameInfo.spectateOnDeath && setSpectator)
         {
             CgsSpectatorHandler.setSpectator(player, true)
+
+            player giveCoins (CgsGameEngine.INSTANCE.gameInfo.awards.participationCoinRange.random() to "Playing a game")
         } else if (broadcastNotification)
         {
             CgsGameEngine.INSTANCE.sendMessage(
                 "${player.displayName}${CC.SEC} has been disqualified."
             )
+
+            player giveCoins (CgsGameEngine.INSTANCE.gameInfo.awards.participationCoinRange.random() to "Playing a game")
         }
     }
 }

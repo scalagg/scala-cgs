@@ -1,5 +1,6 @@
 package gg.scala.cgs.common.information.mode
 
+import gg.scala.cgs.common.information.arena.CgsGameArena
 import org.bukkit.Material
 
 /**
@@ -13,6 +14,8 @@ interface CgsGameMode
     fun getName(): String
     fun getMaterial(): Material
     fun getDescription(): String
+
+    fun getArenas(): List<CgsGameArena>
 
     fun getTeamSize(): Int
     fun getMaxTeams(): Int

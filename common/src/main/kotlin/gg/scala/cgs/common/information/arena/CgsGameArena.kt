@@ -16,8 +16,8 @@ interface CgsGameArena
     fun getMaterial(): Material
     fun getDescription(): String
 
-    // load through SlimeWorldManager
     fun getDirectory(): File
+    fun getBukkitWorldName(): String
 
     fun getPreLobbyLocation(): Location
     fun getSpectatorLocation(): Location

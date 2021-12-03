@@ -10,6 +10,7 @@ import gg.scala.cgs.common.nametag.CgsGameNametagAdapter
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.renderer.CgsGameScoreboardRenderer
+import gg.scala.cgs.common.snapshot.CgsSnapshot
 import gg.scala.cgs.common.teams.CgsGameTeam
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
 import gg.scala.cgs.common.visibility.CgsGameVisibility
@@ -242,6 +243,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     abstract fun getVisibilityAdapter(): CgsGameVisibilityAdapter
     abstract fun getNametagAdapter(): CgsGameNametagAdapter
+    abstract fun getSnapshotCreator(): CgsSnapshot
 
     abstract fun getExtraWinInformation(): List<String>
 

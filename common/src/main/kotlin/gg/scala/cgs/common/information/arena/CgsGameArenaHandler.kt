@@ -1,13 +1,43 @@
 package gg.scala.cgs.common.information.arena
 
+import gg.scala.cgs.common.information.mode.CgsGameMode
+import org.bukkit.Bukkit
+import org.bukkit.World
+import org.bukkit.WorldCreator
+import java.nio.file.CopyOption
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.StandardCopyOption
+
 /**
  * @author GrowlyX
  * @since 11/30/2021
  */
 object CgsGameArenaHandler
 {
-    // TODO: 11/30/2021 add logic for randomly picked arenas on startup
+    lateinit var world: World
+    lateinit var path: Path
 
-    // TODO: 11/30/2021 add a method that returns the PARENT directory which
-    // will contain all arenas for this specific game instance's game type
+    fun initialLoad(gameMode: CgsGameMode)
+    {
+        val random = gameMode.getArenas().random()
+        val directory = random.getDirectory()
+
+        // copy/replacing the previous world
+        path = Files.copy(
+            directory.toPath(),
+            Bukkit.getWorldContainer().toPath(),
+            StandardCopyOption.REPLACE_EXISTING
+        )
+
+        world = Bukkit.createWorld(
+            WorldCreator(directory.name)
+        )
+    }
+
+    fun close()
+    {
+        Files.delete(path)
+        Bukkit.unloadWorld(world, false)
+    }
 }

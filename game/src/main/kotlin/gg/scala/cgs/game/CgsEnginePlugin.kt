@@ -2,6 +2,7 @@ package gg.scala.cgs.game
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.handler.CgsInstanceHandler
+import gg.scala.cgs.common.information.arena.CgsGameArenaHandler
 import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.game.listener.CgsGameEventListener
 import gg.scala.cgs.game.listener.CgsGameGeneralListener
@@ -52,5 +53,7 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
         CgsInstanceHandler.service.runCommand {
            it.hdel("cgs:servers", Lemon.instance.settings.id)
         }
+
+        CgsGameArenaHandler.close()
     }
 }

@@ -9,6 +9,7 @@ import java.util.*
  */
 interface CgsSnapshot
 {
-    fun getParticipants(): List<UUID>
     fun getWinningTeam(): CgsGameTeam
+
+    fun getExtraData(): Map<String, String>
 }
