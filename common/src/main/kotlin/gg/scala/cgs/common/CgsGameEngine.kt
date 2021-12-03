@@ -9,6 +9,7 @@ import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.renderer.CgsGameScoreboardRenderer
 import gg.scala.cgs.common.spectator.CgsSpectatorHandler
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
+import gg.scala.lemon.handler.ChatHandler
 import me.lucko.helper.plugin.ExtendedJavaPlugin
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
@@ -64,6 +65,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         Serializers.useGsonBuilderThenRebuild {
             it.registerTypeAdapter(GameSpecificStatistics::class.java, AbstractTypeSerializer<GameSpecificStatistics>())
         }
+
+        ChatHandler.registerChannelOverride(
+            CgsOverridingSpectatorChannel
+        )
 
         Bukkit.getServer().maxPlayers = gameMode.getMaxTeams() * gameMode.getTeamSize()
     }

@@ -9,15 +9,15 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 12/2/2021
  */
-object CgsSpectatorChannel : ChannelOverride
+object CgsOverridingSpectatorChannel : ChannelOverride
 {
-    override fun getId() = "parties"
-    override fun isGlobal() = true
+    override fun getId() = "spectator"
+    override fun isGlobal() = false
 
-    override fun shouldCheckForPrefix() = true
+    override fun shouldCheckForPrefix() = false
     override fun shouldOverride(player: Player) = player.hasMetadata("spectator")
 
-    override fun getPrefix() = ">"
+    override fun getPrefix() = ""
     override fun getWeight() = 10
 
     override fun getFormatted(
@@ -29,7 +29,7 @@ object CgsSpectatorChannel : ChannelOverride
     }
 
     @Deprecated(
-        message = "Please use CgsSpectatorChannel#hasPermission",
+        message = "Please use ChannelOverride#shouldOverride.",
         replaceWith = ReplaceWith(
             "hasPermission(player)"
         )
