@@ -137,7 +137,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         return cgsGamePlayer.gameSpecificStatistics[statisticType.simpleName]!! as S
     }
 
-    fun sendMessage(message: String)
+    fun broadcast(message: String)
     {
         for (team in CgsGameTeamEngine.teams.values)
         {
@@ -208,7 +208,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         }
     }
 
-    fun sendMessage(fancyMessage: FancyMessage)
+    fun broadcast(fancyMessage: FancyMessage)
     {
         for (team in CgsGameTeamEngine.teams.values)
         {

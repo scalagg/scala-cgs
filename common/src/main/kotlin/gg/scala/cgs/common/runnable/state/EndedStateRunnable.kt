@@ -59,7 +59,7 @@ object EndedStateRunnable : StateRunnable(
             description.add("")
 
             // lol makeshift solution for now
-            engine.sendMessage(
+            engine.broadcast(
                 FancyMessage().withMessage(*description.toTypedArray())
             )
 
@@ -83,7 +83,7 @@ object EndedStateRunnable : StateRunnable(
 
         if (alertTicks.contains(10 - currentTick))
         {
-            engine.sendMessage("${CC.B_RED}The server will automatically reboot in ${10 - currentTick} seconds.")
+            engine.broadcast("${CC.B_RED}The server will automatically reboot in ${10 - currentTick} seconds.")
         }
 
         if (currentTick == 10)

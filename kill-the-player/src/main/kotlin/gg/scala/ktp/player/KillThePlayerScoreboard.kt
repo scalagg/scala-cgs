@@ -49,7 +49,7 @@ object KillThePlayerScoreboard : CgsGameScoreboardRenderer
                 }")
             } else if (state == CgsGameState.STARTING)
             {
-                lines.add("Starting in ${CC.GREEN}${StartingStateRunnable.startingTime}s")
+                lines.add("Starting in ${CC.GREEN}${TimeUtil.formatIntoAbbreviatedString(StartingStateRunnable.startingTime)}")
             }
 
             lines.add("")

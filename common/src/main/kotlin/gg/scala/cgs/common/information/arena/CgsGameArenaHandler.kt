@@ -5,6 +5,7 @@ import org.apache.commons.io.FileUtils
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.WorldCreator
+import org.bukkit.WorldType
 import java.io.File
 import java.nio.file.Files
 
@@ -26,14 +27,16 @@ object CgsGameArenaHandler
 
         world = Bukkit.createWorld(
             WorldCreator(directory.toFile().name)
+                .environment(World.Environment.NORMAL)
+                .type(WorldType.NORMAL)
         )
+        world.setGameRuleValue("doMobSpawning", "false")
+        world.setGameRuleValue("", "")
     }
 
     fun close()
     {
-        Files.delete(
-            File(Bukkit.getWorldContainer(), arena.getBukkitWorldName()).toPath()
-        )
         Bukkit.unloadWorld(world, false)
+        Files.delete(File(Bukkit.getWorldContainer(), arena.getBukkitWorldName()).toPath())
     }
 }

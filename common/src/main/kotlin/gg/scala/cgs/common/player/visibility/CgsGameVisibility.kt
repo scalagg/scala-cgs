@@ -14,9 +14,6 @@ object CgsGameVisibility : VisibilityAdapter
 {
     override fun getAction(toRefresh: Player, refreshFor: Player): VisibilityAction
     {
-        val viewer = CgsPlayerHandler.find(refreshFor)!!
-        val target = CgsPlayerHandler.find(toRefresh)!!
-
         if (refreshFor.hasMetadata("spectator") && !toRefresh.hasMetadata("spectator"))
         {
             return VisibilityAction.HIDE
@@ -24,6 +21,9 @@ object CgsGameVisibility : VisibilityAdapter
         {
             return VisibilityAction.NEUTRAL
         }
+
+        val viewer = CgsPlayerHandler.find(refreshFor)!!
+        val target = CgsPlayerHandler.find(toRefresh)!!
 
         return CgsGameEngine.INSTANCE.getVisibilityAdapter()
             .computeVisibility(viewer, target)

@@ -28,7 +28,7 @@ object CgsGameDisqualificationHandler
             player giveCoins (CgsGameEngine.INSTANCE.gameInfo.awards.participationCoinRange.random() to "Playing a game")
         } else if (broadcastNotification)
         {
-            CgsGameEngine.INSTANCE.sendMessage(
+            CgsGameEngine.INSTANCE.broadcast(
                 "${player.displayName}${CC.SEC} has been disqualified."
             )
 

@@ -27,7 +27,6 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
-import org.bukkit.scoreboard.DisplaySlot
 import kotlin.math.ceil
 
 /**
@@ -54,21 +53,30 @@ object CgsGameEventListener : Listener
                 listOf(cgsGamePlayer)
             )
 
-            engine.sendMessage(
+            // Bukkit.getOnlinePlayers().size
+            // should be replaced with a thing that gets
+            // all the players that will be playing the game
+            // (excluding the spectators) since we will add
+            // a spectator command (able to become a spectator before the game starts)
+
+            val participantSize = Bukkit.getOnlinePlayers().size
+
+            engine.broadcast(
                 "${coloredName(event.participant)}${CC.SEC} has joined. ${CC.GREEN}(${
-                    "${Bukkit.getOnlinePlayers().size}/${Bukkit.getMaxPlayers()}"
+                    "${participantSize}/${Bukkit.getMaxPlayers()}"
                 })"
             )
 
             event.participant refresh (false to GameMode.ADVENTURE)
-
             event.participant.teleport(
                 engine.gameArena.getPreLobbyLocation()
             )
 
-            if (Bukkit.getOnlinePlayers().size >= engine.gameInfo.minimumPlayers)
+            if (participantSize >= engine.gameInfo.minimumPlayers)
             {
                 engine.gameState = CgsGameState.STARTING
+            } else {
+                engine.broadcast("${CC.SEC}The game requires ${CC.PRI + (engine.gameInfo.minimumPlayers - participantSize) + CC.SEC} more players to start.")
             }
         } else if (!event.reconnectCalled)
         {
@@ -127,7 +135,7 @@ object CgsGameEventListener : Listener
         {
             CgsGameTeamEngine.removePlayerFromTeam(event.participant)
 
-            engine.sendMessage(
+            engine.broadcast(
                 "${coloredName(event.participant)}${CC.SEC} has left. ${CC.GREEN}(${
                     "${Bukkit.getOnlinePlayers().size - 1}/${Bukkit.getMaxPlayers()}"
                 })"
@@ -199,6 +207,10 @@ object CgsGameEventListener : Listener
         event.deathMessage = CgsDeathHandler
             .formDeathMessage(player, killer)
 
+        // TODO: 04/12/2021 make a thing for player respawning
+        // like for example they get 5 respawns and after they use them all
+        // they disqualified
+
         if (engine.gameInfo.spectateOnDeath)
         {
             CgsGameDisqualificationHandler.disqualifyPlayer(
@@ -255,7 +267,7 @@ object CgsGameEventListener : Listener
         event: CgsGameEngine.CgsGameForceStartEvent
     )
     {
-        engine.sendMessage("${CC.GREEN}The game has been force-started. ${CC.GRAY}(by ${
+        engine.broadcast("${CC.GREEN}The game has been force-started. ${CC.GRAY}(by ${
             if (event.starter is Player) event.starter.name else "Console"
         })")
     }

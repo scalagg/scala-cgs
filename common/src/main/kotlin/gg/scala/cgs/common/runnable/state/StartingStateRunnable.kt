@@ -6,12 +6,12 @@ import gg.scala.cgs.common.runnable.StateRunnable
 import gg.scala.lemon.Lemon
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
+import net.evilblock.cubed.util.time.TimeUtil
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
 import net.md_5.bungee.api.chat.ClickEvent
-import org.apache.commons.lang3.time.DurationFormatUtils
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 
@@ -60,11 +60,9 @@ object StartingStateRunnable : StateRunnable(
 
             engine.sendTitle(currentTitle)
             engine.playSound(Sound.ORB_PICKUP)
-            engine.sendMessage("${CC.SEC}The game starts in ${getCurrentColor()}${
-                DurationFormatUtils.formatDurationWords(
-                    startingTime * 1000L, true, true
-                )
-            }.")
+            engine.broadcast("${CC.SEC}The game starts in ${getCurrentColor()}${
+                TimeUtil.formatIntoDetailedString((startingTime))
+            }${CC.SEC}.")
         }
 
         if (startingTime <= 0)
@@ -80,7 +78,7 @@ object StartingStateRunnable : StateRunnable(
 
             engine.sendTitle(currentTitle)
             engine.playSound(Sound.LEVEL_UP)
-            engine.sendMessage("${CC.GREEN}The game has commenced!")
+            engine.broadcast("${CC.GREEN}The game has commenced!")
 
             if (engine.gameInfo.gameVersion < 1.0)
             {
@@ -102,7 +100,7 @@ object StartingStateRunnable : StateRunnable(
                     Lemon.instance.lemonWebData.discord
                 )
 
-                engine.sendMessage(fancyMessage)
+                engine.broadcast(fancyMessage)
             }
         }
     }
