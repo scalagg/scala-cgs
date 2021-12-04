@@ -1,13 +1,13 @@
 package gg.scala.cgs.common.information.arena
 
+import com.google.common.io.Files
 import gg.scala.cgs.common.information.mode.CgsGameMode
+import org.apache.commons.io.FileUtils
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.WorldCreator
-import java.nio.file.CopyOption
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.StandardCopyOption
+import java.io.File
+import kotlin.io.path.name
 
 /**
  * @author GrowlyX
@@ -16,28 +16,25 @@ import java.nio.file.StandardCopyOption
 object CgsGameArenaHandler
 {
     lateinit var world: World
-    lateinit var path: Path
+    lateinit var arena: CgsGameArena
 
     fun initialLoad(gameMode: CgsGameMode)
     {
-        val random = gameMode.getArenas().random()
-        val directory = random.getDirectory()
+        arena = gameMode.getArenas().random()
+        val directory = arena.getDirectory()
 
-        // copy/replacing the previous world
-        path = Files.copy(
-            directory.toPath(),
-            Bukkit.getWorldContainer().toPath(),
-            StandardCopyOption.REPLACE_EXISTING
-        )
+        FileUtils.copyDirectory(directory.toFile(), Bukkit.getWorldContainer(), true)
 
         world = Bukkit.createWorld(
-            WorldCreator(directory.name)
+            WorldCreator(directory.toFile().name)
         )
     }
 
     fun close()
     {
-        Files.delete(path)
+        java.nio.file.Files.delete(
+            File(Bukkit.getWorldContainer(), arena.getBukkitWorldName()).toPath()
+        )
         Bukkit.unloadWorld(world, false)
     }
 }

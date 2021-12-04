@@ -4,7 +4,7 @@ package gg.scala.cgs.common.information
  * @author GrowlyX
  * @since 11/30/2021
  */
-data class CgsGameAwardInfo(
+open class CgsGameAwardInfo(
     val awardCoins: Boolean,
     // select a random amount
     // within this IntRange

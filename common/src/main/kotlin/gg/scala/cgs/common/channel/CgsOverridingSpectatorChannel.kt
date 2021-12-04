@@ -34,7 +34,6 @@ object CgsOverridingSpectatorChannel : ChannelOverride
             "hasPermission(player)"
         )
     )
-    override fun getPermission() =
-        throw RuntimeException("PlayerPartyChannel#getPermission is not used.")
+    override fun getPermission(): String? = null
 
 }

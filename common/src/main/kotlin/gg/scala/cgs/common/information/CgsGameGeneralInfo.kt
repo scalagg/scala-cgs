@@ -6,7 +6,7 @@ import gg.scala.cgs.common.information.mode.CgsGameMode
  * @author GrowlyX
  * @since 11/30/2021
  */
-data class CgsGameGeneralInfo(
+open class CgsGameGeneralInfo(
     val fancyNameRender: String,
     val gameVersion: Float,
     val minimumPlayers: Int,

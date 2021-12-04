@@ -2,9 +2,14 @@ package gg.scala.cgs.common
 
 import gg.scala.grape.GrapeSpigotPlugin
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.Tasks
+import net.evilblock.cubed.util.nms.MinecraftReflection
 import net.kyori.adventure.audience.Audience
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
+import org.bukkit.event.entity.PlayerDeathEvent
+import java.lang.reflect.Method
+
 
 /**
  * @author GrowlyX
@@ -25,8 +30,15 @@ infix fun Player.refresh(
     walkSpeed = 0.2f
     inventory.heldItemSlot = 0
 
-    isFlying = information.first
-    allowFlight = information.first
+    if (information.first)
+    {
+        allowFlight = true
+        isFlying = true
+    } else
+    {
+        isFlying = false
+        allowFlight = false
+    }
 
     inventory.clear()
     inventory.armorContents = null
@@ -59,5 +71,30 @@ infix fun Player.giveCoins(
     {
         grapePlayer.coins += information.first
         sendMessage("${CC.GOLD}+${information.first} coins (${information.second})!")
+    }
+}
+
+val ENTITY_PLAYER = MinecraftReflection.getNMSClass("EntityPlayer")
+val MINECRAFT_SERVER = MinecraftReflection.getMinecraftServer()
+
+val PLAYER_LIST: Any = MINECRAFT_SERVER.javaClass
+    .getDeclaredMethod("getPlayerList")
+    .invoke(MINECRAFT_SERVER)
+
+val WORLD_MOVEMENT: Method = PLAYER_LIST.javaClass.getMethod(
+    "moveToWorld", ENTITY_PLAYER,
+    Int::class.javaPrimitiveType,
+    Boolean::class.javaPrimitiveType
+)
+
+fun respawnPlayer(event: PlayerDeathEvent)
+{
+    Tasks.delayed(2L)
+    {
+        WORLD_MOVEMENT.invoke(
+            PLAYER_LIST,
+            MinecraftReflection.getHandle(event.entity),
+            0, false
+        )
     }
 }

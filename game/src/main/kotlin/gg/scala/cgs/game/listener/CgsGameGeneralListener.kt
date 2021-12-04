@@ -139,7 +139,7 @@ object CgsGameGeneralListener : Listener
                     {
                         event.player.kickPlayer("")
                     }
-                    Material.COMPASS ->
+                    Material.ITEM_FRAME ->
                     {
                         CgsGameSpectateMenu().openMenu(event.player)
                     }

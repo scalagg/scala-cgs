@@ -8,6 +8,7 @@ import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.lemon.Lemon
 import me.lucko.helper.Events
+import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import org.bukkit.event.EventPriority
@@ -41,13 +42,16 @@ object CgsPlayerHandler
             CgsGamePlayer::class.java
         )
 
+        handle.supplyWithCustomGson(Serializers.gson)
+
         Events.subscribe(
             AsyncPlayerPreLoginEvent::class.java,
             EventPriority.LOWEST
         ).handler { event ->
             handle.fetchEntryByKey(
                 event.uniqueId.toString()
-            ).thenAccept {
+            ).whenComplete { it, throwable ->
+                throwable?.printStackTrace()
                 players[event.uniqueId] = it ?: CgsGamePlayer(event.uniqueId)
             }
         }

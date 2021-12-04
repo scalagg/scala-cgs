@@ -25,7 +25,7 @@ object StartingStateRunnable : StateRunnable(
 {
     private val engine = CgsGameEngine.INSTANCE
 
-    private var current = engine.gameInfo
+    var current = engine.gameInfo
         .startingCountdownSec + 1
 
     private val alertTicks = listOf(
@@ -62,7 +62,7 @@ object StartingStateRunnable : StateRunnable(
             engine.playSound(Sound.ORB_PICKUP)
             engine.sendMessage("${CC.SEC}The game starts in ${getCurrentColor()}${
                 DurationFormatUtils.formatDurationWords(
-                    currentTick * 1000L, true, true
+                    current * 1000L, true, true
                 )
             }.")
         }

@@ -5,6 +5,8 @@ import gg.scala.cgs.common.CgsGameState
 import gg.scala.cgs.common.disqualify.CgsGameDisqualificationHandler
 import gg.scala.cgs.common.handler.CgsDeathHandler
 import gg.scala.cgs.common.handler.CgsPlayerHandler
+import gg.scala.cgs.common.refresh
+import gg.scala.cgs.common.respawnPlayer
 import gg.scala.cgs.common.runnable.state.EndedStateRunnable
 import gg.scala.cgs.common.runnable.state.StartedStateRunnable
 import gg.scala.cgs.common.runnable.state.StartingStateRunnable
@@ -17,6 +19,7 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants.HEART_SYMBOL
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
+import org.bukkit.GameMode
 import org.bukkit.entity.Arrow
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -58,6 +61,8 @@ object CgsGameEventListener : Listener
                     "${Bukkit.getOnlinePlayers().size}/${Bukkit.getMaxPlayers()}"
                 })"
             )
+
+            event.participant refresh (false to GameMode.ADVENTURE)
 
             event.participant.teleport(
                 engine.gameArena.getPreLobbyLocation()
@@ -122,13 +127,13 @@ object CgsGameEventListener : Listener
     {
         if (engine.gameState == CgsGameState.WAITING || engine.gameState == CgsGameState.STARTING)
         {
-            Tasks.delayed(1L) {
-                engine.sendMessage(
-                    "${coloredName(event.participant)}${CC.SEC} has left. ${CC.GREEN}(${
-                        "${Bukkit.getOnlinePlayers().size}/${Bukkit.getMaxPlayers()}"
-                    })"
-                )
-            }
+            CgsGameTeamEngine.removePlayerFromTeam(event.participant)
+
+            engine.sendMessage(
+                "${coloredName(event.participant)}${CC.SEC} has left. ${CC.GREEN}(${
+                    "${Bukkit.getOnlinePlayers().size - 1}/${Bukkit.getMaxPlayers()}"
+                })"
+            )
         } else if (engine.gameState.isAfter(CgsGameState.STARTED))
         {
             val cgsGamePlayer = CgsPlayerHandler
@@ -181,6 +186,8 @@ object CgsGameEventListener : Listener
 
         val statistics = engine.getStatistics(cgsGamePlayer)
         statistics.deaths.increment()
+
+        respawnPlayer(event)
 
         if (killer != null)
         {

@@ -6,7 +6,7 @@ package gg.scala.cgs.common.player.statistic.value
  */
 class CgsGameStatistic
 {
-    private var value = 0
+    var value = 0
 
     fun increment()
     {

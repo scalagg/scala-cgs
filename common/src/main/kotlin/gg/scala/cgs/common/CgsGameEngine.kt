@@ -4,6 +4,7 @@ import gg.scala.cgs.common.channel.CgsOverridingSpectatorChannel
 import gg.scala.cgs.common.handler.CgsPlayerHandler
 import gg.scala.cgs.common.information.CgsGameGeneralInfo
 import gg.scala.cgs.common.information.arena.CgsGameArena
+import gg.scala.cgs.common.information.arena.CgsGameArenaHandler
 import gg.scala.cgs.common.information.mode.CgsGameMode
 import gg.scala.cgs.common.nametag.CgsGameNametag
 import gg.scala.cgs.common.nametag.CgsGameNametagAdapter
@@ -18,7 +19,9 @@ import gg.scala.cgs.common.visibility.CgsGameVisibilityAdapter
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.ChatHandler
+import me.lucko.helper.Events
 import net.evilblock.cubed.nametag.NametagHandler
+import net.evilblock.cubed.scoreboard.ScoreboardHandler
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import net.evilblock.cubed.util.bukkit.FancyMessage
@@ -33,6 +36,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
+import org.bukkit.event.player.PlayerJoinEvent
 import java.util.*
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
@@ -74,20 +78,21 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     fun initialLoad()
     {
         INSTANCE = this
+        gameArena = CgsGameArenaHandler.arena
     }
 
     fun initialResourceLoad()
     {
         plugin.invokeTrackedTask("initial loading CGS resources") {
-            CgsPlayerHandler.initialLoad()
-            CgsGameTeamEngine.initialLoad(this)
-
             Serializers.useGsonBuilderThenRebuild {
                 it.registerTypeAdapter(
                     GameSpecificStatistics::class.java,
                     AbstractTypeSerializer<GameSpecificStatistics>()
                 )
             }
+
+            CgsPlayerHandler.initialLoad()
+            CgsGameTeamEngine.initialLoad(this)
 
             ChatHandler.registerChannelOverride(
                 CgsOverridingSpectatorChannel
@@ -100,6 +105,18 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             NametagHandler.registerProvider(
                 CgsGameNametag
             )
+
+            Events.subscribe(PlayerJoinEvent::class.java).handler {
+                CgsPlayerHandler.find(it.player)?.let { player ->
+                    try
+                    {
+                        getStatistics(player)
+                    } catch (ignored: Exception)
+                    {
+                        player.gameSpecificStatistics[statisticType.java.simpleName] = statisticType.java.newInstance() as S
+                    }
+                }
+            }
 
             Lemon.instance.localInstance
                 .metaData["game-server"] = "true"
@@ -261,8 +278,12 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         val cgsGameTeam: CgsGameTeam
     ) : CgsGameEvent()
 
+
     class CgsGameStartEvent : CgsGameEvent()
+
+
     class CgsGamePreStartEvent : CgsGameEvent()
+
 
     // Send a special message indicating that this user/console has
     // force started the game to the STARTING state.
@@ -272,6 +293,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         val starter: CommandSender
     ) : CgsGameEvent()
 
+
     // teleport everyone back to the
     // LOBBY the CgsGameArena spawn location
 
@@ -279,21 +301,26 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     // KyoriBridge, and teleport possible spectators back
     class CgsGamePreStartCancelEvent : CgsGameEvent()
 
+
     class CgsGameParticipantConnectEvent(
         val participant: Player, val reconnectCalled: Boolean
     ) : CgsGameEvent()
+
 
     class CgsGameParticipantReconnectEvent(
         val participant: Player, val connectedWithinTimeframe: Boolean
     ) : CgsGameEvent()
 
+
     class CgsGameParticipantReinstateEvent(
         val participant: Player, val gameTeam: CgsGameTeam
     ) : CgsGameEvent()
 
+
     class CgsGameParticipantDisconnectEvent(
         val participant: Player
     ) : CgsGameEvent()
+
 
     class CgsGameSpectatorAddEvent(
         val spectator: Player
@@ -301,15 +328,15 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     abstract class CgsGameEvent : Event(), Cancellable
     {
-        companion object
-        {
+        companion object {
             @JvmStatic
-            val HANDLERS = HandlerList()
+            val handlerList = HandlerList()
         }
+
+        override fun getHandlers() = handlerList
 
         private var internalCancelled = false
 
-        override fun getHandlers() = HANDLERS
         override fun isCancelled() = internalCancelled
 
         override fun setCancelled(new: Boolean)

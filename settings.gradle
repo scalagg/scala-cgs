@@ -4,3 +4,5 @@ include "game"
 include "lobby"
 include "parties"
 include "queue"
+include 'kill-the-player'
+

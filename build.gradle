@@ -37,7 +37,9 @@ subprojects {
     }
 
     shadowJar {
-        archiveClassifier = null
+        archiveClassifier.set(
+                ""
+        )
 
         exclude "**/*.kotlin_metadata"
         exclude "**/*.kotlin_builtins"

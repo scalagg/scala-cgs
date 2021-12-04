@@ -4,6 +4,7 @@ import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.adventure
 import gg.scala.cgs.common.handler.CgsPlayerHandler
 import gg.scala.cgs.common.refresh
+import gg.scala.cgs.common.respawnPlayer
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
@@ -53,7 +54,7 @@ object CgsSpectatorHandler
             .decorate(TextDecoration.BOLD)
             .color(TextColor.fromHexString("#FF4F4B")),
         Component.text("Better luck next time!")
-            .color(TextColor.fromHexString("#FFFFF"))
+            .color(TextColor.fromHexString("#FFFFFF"))
     )
 
     @JvmOverloads

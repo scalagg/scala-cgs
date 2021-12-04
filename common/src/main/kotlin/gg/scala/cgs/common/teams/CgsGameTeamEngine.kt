@@ -32,6 +32,14 @@ object CgsGameTeamEngine
         }
     }
 
+    fun removePlayerFromTeam(player: Player)
+    {
+        teams.values.firstOrNull { team ->
+            team.participants.removeIf { it == player.uniqueId }
+            team.eliminated.removeIf { it == player.uniqueId }
+        }
+    }
+
     fun allocatePlayersToAvailableTeam(players: List<CgsGamePlayer>): Boolean
     {
         if (players.isEmpty())
