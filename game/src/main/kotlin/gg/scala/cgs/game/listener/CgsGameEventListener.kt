@@ -219,15 +219,6 @@ object CgsGameEventListener : Listener
         engine.originalRemaining = participants.size
 
         participants.forEach {
-            val scoreboard = it.scoreboard ?: return@forEach
-
-            val objective = scoreboard.registerNewObjective("tabHealth", "health")
-            objective.displaySlot = DisplaySlot.PLAYER_LIST
-
-            val healthObjective = scoreboard.registerNewObjective("nameHealth", "health")
-            healthObjective.displaySlot = DisplaySlot.BELOW_NAME
-            healthObjective.displayName = "${CC.D_RED}${HEART_SYMBOL}"
-
             NametagHandler.reloadPlayer(it)
         }
 
