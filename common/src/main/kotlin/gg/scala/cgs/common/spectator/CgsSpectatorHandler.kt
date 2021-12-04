@@ -78,9 +78,12 @@ object CgsSpectatorHandler
                 }
             }
 
-            player.teleport(
-                engine.gameArena.getSpectatorLocation()
-            )
+            Tasks.delayed(1L)
+            {
+                player.teleport(
+                    engine.gameArena.getSpectatorLocation()
+                )
+            }
 
             player.playerListName = "${CC.GRAY}${player.name}"
 
