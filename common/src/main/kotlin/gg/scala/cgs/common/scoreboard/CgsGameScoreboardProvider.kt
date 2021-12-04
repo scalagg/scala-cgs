@@ -1,4 +1,4 @@
-package gg.scala.cgs.game.scoreboard
+package gg.scala.cgs.common.scoreboard
 
 import gg.scala.cgs.common.CgsGameEngine
 import net.evilblock.cubed.scoreboard.ScoreboardAdapter

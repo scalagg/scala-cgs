@@ -1,4 +1,4 @@
-package gg.scala.cgs.common.renderer
+package gg.scala.cgs.common.scoreboard
 
 import gg.scala.cgs.common.CgsGameState
 import org.bukkit.entity.Player

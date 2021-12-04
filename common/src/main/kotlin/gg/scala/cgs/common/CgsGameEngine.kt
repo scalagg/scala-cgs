@@ -10,7 +10,8 @@ import gg.scala.cgs.common.nametag.CgsGameNametag
 import gg.scala.cgs.common.nametag.CgsGameNametagAdapter
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
-import gg.scala.cgs.common.renderer.CgsGameScoreboardRenderer
+import gg.scala.cgs.common.scoreboard.CgsGameScoreboardProvider
+import gg.scala.cgs.common.scoreboard.CgsGameScoreboardRenderer
 import gg.scala.cgs.common.snapshot.CgsSnapshot
 import gg.scala.cgs.common.teams.CgsGameTeam
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
@@ -20,6 +21,7 @@ import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.ChatHandler
 import me.lucko.helper.Events
+import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
 import net.evilblock.cubed.serializers.Serializers
@@ -62,7 +64,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     lateinit var statisticType: KClass<*>
     lateinit var gameArena: CgsGameArena
 
-    val uniqueId = UUID.randomUUID()
+    val uniqueId: UUID = UUID.randomUUID()
     var gameState by SmartCgsState()
 
     var gameStart = 0L
@@ -90,6 +92,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
                     AbstractTypeSerializer<GameSpecificStatistics>()
                 )
             }
+
+            ScoreboardHandler.configure(
+                CgsGameScoreboardProvider(this)
+            )
 
             CgsPlayerHandler.initialLoad()
             CgsGameTeamEngine.initialLoad(this)
@@ -243,7 +249,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             event = CgsGameStartEvent()
         } else if (compare(oldState, CgsGameState.STARTED, CgsGameState.ENDED))
         {
-            event = CgsGameEndEvent(winningTeam)
+            event = CgsGameEndEvent()
         }
 
         Tasks.sync {
@@ -264,63 +270,32 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     abstract fun getExtraWinInformation(): List<String>
 
-    // Display a Congratulations title to the winner/winning team
-
-    // Give a random ranged coin amount to both
-    // participants IF AWARDS ARE ENABLED
-
-    // MAKE SURE TO CHECK FOR AWARD BECAUSE
-    // WE MAY HAVE PRIVATE MATCHES
-
-    // Start a new StateRunnable which will run for 10 ticks
-    // At the last tick, do bukkit.shutdown
-    class CgsGameEndEvent(
-        val cgsGameTeam: CgsGameTeam
-    ) : CgsGameEvent()
-
+    class CgsGameEndEvent : CgsGameEvent()
 
     class CgsGameStartEvent : CgsGameEvent()
-
-
     class CgsGamePreStartEvent : CgsGameEvent()
 
-
-    // Send a special message indicating that this user/console has
-    // force started the game to the STARTING state.
-
-    // We will not be going directly to STARTED as we need STARTING checks to be called.
     class CgsGameForceStartEvent(
         val starter: CommandSender
     ) : CgsGameEvent()
 
-
-    // teleport everyone back to the
-    // LOBBY the CgsGameArena spawn location
-
-    // Make sure to clear everyones titles through
-    // KyoriBridge, and teleport possible spectators back
     class CgsGamePreStartCancelEvent : CgsGameEvent()
-
 
     class CgsGameParticipantConnectEvent(
         val participant: Player, val reconnectCalled: Boolean
     ) : CgsGameEvent()
 
-
     class CgsGameParticipantReconnectEvent(
         val participant: Player, val connectedWithinTimeframe: Boolean
     ) : CgsGameEvent()
-
 
     class CgsGameParticipantReinstateEvent(
         val participant: Player, val gameTeam: CgsGameTeam
     ) : CgsGameEvent()
 
-
     class CgsGameParticipantDisconnectEvent(
         val participant: Player
     ) : CgsGameEvent()
-
 
     class CgsGameSpectatorAddEvent(
         val spectator: Player
@@ -333,10 +308,9 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             val handlerList = HandlerList()
         }
 
-        override fun getHandlers() = handlerList
-
         private var internalCancelled = false
 
+        override fun getHandlers() = handlerList
         override fun isCancelled() = internalCancelled
 
         override fun setCancelled(new: Boolean)

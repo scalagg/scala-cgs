@@ -3,7 +3,7 @@ package gg.scala.ktp
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.CgsGameState
 import gg.scala.cgs.common.handler.CgsPlayerHandler
-import gg.scala.cgs.common.renderer.CgsGameScoreboardRenderer
+import gg.scala.cgs.common.scoreboard.CgsGameScoreboardRenderer
 import gg.scala.cgs.common.runnable.state.StartingStateRunnable
 import gg.scala.cgs.game.CgsEnginePlugin
 import net.evilblock.cubed.util.CC

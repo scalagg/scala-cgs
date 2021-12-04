@@ -5,6 +5,7 @@ import gg.scala.cgs.common.CgsGameState
 import gg.scala.cgs.common.information.CgsGameGeneralInfo
 import gg.scala.cgs.common.information.mode.CgsGameMode
 import gg.scala.commons.ExtendedScalaPlugin
+import kotlin.properties.Delegates
 
 /**
  * @author GrowlyX
@@ -21,7 +22,7 @@ class KillThePlayerCgsEngine(
     companion object
     {
         @JvmStatic
-        lateinit var INSTANCE: KillThePlayerCgsEngine
+        var INSTANCE by Delegates.notNull<KillThePlayerCgsEngine>()
     }
 
     override fun onTick(state: CgsGameState, tickOfState: Int): Boolean

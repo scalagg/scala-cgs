@@ -262,6 +262,16 @@ object CgsGameEventListener : Listener
     }
 
     @EventHandler
+    fun onCgsForceStart(
+        event: CgsGameEngine.CgsGameForceStartEvent
+    )
+    {
+        engine.sendMessage("${CC.GREEN}The game has been force-started. ${CC.GRAY}(by ${
+            if (event.starter is Player) event.starter.name else "Console"
+        })")
+    }
+
+    @EventHandler
     fun onEntityDamageNormal(event: EntityDamageEvent)
     {
         if (event.entity is Player)
