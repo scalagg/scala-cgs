@@ -1,13 +1,12 @@
 package gg.scala.cgs.common.information.arena
 
-import com.google.common.io.Files
 import gg.scala.cgs.common.information.mode.CgsGameMode
 import org.apache.commons.io.FileUtils
 import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.WorldCreator
 import java.io.File
-import kotlin.io.path.name
+import java.nio.file.Files
 
 /**
  * @author GrowlyX
@@ -32,7 +31,7 @@ object CgsGameArenaHandler
 
     fun close()
     {
-        java.nio.file.Files.delete(
+        Files.delete(
             File(Bukkit.getWorldContainer(), arena.getBukkitWorldName()).toPath()
         )
         Bukkit.unloadWorld(world, false)

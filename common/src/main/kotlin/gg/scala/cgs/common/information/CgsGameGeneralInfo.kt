@@ -15,5 +15,6 @@ open class CgsGameGeneralInfo(
     val disqualifyOnLogout: Boolean,
     val spectateOnDeath: Boolean,
     val showTabHearts: Boolean,
+    val showNameHearts: Boolean,
     val gameModes: List<CgsGameMode>
 )

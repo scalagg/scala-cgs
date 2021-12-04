@@ -6,8 +6,6 @@ package gg.scala.cgs.common.information
  */
 open class CgsGameAwardInfo(
     val awardCoins: Boolean,
-    // select a random amount
-    // within this IntRange
     val winningCoinRange: IntRange,
     val participationCoinRange: IntRange,
 )

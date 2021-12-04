@@ -5,19 +5,14 @@ import gg.scala.cgs.common.CgsGameState
 import gg.scala.cgs.common.adventure
 import gg.scala.cgs.common.giveCoins
 import gg.scala.cgs.common.runnable.StateRunnable
-import gg.scala.cgs.common.teams.CgsGameTeamEngine
-import gg.scala.lemon.Lemon
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
-import net.evilblock.cubed.util.bukkit.Tasks
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
-import net.md_5.bungee.api.chat.ClickEvent
 import org.apache.commons.lang3.time.DurationFormatUtils
 import org.bukkit.Bukkit
-import org.bukkit.Sound
 
 /**
  * @author GrowlyX
@@ -49,7 +44,7 @@ object EndedStateRunnable : StateRunnable(
             description.add(" ${CC.GRAY}Winner${
                 if (engine.gameMode.getTeamSize() == 1) "" else "s"
             }: ${CC.WHITE}${
-                engine.winningTeam.getAlive().joinToString(
+                engine.winningTeam.alive.joinToString(
                     separator = ", "
                 ) { 
                     Bukkit.getPlayer(it)?.name ?: "???"
@@ -75,7 +70,7 @@ object EndedStateRunnable : StateRunnable(
                 Component.text("Congratulations!")
             )
 
-            engine.winningTeam.getAlive().forEach {
+            engine.winningTeam.alive.forEach {
                 val bukkitPlayer = Bukkit.getPlayer(it)
                     ?: return@forEach
 

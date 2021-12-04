@@ -10,12 +10,12 @@ class CgsGameStatistic
 
     fun increment()
     {
-        value += 1
+        value++
     }
 
     fun decrement()
     {
-        value += 1
+        value--
     }
 
     fun update(new: Int)
@@ -25,6 +25,6 @@ class CgsGameStatistic
 
     fun reset()
     {
-        value += 1
+        value = 0
     }
 }

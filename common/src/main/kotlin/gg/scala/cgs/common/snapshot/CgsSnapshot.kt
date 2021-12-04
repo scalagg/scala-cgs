@@ -1,7 +1,6 @@
 package gg.scala.cgs.common.snapshot
 
 import gg.scala.cgs.common.teams.CgsGameTeam
-import java.util.*
 
 /**
  * @author GrowlyX

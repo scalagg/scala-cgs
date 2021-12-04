@@ -12,7 +12,7 @@ interface CgsGameMode
     fun getId(): String
 
     fun getName(): String
-    fun getMaterial(): Material
+    fun getMaterial(): Pair<Material, Int>
     fun getDescription(): String
 
     fun getArenas(): List<CgsGameArena>

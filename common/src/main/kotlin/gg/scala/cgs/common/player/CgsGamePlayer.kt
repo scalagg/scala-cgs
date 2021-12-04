@@ -1,8 +1,6 @@
 package gg.scala.cgs.common.player
 
-import com.google.gson.JsonElement
-import gg.scala.cgs.common.CgsGameEngine
-import gg.scala.cgs.common.handler.CgsPlayerHandler
+import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.common.Savable
 import gg.scala.lemon.util.CubedCacheUtil

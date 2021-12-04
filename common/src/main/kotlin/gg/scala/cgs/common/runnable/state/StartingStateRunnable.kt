@@ -25,7 +25,7 @@ object StartingStateRunnable : StateRunnable(
 {
     private val engine = CgsGameEngine.INSTANCE
 
-    var current = engine.gameInfo
+    var startingTime = engine.gameInfo
         .startingCountdownSec + 1
 
     private val alertTicks = listOf(
@@ -41,7 +41,7 @@ object StartingStateRunnable : StateRunnable(
 
     override fun onTick()
     {
-        current--
+        startingTime--
 
         if (Bukkit.getOnlinePlayers().size < engine.gameInfo.minimumPlayers)
         {
@@ -49,10 +49,10 @@ object StartingStateRunnable : StateRunnable(
             return
         }
 
-        if (alertTicks.contains(current))
+        if (alertTicks.contains(startingTime))
         {
             val currentTitle = Title.title(
-                Component.text(current)
+                Component.text(startingTime)
                     .decorate(TextDecoration.BOLD)
                     .color(TextColor.fromHexString("#2acc29")),
                 Component.text("The game is starting!")
@@ -62,15 +62,15 @@ object StartingStateRunnable : StateRunnable(
             engine.playSound(Sound.ORB_PICKUP)
             engine.sendMessage("${CC.SEC}The game starts in ${getCurrentColor()}${
                 DurationFormatUtils.formatDurationWords(
-                    current * 1000L, true, true
+                    startingTime * 1000L, true, true
                 )
             }.")
         }
 
-        if (current <= 0)
+        if (startingTime <= 0)
         {
             val currentTitle = Title.title(
-                Component.text("BEGUN")
+                Component.text("BEGIN")
                     .decorate(TextDecoration.BOLD)
                     .color(TextColor.fromHexString("#2acc29")),
                 Component.text("The game has started!")
@@ -110,7 +110,7 @@ object StartingStateRunnable : StateRunnable(
     private fun getCurrentColor(): String
     {
         return rangeToColor.entries
-            .firstOrNull { it.key.contains(current) }?.value
+            .firstOrNull { it.key.contains(startingTime) }?.value
             ?: CC.GREEN
     }
 }

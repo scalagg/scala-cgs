@@ -2,15 +2,15 @@ package gg.scala.cgs.game.listener
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.CgsGameState
-import gg.scala.cgs.common.disqualify.CgsGameDisqualificationHandler
-import gg.scala.cgs.common.handler.CgsDeathHandler
-import gg.scala.cgs.common.handler.CgsPlayerHandler
+import gg.scala.cgs.common.player.handler.CgsGameDisqualificationHandler
+import gg.scala.cgs.common.player.handler.CgsDeathHandler
+import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.refresh
 import gg.scala.cgs.common.respawnPlayer
 import gg.scala.cgs.common.runnable.state.EndedStateRunnable
 import gg.scala.cgs.common.runnable.state.StartedStateRunnable
 import gg.scala.cgs.common.runnable.state.StartingStateRunnable
-import gg.scala.cgs.common.spectator.CgsSpectatorHandler
+import gg.scala.cgs.common.player.handler.CgsSpectatorHandler
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
 import gg.scala.lemon.disguise.update.event.PreDisguiseEvent
 import gg.scala.lemon.util.QuickAccess.coloredName
@@ -26,14 +26,12 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.PlayerDeathEvent
-import org.bukkit.potion.PotionEffectType
 import org.bukkit.scoreboard.DisplaySlot
 import kotlin.math.ceil
 
 /**
- * @author GrowlyX
+ * @author GrowlyX, puugz
  * @since 12/1/2021
  */
 object CgsGameEventListener : Listener
@@ -271,15 +269,6 @@ object CgsGameEventListener : Listener
         })")
     }
 
-    @EventHandler
-    fun onEntityDamageNormal(event: EntityDamageEvent)
-    {
-        if (event.entity is Player)
-        {
-            updateTabHealth(event.entity as Player)
-        }
-    }
-
     @EventHandler(
         priority = EventPriority.LOW
     )
@@ -329,52 +318,5 @@ object CgsGameEventListener : Listener
                 }
             }
         }
-    }
-
-    fun updateTabHealth(player: Player)
-    {
-        if (!engine.gameInfo.showTabHearts)
-            return
-
-        for (onlinePlayer in Bukkit.getOnlinePlayers())
-        {
-            val board = onlinePlayer.scoreboard
-            var tabHealthObjective = board.getObjective("tabHealth")
-
-            if (tabHealthObjective == null)
-            {
-                tabHealthObjective = board.registerNewObjective("tabHealth", "health")
-                tabHealthObjective.displaySlot = DisplaySlot.PLAYER_LIST
-            }
-
-            tabHealthObjective.getScore(player.name).score = getHealth(player)
-
-            var nameHealthObjective = board.getObjective("nameHealth")
-
-            if (nameHealthObjective == null)
-            {
-                nameHealthObjective = board.registerNewObjective("nameHealth", "health")
-                nameHealthObjective.displaySlot = DisplaySlot.BELOW_NAME
-                nameHealthObjective.displayName = CC.D_RED + HEART_SYMBOL
-            }
-
-            nameHealthObjective.getScore(player.name).score = getHealth(player)
-        }
-    }
-
-    private fun getHealth(player: Player): Int
-    {
-        var health = player.health.toInt()
-
-        val effect = player.activePotionEffects.firstOrNull {
-            it.type == PotionEffectType.ABSORPTION
-        }
-
-        if (effect != null)
-        {
-            health += effect.amplifier * 2 + 2
-        }
-
-        return health
     }
 }

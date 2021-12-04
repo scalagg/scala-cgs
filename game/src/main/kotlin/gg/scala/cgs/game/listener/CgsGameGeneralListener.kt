@@ -3,6 +3,8 @@ package gg.scala.cgs.game.listener
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.CgsGameState
 import gg.scala.cgs.common.menu.CgsGameSpectateMenu
+import gg.scala.lemon.cooldown.CooldownHandler
+import gg.scala.lemon.cooldown.type.PlayerStaticCooldown
 import org.bukkit.Material
 import org.bukkit.entity.ItemFrame
 import org.bukkit.entity.Player
@@ -11,10 +13,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
-import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.entity.EntityDamageEvent
-import org.bukkit.event.entity.EntityTargetEvent
-import org.bukkit.event.entity.EntityTargetLivingEntityEvent
+import org.bukkit.event.entity.*
 import org.bukkit.event.hanging.HangingPlaceEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
@@ -23,12 +22,16 @@ import org.bukkit.event.vehicle.VehicleEnterEvent
 import org.bukkit.event.weather.WeatherChangeEvent
 
 /**
- * @author GrowlyX
+ * @author GrowlyX, puugz
  * @since 12/2/2021
  */
 object CgsGameGeneralListener : Listener
 {
     private val engine = CgsGameEngine.INSTANCE
+
+    init {
+        CooldownHandler.register(InteractionCooldown)
+    }
 
     @EventHandler
     fun onPickupItem(event: PlayerPickupItemEvent)
@@ -127,23 +130,28 @@ object CgsGameGeneralListener : Listener
     @EventHandler
     fun onInteract(event: PlayerInteractEvent)
     {
-        if (shouldCancel(event.player))
-        {
-            event.isCancelled = true
+        if (shouldCancel(event.player)) event.isCancelled = true
+        if (!event.hasItem() || !event.action.name.contains("RIGHT")) return
 
-            if (event.item != null)
-            {
-                when (event.item.type)
+        val cooldown = CooldownHandler.find(
+            InteractionCooldown::class.java
+        )!!
+
+        if (!cooldown.isActive(event.player)) {
+            cooldown.addOrOverride(event.player)
+
+            when (event.item.type) {
+                Material.BED ->
                 {
-                    Material.BED ->
-                    {
+                    if (engine.gameState == CgsGameState.WAITING || engine.gameState == CgsGameState.STARTING) {
                         event.player.kickPlayer("")
                     }
-                    Material.ITEM_FRAME ->
-                    {
+                }
+                Material.ITEM_FRAME ->
+                {
+                    if (event.player.hasMetadata("spectator")) {
                         CgsGameSpectateMenu().openMenu(event.player)
                     }
-                    else -> {}
                 }
             }
         }
@@ -164,8 +172,22 @@ object CgsGameGeneralListener : Listener
         event.isCancelled = true
     }
 
+    @EventHandler
+    fun onFoodLevelChange(event: FoodLevelChangeEvent) {
+        if (event.entity is Player && shouldCancel(event.entity as Player)) {
+            event.isCancelled = true
+            (event.entity as Player).foodLevel = 20
+        }
+    }
+
     private fun shouldCancel(player: Player): Boolean
     {
-        return player.hasMetadata("spectator") || engine.gameState.isBefore(CgsGameState.STARTING)
+        return player.hasMetadata("spectator") ||
+                engine.gameState.isBefore(CgsGameState.WAITING) ||
+                engine.gameState.isBefore(CgsGameState.STARTING)
     }
 }
+
+object InteractionCooldown : PlayerStaticCooldown(
+    "interaction", 1000L
+)

@@ -3,7 +3,7 @@ package gg.scala.parties.receiver
 import gg.scala.banana.annotate.Subscribe
 import gg.scala.banana.message.Message
 import gg.scala.banana.subscribe.marker.BananaHandler
-import gg.scala.parties.service.PlayerPartyService
+import gg.scala.parties.service.PartyService
 import java.util.*
 
 /**
@@ -19,6 +19,6 @@ object PartyReceiverHandler : BananaHandler
             message["uniqueId"]
         )
 
-        PlayerPartyService.reloadPartyByUniqueId(uniqueId)
+        PartyService.reloadPartyByUniqueId(uniqueId)
     }
 }

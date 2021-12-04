@@ -22,7 +22,7 @@ class CgsGameSpectateMenu : PaginatedMenu()
     {
         return mutableMapOf<Int, Button>().also { buttons ->
             CgsGameTeamEngine.teams.values.forEach { team ->
-                team.getAlive().mapNotNull {
+                team.alive.mapNotNull {
                     Bukkit.getPlayer(it)
                 }.forEach {
                     buttons[buttons.size] = SpectateButton(it)

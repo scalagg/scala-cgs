@@ -2,7 +2,6 @@ package gg.scala.cgs.common.information.arena
 
 import org.bukkit.Location
 import org.bukkit.Material
-import java.io.File
 import java.nio.file.Path
 
 /**
@@ -14,7 +13,7 @@ interface CgsGameArena
     fun getId(): String
 
     fun getName(): String
-    fun getMaterial(): Material
+    fun getMaterial(): Pair<Material, Int>
     fun getDescription(): String
 
     fun getDirectory(): Path
