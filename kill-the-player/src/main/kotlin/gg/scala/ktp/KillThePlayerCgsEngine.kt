@@ -35,5 +35,5 @@ class KillThePlayerCgsEngine(
     override fun getNametagAdapter() = KillThePlayerCgsNametagAdapter
     override fun getSnapshotCreator() = KillThePlayerCgsSnapshot
 
-    override fun getExtraWinInformation() = listOf("This is extra info")
+    override fun getExtraWinInformation() = listOf(" Something something something")
 }

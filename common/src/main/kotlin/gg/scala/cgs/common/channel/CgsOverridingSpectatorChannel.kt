@@ -25,8 +25,10 @@ object CgsOverridingSpectatorChannel : ChannelOverride
         rank: Rank, receiver: Player
     ): String
     {
-        return "${CC.GRAY}[Spectator] $sender $message"
+        return "${CC.GRAY}[Spectator] $sender: $message"
     }
+
+    override fun hasPermission(t: Player) = t.hasMetadata("spectator")
 
     @Deprecated(
         message = "Please use ChannelOverride#shouldOverride.",
