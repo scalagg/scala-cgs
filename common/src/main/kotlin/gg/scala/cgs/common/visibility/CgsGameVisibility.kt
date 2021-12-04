@@ -17,12 +17,12 @@ object CgsGameVisibility : VisibilityAdapter
         val viewer = CgsPlayerHandler.find(refreshFor)!!
         val target = CgsPlayerHandler.find(toRefresh)!!
 
-        if (toRefresh.hasMetadata("spectator") && !refreshFor.hasMetadata("spectator"))
+        if (refreshFor.hasMetadata("spectator") && !toRefresh.hasMetadata("spectator"))
         {
             return VisibilityAction.HIDE
-        } else if (!toRefresh.hasMetadata("spectator") && refreshFor.hasMetadata("spectator"))
+        } else if (refreshFor.hasMetadata("spectator") && toRefresh.hasMetadata("spectator"))
         {
-            return VisibilityAction.HIDE
+            return VisibilityAction.NEUTRAL
         }
 
         return CgsGameEngine.INSTANCE.getVisibilityAdapter()
