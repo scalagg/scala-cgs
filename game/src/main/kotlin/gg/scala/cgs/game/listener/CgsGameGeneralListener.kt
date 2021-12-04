@@ -143,7 +143,7 @@ object CgsGameGeneralListener : Listener
             when (event.item.type) {
                 Material.BED ->
                 {
-                    if (engine.gameState == CgsGameState.WAITING || engine.gameState == CgsGameState.STARTING) {
+                    if (event.item.hasItemMeta() && event.item.itemMeta.displayName.contains("Lobby")) {
                         event.player.kickPlayer("")
                     }
                 }

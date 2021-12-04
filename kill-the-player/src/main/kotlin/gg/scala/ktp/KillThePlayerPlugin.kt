@@ -33,7 +33,9 @@ class KillThePlayerPlugin : ExtendedScalaPlugin()
         Events.subscribe(CgsGameEngine.CgsGameStartEvent::class.java).handler {
             Bukkit.getOnlinePlayers().forEach { player ->
                 player.inventory.armorContents = KillThePlayerInventory.ARMOR
-                player.inventory.setItem(0, KillThePlayerInventory.SWORD)
+                player.inventory.contents = KillThePlayerInventory.CONTENTS
+
+                player.updateInventory()
             }
         }
 

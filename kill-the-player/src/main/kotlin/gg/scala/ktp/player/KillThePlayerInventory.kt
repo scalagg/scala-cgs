@@ -24,5 +24,8 @@ object KillThePlayerInventory
     )
 
     @JvmStatic
-    val SWORD = ItemStack(Material.STONE_SWORD)
+    val CONTENTS = arrayOf(
+        ItemStack(Material.STONE_SWORD),
+        ItemStack(Material.COOKED_BEEF)
+    )
 }

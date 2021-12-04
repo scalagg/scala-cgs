@@ -1,6 +1,6 @@
 name: kill-the-player
 version: 1.0.0
-main: gg.scala.ktp.KillThePlayerBootstrap
+main: gg.scala.ktp.KillThePlayerPlugin
 
 author: Scala
 website: https://scala.gg

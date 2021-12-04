@@ -54,7 +54,7 @@ class CgsGameSpectateMenu : PaginatedMenu()
         )
         {
             player.teleport(this.player)
-            player.sendMessage("${CC.GREEN}You've been teleported to ${CC.ID_GREEN}${this.player.name}${CC.GREEN}.")
+            player.sendMessage("${CC.GREEN}You've been teleported to ${CC.ID_GREEN}${this.player.displayName}${CC.GREEN}.")
         }
     }
 }
