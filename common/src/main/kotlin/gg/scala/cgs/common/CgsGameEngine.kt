@@ -146,7 +146,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
                 val bukkitPlayer = Bukkit.getPlayer(uuid)
                     ?: return@forEach
 
-                bukkitPlayer.sendMessage(message)
+                if (!bukkitPlayer.hasMetadata("spectator"))
+                    bukkitPlayer.sendMessage(message)
             }
         }
 
@@ -166,9 +167,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
                 val bukkitPlayer = Bukkit.getPlayer(uuid)
                     ?: return@forEach
 
-                bukkitPlayer adventure {
-                    it.showTitle(title)
-                }
+                if (!bukkitPlayer.hasMetadata("spectator"))
+                    bukkitPlayer adventure {
+                        it.showTitle(title)
+                    }
             }
         }
 
@@ -190,9 +192,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
                 val bukkitPlayer = Bukkit.getPlayer(uuid)
                     ?: return@forEach
 
-                bukkitPlayer.playSound(
-                    bukkitPlayer.location, sound, 1F, 1F
-                )
+                if (!bukkitPlayer.hasMetadata("spectator"))
+                    bukkitPlayer.playSound(
+                        bukkitPlayer.location, sound, 1F, 1F
+                    )
             }
         }
 
@@ -214,7 +217,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
                 val bukkitPlayer = Bukkit.getPlayer(uuid)
                     ?: return@forEach
 
-                fancyMessage.sendToPlayer(bukkitPlayer)
+                if (!bukkitPlayer.hasMetadata("spectator"))
+                    fancyMessage.sendToPlayer(bukkitPlayer)
             }
         }
 
