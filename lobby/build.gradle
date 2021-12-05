@@ -1,7 +1,5 @@
 dependencies {
     implementation project(":common")
     implementation project(":parties")
-    implementation project(":queue")
-
     compileOnly "gg.scala:tangerine:1.0-SNAPSHOT"
 }

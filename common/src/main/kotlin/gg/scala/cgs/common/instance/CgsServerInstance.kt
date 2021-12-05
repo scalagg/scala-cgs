@@ -8,7 +8,8 @@ import gg.scala.cgs.common.instance.game.CgsGameServerInfo
  */
 class CgsServerInstance(
     val internalServerId: String,
-    val type: CgsServerType
+    val type: CgsServerType,
+    var online: Int = 0
 )
 {
     var gameServerInfo: CgsGameServerInfo? = null

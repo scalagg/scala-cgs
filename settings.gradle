@@ -3,6 +3,8 @@ include "common"
 include "game"
 include "lobby"
 include "parties"
-include "queue"
+
 include 'kill-the-player'
+include 'kill-the-player-game'
+include 'kill-the-player-lobby'
 

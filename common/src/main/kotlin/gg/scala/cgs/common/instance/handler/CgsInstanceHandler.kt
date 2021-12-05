@@ -7,6 +7,7 @@ import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.instance.game.CgsGameServerInfo
 import gg.scala.lemon.Lemon
 import net.evilblock.cubed.util.bukkit.Tasks
+import org.bukkit.Bukkit
 import kotlin.properties.Delegates
 
 /**
@@ -39,6 +40,13 @@ object CgsInstanceHandler
         )
 
         Tasks.asyncTimer(0L, 55L) {
+            if (current.gameServerInfo != null)
+            {
+                current.gameServerInfo!!.refresh()
+            }
+
+            current.online = Bukkit.getOnlinePlayers().size
+
             service.saveEntry(current.internalServerId, current)
         }
     }

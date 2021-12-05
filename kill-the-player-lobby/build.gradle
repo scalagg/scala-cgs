@@ -1,0 +1,7 @@
+dependencies {
+    compileOnly project(":common")
+    compileOnly project(":parties")
+    compileOnly project(":lobby")
+
+    implementation project(":kill-the-player")
+}
