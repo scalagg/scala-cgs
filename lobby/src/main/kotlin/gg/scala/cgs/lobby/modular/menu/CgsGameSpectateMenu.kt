@@ -1,5 +1,6 @@
 package gg.scala.cgs.lobby.modular.menu
 
+import gg.scala.cgs.common.CgsGameState
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 import gg.scala.cgs.lobby.updater.CgsGameInfoUpdater
 import net.evilblock.cubed.menu.Button
@@ -33,10 +34,12 @@ class CgsGameSpectateMenu : PaginatedMenu()
     override fun getAllPagesButtons(player: Player): Map<Int, Button>
     {
         return mutableMapOf<Int, Button>().also {
-            CgsGameInfoUpdater.gameServers.forEach { server ->
-                it[it.size] = CgsGameLobby.INSTANCE
-                    .getFormattedButton(server)
-            }
+            CgsGameInfoUpdater.gameServers
+                .filter { it.gameServerInfo!!.state.isAfter(CgsGameState.STARTED) }
+                .forEach { server ->
+                    it[it.size] = CgsGameLobby.INSTANCE
+                        .getFormattedButton(server)
+                }
         }
     }
 

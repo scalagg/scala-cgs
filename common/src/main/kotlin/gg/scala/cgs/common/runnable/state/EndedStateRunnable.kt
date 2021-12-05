@@ -4,6 +4,7 @@ import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.CgsGameState
 import gg.scala.cgs.common.adventure
 import gg.scala.cgs.common.giveCoins
+import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.runnable.StateRunnable
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
@@ -73,6 +74,10 @@ object EndedStateRunnable : StateRunnable(
             engine.winningTeam.alive.forEach {
                 val bukkitPlayer = Bukkit.getPlayer(it)
                     ?: return@forEach
+                val cgsGamePlayer = CgsPlayerHandler.find(bukkitPlayer)!!
+
+                val statistics = engine.getStatistics(cgsGamePlayer)
+                statistics.wins.increment()
 
                 bukkitPlayer giveCoins (engine.gameInfo.awards.winningCoinRange.random() to "Winning a ${engine.gameInfo.fancyNameRender} game")
                 bukkitPlayer adventure { audi ->

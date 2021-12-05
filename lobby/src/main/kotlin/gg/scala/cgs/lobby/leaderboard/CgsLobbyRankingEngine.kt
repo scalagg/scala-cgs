@@ -1,9 +1,11 @@
 package gg.scala.cgs.lobby.leaderboard
 
+import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 import gg.scala.lemon.util.CubedCacheUtil
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
+import java.util.*
 import kotlin.properties.Delegates
 
 /**
@@ -19,21 +21,34 @@ object CgsLobbyRankingEngine
         CgsGameLobby.INSTANCE
     }
 
-    private var entries by Delegates.notNull<List<CgsLobbyRankingEntry<*>>>()
+    var entries by Delegates.notNull<List<CgsLobbyRankingEntry<*>>>()
+
+    fun findEntry(id: String): CgsLobbyRankingEntry<*>?
+    {
+        return entries.firstOrNull {
+            it.getId().equals(id, true)
+        }
+    }
 
     fun initialLoad()
     {
         entries = engine.getRankingEntries().toList()
 
         Schedulers.async().runRepeating(Runnable {
-            for (entry in entries)
-            {
-                entry.computeTopTen().thenAccept {
+            CgsPlayerHandler.handle.fetchAllEntries().thenAccept {
+                for (entry in entries)
+                {
+                    val topTen = it.entries
+                        .sortedByDescending { mapping -> entry.getValue(mapping.value) }
+                        .subList(0, 9)
+
                     val formatted = mutableListOf<String>()
 
-                    it.entries.forEachIndexed { index, data ->
+                    topTen.forEachIndexed { index, data ->
                         formatted.add("${CC.PRI}${index + 1}. ${CC.RESET}${
-                            CubedCacheUtil.fetchName(data.key)
+                            CubedCacheUtil.fetchName(
+                                UUID.fromString(data.key)
+                            )
                         } ${CC.GRAY}- ${CC.GREEN}${data.value}")
                     }
 

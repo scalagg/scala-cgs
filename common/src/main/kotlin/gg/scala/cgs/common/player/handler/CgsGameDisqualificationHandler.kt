@@ -2,6 +2,7 @@ package gg.scala.cgs.common.player.handler
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.giveCoins
+import gg.scala.cgs.common.runnable.state.EndedStateRunnable
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
@@ -20,6 +21,11 @@ object CgsGameDisqualificationHandler
     {
         val cgsGameTeam = CgsGameTeamEngine.getTeamOf(player) ?: return
         cgsGameTeam.eliminated.add(player.uniqueId)
+
+        val cgsGamePlayer = CgsPlayerHandler.find(player)!!
+
+        val statistics = CgsGameEngine.INSTANCE.getStatistics(cgsGamePlayer)
+        statistics.losses.increment()
 
         if (CgsGameEngine.INSTANCE.gameInfo.spectateOnDeath && setSpectator)
         {

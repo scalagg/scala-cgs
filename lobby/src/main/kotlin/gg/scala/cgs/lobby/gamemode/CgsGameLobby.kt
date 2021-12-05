@@ -18,6 +18,8 @@ import gg.scala.tangerine.TangerineSpigotPlugin
 import me.lucko.helper.Events
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.scoreboard.ScoreboardAdapter
+import net.evilblock.cubed.serializers.Serializers
+import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import org.bukkit.event.player.PlayerJoinEvent
 import kotlin.properties.Delegates
 import kotlin.reflect.KClass
@@ -46,8 +48,15 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>
 
     fun initialResourceLoad()
     {
-        CgsPlayerHandler.initialLoad()
+        Serializers.useGsonBuilderThenRebuild {
+            it.registerTypeAdapter(
+                GameSpecificStatistics::class.java,
+                AbstractTypeSerializer<GameSpecificStatistics>()
+            )
+        }
+
         CgsInstanceHandler.initialLoad(CgsServerType.LOBBY)
+        CgsPlayerHandler.initialLoad()
 
         TangerineSpigotPlugin.instance.hubModule = CgsLobbyModule
 

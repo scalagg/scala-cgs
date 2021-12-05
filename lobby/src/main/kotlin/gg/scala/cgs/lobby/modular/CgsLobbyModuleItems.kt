@@ -1,6 +1,7 @@
 package gg.scala.cgs.lobby.modular
 
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
+import gg.scala.cgs.lobby.modular.menu.CgsGameJoinMenu
 import gg.scala.cgs.lobby.modular.menu.CgsGameSpectateMenu
 import gg.scala.tangerine.items.ConfigurableItemHandler
 import gg.scala.tangerine.module.impl.HubModuleItemAdapter
@@ -59,7 +60,7 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
                     CgsGameSpectateMenu().openMenu(it.player)
                 } else if (it.item.isSimilar(joinGameItem))
                 {
-
+                    CgsGameJoinMenu().openMenu(it.player)
                 }
             }
     }
