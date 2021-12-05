@@ -8,6 +8,8 @@ import gg.scala.cgs.common.instance.handler.CgsInstanceHandler
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
+import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEngine
+import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.cgs.lobby.locator.CgsInstanceLocator
 import gg.scala.cgs.lobby.modular.CgsLobbyModule
 import gg.scala.cgs.lobby.modular.CgsLobbyModuleItems
@@ -35,6 +37,8 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>
     abstract fun getScoreboardAdapter(): ScoreboardAdapter
     abstract fun getGameInfo(): CgsGameGeneralInfo
 
+    abstract fun getRankingEntries(): Collection<CgsLobbyRankingEntry<*>>
+
     abstract fun getGameModeButtons(): Map<Int, Button>
     abstract fun getFormattedButton(info: CgsServerInstance): Button
 
@@ -48,8 +52,8 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>
         TangerineSpigotPlugin.instance.hubModule = CgsLobbyModule
 
         CgsLobbyModuleItems.initialLoad()
-
         CgsGameInfoUpdater.start()
+        CgsLobbyRankingEngine.initialLoad()
 
         Events.subscribe(PlayerJoinEvent::class.java).handler {
             CgsPlayerHandler.find(it.player)?.let { player ->
