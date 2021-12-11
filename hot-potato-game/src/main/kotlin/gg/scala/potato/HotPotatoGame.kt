@@ -12,6 +12,6 @@ object HotPotatoGame
     var currentHolder: UUID? = null
 
     class PotatoRoundStartEvent(
-        val currentRound: 
+        val currentRound: Int
     )
 }

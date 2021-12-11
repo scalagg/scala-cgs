@@ -21,9 +21,13 @@ object CgsGameArenaHandler
     fun initialLoad(gameMode: CgsGameMode)
     {
         arena = gameMode.getArenas().random()
-        val directory = arena.getDirectory()
 
-        FileUtils.copyDirectory(directory.toFile(), Bukkit.getWorldContainer(), true)
+        val directory = arena.getDirectory()
+        val childDirectory = File(
+            Bukkit.getWorldContainer(), arena.getBukkitWorldName()
+        )
+
+        FileUtils.copyDirectory(directory.toFile(), childDirectory, true)
 
         world = Bukkit.createWorld(
             WorldCreator(directory.toFile().name)
