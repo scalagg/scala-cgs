@@ -10,7 +10,9 @@ import net.evilblock.cubed.visibility.VisibilityAction
  */
 object KillThePlayerVisibilityAdapter : CgsGameVisibilityAdapter
 {
-    override fun computeVisibility(viewer: CgsGamePlayer, target: CgsGamePlayer): VisibilityAction
+    override fun computeVisibility(
+        viewer: CgsGamePlayer, target: CgsGamePlayer
+    ): VisibilityAction
     {
         return VisibilityAction.NEUTRAL
     }

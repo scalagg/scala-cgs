@@ -1,0 +1,13 @@
+name: hot-potato
+version: 1.0.0
+main: gg.scala.potato.HotPotatoPlugin
+
+author: Scala
+website: https://scala.gg
+
+depend:
+  - Cubed
+  - helper
+  - Lemon
+  - cgs-engine
+  - Grape

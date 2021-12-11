@@ -62,9 +62,9 @@ object CgsGameEventListener : Listener
             val participantSize = Bukkit.getOnlinePlayers().size
 
             engine.broadcast(
-                "${coloredName(event.participant)}${CC.SEC} has joined. ${CC.GREEN}(${
+                "${coloredName(event.participant)}${CC.SEC} has joined ${CC.AQUA}(${
                     "${participantSize}/${Bukkit.getMaxPlayers()}"
-                })"
+                })!"
             )
 
             event.participant refresh (false to GameMode.ADVENTURE)
@@ -136,9 +136,9 @@ object CgsGameEventListener : Listener
             CgsGameTeamEngine.removePlayerFromTeam(event.participant)
 
             engine.broadcast(
-                "${coloredName(event.participant)}${CC.SEC} has left. ${CC.GREEN}(${
+                "${event.participant.name}${CC.SEC} has left ${CC.AQUA}(${
                     "${Bukkit.getOnlinePlayers().size - 1}/${Bukkit.getMaxPlayers()}"
-                })"
+                })${CC.YELLOW}!"
             )
         } else if (engine.gameState.isAfter(CgsGameState.STARTED))
         {

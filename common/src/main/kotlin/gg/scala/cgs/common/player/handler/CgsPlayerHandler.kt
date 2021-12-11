@@ -105,7 +105,7 @@ object CgsPlayerHandler
             // profile save handle which is seen below at a priority of LOWEST.
             Events.subscribe(
                 PlayerQuitEvent::class.java,
-                EventPriority.HIGH
+                EventPriority.HIGHEST
             ).handler {
                 val cgsParticipantDisconnect = CgsGameEngine
                     .CgsGameParticipantDisconnectEvent(it.player)
