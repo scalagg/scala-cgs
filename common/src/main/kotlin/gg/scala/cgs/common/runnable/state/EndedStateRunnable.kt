@@ -8,6 +8,7 @@ import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.runnable.StateRunnable
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
+import net.evilblock.cubed.util.bukkit.Tasks
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -23,6 +24,8 @@ object EndedStateRunnable : StateRunnable(
     CgsGameState.ENDED
 )
 {
+    var allowedToJoin = true
+
     private val engine = CgsGameEngine.INSTANCE
 
     private val alertTicks = listOf(
@@ -93,7 +96,22 @@ object EndedStateRunnable : StateRunnable(
 
         if (currentTick == 10)
         {
-            Bukkit.shutdown()
+            val kickMessage = CC.YELLOW + engine.winningTeam.alive.joinToString(
+                separator = ", "
+            ) {
+                Bukkit.getPlayer(it)?.name ?: "???"
+            } + CC.GREEN + " won the game. Thanks for playing!"
+
+            for (onlinePlayer in Bukkit.getOnlinePlayers())
+            {
+                onlinePlayer.kickPlayer(kickMessage)
+            }
+
+            allowedToJoin = false
+
+            Tasks.delayed(40L) {
+                Bukkit.shutdown()
+            }
         }
     }
 }

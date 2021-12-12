@@ -14,6 +14,7 @@ import gg.scala.cgs.common.player.scoreboard.CgsGameScoreboardRenderer
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.player.visibility.CgsGameVisibility
 import gg.scala.cgs.common.player.visibility.CgsGameVisibilityAdapter
+import gg.scala.cgs.common.runnable.state.EndedStateRunnable
 import gg.scala.cgs.common.snapshot.CgsSnapshot
 import gg.scala.cgs.common.teams.CgsGameTeam
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
@@ -25,6 +26,7 @@ import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.scoreboard.ScoreboardHandler
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
+import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.visibility.VisibilityHandler
@@ -37,7 +39,10 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
+import org.bukkit.event.player.AsyncPlayerChatEvent
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerPreLoginEvent
 import java.util.*
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
@@ -110,6 +115,13 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             NametagHandler.registerProvider(
                 CgsGameNametag
             )
+
+            Events.subscribe(AsyncPlayerPreLoginEvent::class.java).handler {
+                if (!EndedStateRunnable.allowedToJoin)
+                {
+                    it.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, "${CC.RED}This server is currently whitelisted.")
+                }
+            }
 
             Events.subscribe(PlayerJoinEvent::class.java).handler {
                 CgsPlayerHandler.find(it.player)?.let { player ->

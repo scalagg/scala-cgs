@@ -153,6 +153,7 @@ object CgsGameGeneralListener : Listener
                         CgsGameSpectateMenu().openMenu(event.player)
                     }
                 }
+                else -> {}
             }
         }
     }
