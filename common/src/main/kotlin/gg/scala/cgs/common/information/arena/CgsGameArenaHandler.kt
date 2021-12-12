@@ -40,7 +40,11 @@ object CgsGameArenaHandler
 
     fun close()
     {
-        Bukkit.unloadWorld(world, false)
-        Files.delete(File(Bukkit.getWorldContainer(), arena.getBukkitWorldName()).toPath())
+        val file = File(
+            Bukkit.getWorldContainer(),
+            arena.getBukkitWorldName()
+        )
+
+        Files.delete(file.toPath())
     }
 }

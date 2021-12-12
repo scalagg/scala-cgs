@@ -6,6 +6,7 @@ import gg.scala.cgs.common.adventure
 import gg.scala.cgs.common.giveCoins
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.runnable.StateRunnable
+import gg.scala.lemon.util.CubedCacheUtil
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -62,7 +63,6 @@ object EndedStateRunnable : StateRunnable(
             description.add(" ${CC.GREEN}Thanks for playing ${engine.gameInfo.fancyNameRender}!")
             description.add("")
 
-            // lol makeshift solution for now
             engine.broadcast(
                 FancyMessage().withMessage(*description.toTypedArray())
             )
@@ -97,9 +97,9 @@ object EndedStateRunnable : StateRunnable(
         if (currentTick == 10)
         {
             val kickMessage = CC.YELLOW + engine.winningTeam.alive.joinToString(
-                separator = ", "
+                separator = "${CC.GREEN}, ${CC.YELLOW}"
             ) {
-                Bukkit.getPlayer(it)?.name ?: "???"
+                CubedCacheUtil.fetchName(it) ?: "???"
             } + CC.GREEN + " won the game. Thanks for playing!"
 
             for (onlinePlayer in Bukkit.getOnlinePlayers())
