@@ -182,7 +182,7 @@ object CgsGameGeneralListener : Listener
 
     private fun shouldCancel(player: Player): Boolean
     {
-        return player.hasMetadata("spectator") || engine.gameState.isBefore(CgsGameState.WAITING)
+        return player.hasMetadata("spectator") || engine.gameState.isBefore(CgsGameState.STARTING)
     }
 }
 
