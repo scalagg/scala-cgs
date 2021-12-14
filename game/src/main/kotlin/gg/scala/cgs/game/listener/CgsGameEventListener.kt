@@ -18,6 +18,7 @@ import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants.HEART_SYMBOL
 import net.evilblock.cubed.util.bukkit.Tasks
+import net.evilblock.cubed.visibility.VisibilityHandler
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.entity.Arrow
@@ -53,19 +54,17 @@ object CgsGameEventListener : Listener
                 listOf(cgsGamePlayer)
             )
 
-            // Bukkit.getOnlinePlayers().size
-            // should be replaced with a thing that gets
-            // all the players that will be playing the game
-            // (excluding the spectators) since we will add
-            // a spectator command (able to become a spectator before the game starts)
-
             val participantSize = Bukkit.getOnlinePlayers().size
 
             engine.broadcast(
                 "${coloredName(event.participant)}${CC.SEC} has joined ${CC.AQUA}(${
                     "${participantSize}/${Bukkit.getMaxPlayers()}"
-                })!"
+                })${CC.YELLOW}!"
             )
+
+            event.participant.removeMetadata("spectator", engine.plugin)
+
+            VisibilityHandler.update(event.participant)
 
             event.participant refresh (false to GameMode.ADVENTURE)
             event.participant.teleport(
