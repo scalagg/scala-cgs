@@ -4,9 +4,6 @@ include "game"
 include "lobby"
 include "parties"
 
-include 'hot-potato'
-include 'hot-potato-game'
-
 include 'kill-the-player'
 include 'kill-the-player-game'
 include 'kill-the-player-lobby'

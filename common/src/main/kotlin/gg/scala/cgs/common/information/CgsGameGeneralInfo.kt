@@ -16,5 +16,6 @@ open class CgsGameGeneralInfo(
     val spectateOnDeath: Boolean,
     val showTabHearts: Boolean,
     val showNameHearts: Boolean,
+    val usesCustomArenaWorld: Boolean,
     val gameModes: List<CgsGameMode>
 )

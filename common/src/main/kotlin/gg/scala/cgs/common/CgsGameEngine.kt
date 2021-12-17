@@ -312,6 +312,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         val participant: Player
     ) : CgsGameEvent()
 
+    class CgsGameParticipantDeathEvent(
+        val participant: Player
+    ) : CgsGameEvent()
+
     class CgsGameSpectatorAddEvent(
         val spectator: Player
     ) : CgsGameEvent()

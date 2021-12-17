@@ -197,8 +197,8 @@ object CgsGameEventListener : Listener
         if (killer != null)
         {
             val cgsGameKiller = CgsPlayerHandler.find(killer)!!
-
             val killerStatistics = engine.getStatistics(cgsGameKiller)
+
             killerStatistics.kills.increment()
             killerStatistics.gameKills.increment()
         }
@@ -206,16 +206,17 @@ object CgsGameEventListener : Listener
         event.deathMessage = CgsDeathHandler
             .formDeathMessage(player, killer)
 
-        // TODO: 04/12/2021 make a thing for player respawning
-        // like for example they get 5 respawns and after they use them all
-        // they disqualified
-
         if (engine.gameInfo.spectateOnDeath)
         {
             CgsGameDisqualificationHandler.disqualifyPlayer(
                 player = player, broadcastNotification = false, setSpectator = true
             )
         }
+
+        val cgsDeathEvent = CgsGameEngine
+            .CgsGameParticipantDeathEvent(player)
+
+        cgsDeathEvent.callNow()
     }
 
     @EventHandler
