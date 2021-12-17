@@ -50,13 +50,19 @@ object CgsGameEventListener : Listener
 
         if (engine.gameState == CgsGameState.WAITING || engine.gameState == CgsGameState.STARTING)
         {
-            // TODO: 12/1/2021 check for party leader
-            //  connection & all online player's connections
-            CgsGameTeamEngine.allocatePlayersToAvailableTeam(
-                listOf(cgsGamePlayer)
-            )
-
             val participantSize = Bukkit.getOnlinePlayers().size
+
+            if (!CgsGameTeamEngine.allocatePlayersToAvailableTeam(cgsGamePlayer))
+            {
+                if (
+                    !CgsGameTeamEngine.allocatePlayersToAvailableTeam(
+                        cgsGamePlayer, forceRandom = true
+                    )
+                )
+                {
+                    event.participant.kickPlayer("${CC.RED}Sorry, we were unable to allocate you to a team.")
+                }
+            }
 
             engine.broadcast(
                 "${coloredName(event.participant)}${CC.SEC} has joined ${CC.AQUA}(${

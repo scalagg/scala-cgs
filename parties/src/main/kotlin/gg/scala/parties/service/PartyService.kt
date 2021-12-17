@@ -26,6 +26,20 @@ object PartyService
         )
     }
 
+    fun findPartyByLeader(uniqueId: UUID): Party?
+    {
+        return loadedParties.values.firstOrNull {
+            it.leader.uniqueId == uniqueId
+        }
+    }
+
+    fun findPartyByUniqueId(uniqueId: UUID): Party?
+    {
+        return loadedParties.values.firstOrNull {
+            it.members.containsKey(uniqueId)
+        }
+    }
+
     fun findPartyByUniqueId(player: Player): Party?
     {
         return loadedParties.values.firstOrNull {

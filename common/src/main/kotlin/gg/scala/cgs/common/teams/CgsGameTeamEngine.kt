@@ -2,6 +2,8 @@ package gg.scala.cgs.common.teams
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.player.CgsGamePlayer
+import gg.scala.parties.service.PartyService
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.concurrent.ConcurrentHashMap
 
@@ -40,51 +42,42 @@ object CgsGameTeamEngine
         }
     }
 
-    fun allocatePlayersToAvailableTeam(players: List<CgsGamePlayer>): Boolean
+    fun allocatePlayersToAvailableTeam(
+        player: CgsGamePlayer, forceRandom: Boolean = false
+    ): Boolean
     {
-        if (players.isEmpty())
-        {
-            throw IndexOutOfBoundsException("The player list is empty")
-        }
+        val availableTeams = teams.values.filter {
+            it.participants.size < engine.gameMode.getTeamSize()
+        }.toList()
 
-        if (players.size == 1)
+        if (availableTeams.isNotEmpty())
         {
-            val availableTeams = teams.values.filter {
-                it.participants.size < engine.gameMode.getTeamSize()
-            }.toMutableList()
+            val playerParty = PartyService
+                .findPartyByUniqueId(player.uniqueId)
 
-            if (availableTeams.isNotEmpty())
+            if (playerParty != null && !forceRandom)
+            {
+                val partyLeader = Bukkit
+                    .getPlayer(playerParty.leader.uniqueId)
+
+                if (partyLeader != null)
+                {
+                    val teamOfLeader = getTeamOf(partyLeader)
+
+                    if (teamOfLeader != null && availableTeams.contains(teamOfLeader))
+                    {
+                        teamOfLeader.participants.add(player.uniqueId)
+                    }
+                }
+            } else
             {
                 val randomTeam = teams[
                         availableTeams.random().id
                 ]!!
-                randomTeam.participants.add(players[0].uniqueId)
-            }
-        } else
-        {
-            val availableTeams = teams.values.filter {
-                it.participants.size + players.size <= engine.gameMode.getTeamSize()
-            }.toMutableList()
 
-            if (availableTeams.isEmpty())
-            {
-                // fallback to individual allocation
-                players.forEach {
-                    allocatePlayersToAvailableTeam(listOf(it))
-                }
+                randomTeam.participants.add(player.uniqueId)
                 return true
             }
-
-            // This should never be null
-            val randomTeam = teams[
-                    availableTeams.random().id
-            ]!!
-
-            players.forEach {
-                randomTeam.participants.add(it.uniqueId)
-            }
-
-            return true
         }
 
         return false

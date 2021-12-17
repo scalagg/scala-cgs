@@ -1,4 +1,6 @@
 dependencies {
     implementation 'net.kyori:adventure-api:4.9.3'
     implementation "net.kyori:adventure-platform-bukkit:4.0.0"
+
+    compileOnly project(":parties")
 }
