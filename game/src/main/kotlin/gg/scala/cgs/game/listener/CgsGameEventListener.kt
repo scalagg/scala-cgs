@@ -196,7 +196,7 @@ object CgsGameEventListener : Listener
     }
 
     @EventHandler(
-        priority = EventPriority.HIGHEST
+        priority = EventPriority.HIGH
     )
     fun onPlayerDeath(event: PlayerDeathEvent)
     {
