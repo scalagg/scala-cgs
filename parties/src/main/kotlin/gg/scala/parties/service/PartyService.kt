@@ -85,7 +85,9 @@ object PartyService
 
                 if (found != null)
                 {
-                    loadedParties[found.uniqueId] = found
+                    kotlin.run {
+                        loadedParties[found.uniqueId] = found
+                    }
                 }
 
                 return@thenApply found

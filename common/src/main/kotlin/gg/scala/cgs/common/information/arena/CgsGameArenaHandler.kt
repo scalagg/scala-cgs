@@ -23,6 +23,8 @@ object CgsGameArenaHandler
         arena = gameMode.getArenas().random()
 
         val directory = arena.getDirectory()
+            ?: return
+
         val childDirectory = File(
             Bukkit.getWorldContainer(), arena.getBukkitWorldName()
         )
@@ -40,6 +42,14 @@ object CgsGameArenaHandler
 
     fun close()
     {
+        try
+        {
+            world
+        } catch (ignored: Exception)
+        {
+            return
+        }
+
         val file = File(
             Bukkit.getWorldContainer(),
             arena.getBukkitWorldName()

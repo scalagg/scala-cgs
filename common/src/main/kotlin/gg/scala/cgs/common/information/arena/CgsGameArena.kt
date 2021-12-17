@@ -16,7 +16,7 @@ interface CgsGameArena
     fun getMaterial(): Pair<Material, Int>
     fun getDescription(): String
 
-    fun getDirectory(): Path
+    fun getDirectory(): Path?
     fun getBukkitWorldName(): String
 
     fun getPreLobbyLocation(): Location

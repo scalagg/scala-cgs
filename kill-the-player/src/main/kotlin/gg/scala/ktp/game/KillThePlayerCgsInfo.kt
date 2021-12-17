@@ -10,5 +10,6 @@ import gg.scala.ktp.game.gamemode.KillThePlayerSoloGameMode
 object KillThePlayerCgsInfo : CgsGameGeneralInfo(
     "Kill the Player", 0.01F, 2,
     20, KillThePlayerCgsAwards, true,
-    true, false, true, listOf(KillThePlayerSoloGameMode)
+    true, false, true,
+    false, listOf(KillThePlayerSoloGameMode)
 )
