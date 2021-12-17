@@ -38,7 +38,9 @@ object CgsGameEventListener : Listener
 {
     private val engine = CgsGameEngine.INSTANCE
 
-    @EventHandler
+    @EventHandler(
+        priority = EventPriority.HIGHEST
+    )
     fun onCgsParticipantConnect(
         event: CgsGameEngine.CgsGameParticipantConnectEvent
     )
@@ -90,7 +92,9 @@ object CgsGameEventListener : Listener
         }
     }
 
-    @EventHandler
+    @EventHandler(
+        priority = EventPriority.HIGHEST
+    )
     fun onCgsParticipantReconnect(
         event: CgsGameEngine.CgsGameParticipantReconnectEvent
     )
@@ -125,7 +129,9 @@ object CgsGameEventListener : Listener
         }
     }
 
-    @EventHandler
+    @EventHandler(
+        priority = EventPriority.HIGHEST
+    )
     fun onCgsParticipantDisconnect(
         event: CgsGameEngine.CgsGameParticipantDisconnectEvent
     )
@@ -171,7 +177,9 @@ object CgsGameEventListener : Listener
         }
     }
 
-    @EventHandler
+    @EventHandler(
+        priority = EventPriority.HIGHEST
+    )
     fun onPreDisguise(event: PreDisguiseEvent)
     {
         if (engine.gameState.isAfter(CgsGameState.STARTED))
@@ -181,7 +189,9 @@ object CgsGameEventListener : Listener
         }
     }
 
-    @EventHandler
+    @EventHandler(
+        priority = EventPriority.HIGHEST
+    )
     fun onPlayerDeath(event: PlayerDeathEvent)
     {
         val player = event.entity
@@ -219,7 +229,9 @@ object CgsGameEventListener : Listener
         cgsDeathEvent.callNow()
     }
 
-    @EventHandler
+    @EventHandler(
+        priority = EventPriority.HIGHEST
+    )
     fun onCgsGameStart(
         event: CgsGameEngine.CgsGameStartEvent
     )
@@ -262,7 +274,9 @@ object CgsGameEventListener : Listener
         )
     }
 
-    @EventHandler
+    @EventHandler(
+        priority = EventPriority.HIGHEST
+    )
     fun onCgsForceStart(
         event: CgsGameEngine.CgsGameForceStartEvent
     )
@@ -273,7 +287,7 @@ object CgsGameEventListener : Listener
     }
 
     @EventHandler(
-        priority = EventPriority.LOW
+        priority = EventPriority.HIGHEST
     )
     fun onEntityDamage(event: EntityDamageByEntityEvent)
     {
@@ -295,7 +309,9 @@ object CgsGameEventListener : Listener
         }
     }
 
-    @EventHandler
+    @EventHandler(
+        priority = EventPriority.HIGHEST
+    )
     fun onArrowShoot(event: EntityDamageByEntityEvent)
     {
         if (engine.gameState != CgsGameState.STARTED)
