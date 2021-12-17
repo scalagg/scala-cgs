@@ -33,6 +33,7 @@ import net.evilblock.cubed.visibility.VisibilityHandler
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.title.Title
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.Sound
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -313,7 +314,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     ) : CgsGameEvent()
 
     class CgsGameParticipantDeathEvent(
-        val participant: Player
+        val participant: Player,
+        val deathLocation: Location
     ) : CgsGameEvent()
 
     class CgsGameSpectatorAddEvent(

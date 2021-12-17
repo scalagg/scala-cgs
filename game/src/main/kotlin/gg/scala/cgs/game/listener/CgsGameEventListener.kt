@@ -201,6 +201,7 @@ object CgsGameEventListener : Listener
     fun onPlayerDeath(event: PlayerDeathEvent)
     {
         val player = event.entity
+        val location = event.entity.location
         val killer = event.entity.killer
 
         val cgsGamePlayer = CgsPlayerHandler.find(player)!!
@@ -222,15 +223,15 @@ object CgsGameEventListener : Listener
         event.deathMessage = CgsDeathHandler
             .formDeathMessage(player, killer)
 
+        val cgsDeathEvent = CgsGameEngine
+            .CgsGameParticipantDeathEvent(player, location)
+
         if (engine.gameInfo.spectateOnDeath)
         {
             CgsGameDisqualificationHandler.disqualifyPlayer(
                 player = player, broadcastNotification = false, setSpectator = true
             )
         }
-
-        val cgsDeathEvent = CgsGameEngine
-            .CgsGameParticipantDeathEvent(player)
 
         cgsDeathEvent.callNow()
     }
