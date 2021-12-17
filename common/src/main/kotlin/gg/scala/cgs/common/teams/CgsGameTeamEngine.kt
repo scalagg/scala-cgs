@@ -6,6 +6,7 @@ import gg.scala.parties.service.PartyService
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.properties.Delegates
 
 /**
  * @author GrowlyX
@@ -13,14 +14,14 @@ import java.util.concurrent.ConcurrentHashMap
  */
 object CgsGameTeamEngine
 {
-    private lateinit var engine: CgsGameEngine<*>
+    private val engine by lazy {
+        CgsGameEngine.INSTANCE
+    }
 
     val teams = ConcurrentHashMap<Int, CgsGameTeam>()
 
-    fun initialLoad(engine: CgsGameEngine<*>)
+    fun initialLoad()
     {
-        this.engine = engine
-
         for (id in 1..engine.gameMode.getMaxTeams())
         {
             teams[id] = CgsGameTeam(id)

@@ -102,7 +102,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             )
 
             CgsPlayerHandler.initialLoad()
-            CgsGameTeamEngine.initialLoad(this)
+            CgsGameTeamEngine.initialLoad()
 
             ChatHandler.registerChannelOverride(
                 CgsOverridingSpectatorChannel
