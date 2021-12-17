@@ -44,17 +44,27 @@ object CgsGameArenaHandler
     {
         try
         {
-            world
+            world.worldFolder.completeDelete()
         } catch (ignored: Exception)
         {
             return
         }
 
-        val file = File(
-            Bukkit.getWorldContainer(),
-            arena.getBukkitWorldName()
-        )
-
-        Files.delete(file.toPath())
     }
+}
+
+fun File.completeDelete(): Boolean
+{
+    if (isDirectory)
+    {
+        for (subFile in listFiles())
+        {
+            if (!subFile.completeDelete())
+            {
+                return false
+            }
+        }
+    }
+
+    return delete()
 }

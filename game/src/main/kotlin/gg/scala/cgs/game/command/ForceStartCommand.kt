@@ -40,5 +40,7 @@ object ForceStartCommand : BaseCommand()
             .CgsGameForceStartEvent(sender)
 
         cgsGameForceStart.callNow()
+
+        StartingStateRunnable.startingTime = 11
     }
 }
