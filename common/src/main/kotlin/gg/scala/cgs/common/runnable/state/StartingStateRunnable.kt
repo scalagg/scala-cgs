@@ -25,6 +25,8 @@ object StartingStateRunnable : StateRunnable(
 {
     private val engine = CgsGameEngine.INSTANCE
 
+    var hasBeenForceStarted = false
+
     var startingTime = engine.gameInfo
         .startingCountdownSec + 1
 
@@ -43,7 +45,7 @@ object StartingStateRunnable : StateRunnable(
     {
         startingTime--
 
-        if (Bukkit.getOnlinePlayers().size < engine.gameInfo.minimumPlayers)
+        if (Bukkit.getOnlinePlayers().size < engine.gameInfo.minimumPlayers && !hasBeenForceStarted)
         {
             engine.gameState = CgsGameState.WAITING
             return

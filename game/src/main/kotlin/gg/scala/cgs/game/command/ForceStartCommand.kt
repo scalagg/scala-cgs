@@ -2,6 +2,7 @@ package gg.scala.cgs.game.command
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.CgsGameState
+import gg.scala.cgs.common.runnable.state.StartingStateRunnable
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -26,14 +27,17 @@ object ForceStartCommand : BaseCommand()
             throw ConditionFailedException("You cannot force-start the game when you are alone.")
         }
 
-        if (engine.gameState.isAfter(CgsGameState.STARTED))
+        if (engine.gameState.isAfter(CgsGameState.STARTING))
         {
             throw ConditionFailedException("You cannot force-start the game at this time.")
         }
 
+        StartingStateRunnable.hasBeenForceStarted = true
+
+        engine.gameState = CgsGameState.STARTING
+
         val cgsGameForceStart = CgsGameEngine
             .CgsGameForceStartEvent(sender)
-        engine.gameState = CgsGameState.STARTING
 
         cgsGameForceStart.callNow()
     }
