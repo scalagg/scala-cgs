@@ -74,7 +74,7 @@ object CgsGameEventListener : Listener
 
             VisibilityHandler.update(event.participant)
 
-            event.participant refresh (false to GameMode.ADVENTURE)
+            event.participant refresh (false to GameMode.SURVIVAL)
             event.participant.teleport(
                 engine.gameArena.getPreLobbyLocation()
             )
@@ -182,6 +182,10 @@ object CgsGameEventListener : Listener
             }
         }
     }
+    // for what?
+    // ?
+    // no i cant hear u lmao
+    // OH yes we use notion & github projects as well as pull requests & issues
 
     @EventHandler(
         priority = EventPriority.HIGHEST

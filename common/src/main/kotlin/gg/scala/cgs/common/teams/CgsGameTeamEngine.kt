@@ -4,6 +4,7 @@ import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.parties.service.PartyService
 import org.bukkit.Bukkit
+import org.bukkit.entity.Horse
 import org.bukkit.entity.Player
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.properties.Delegates
@@ -12,8 +13,25 @@ import kotlin.properties.Delegates
  * @author GrowlyX
  * @since 12/1/2021
  */
+// objects - singletons
+// you can access them through "Class.INSTANCE" in java, or just directly the class
+
+typealias d = CgsGameTeamEngine
 object CgsGameTeamEngine
 {
+    // typalaiases
+    // uhhh
+
+    init
+    {
+        Bukkit.getPlayer("") poop true
+    }
+
+
+    infix fun Player.poop(boolean: Boolean )
+    {
+    }
+
     private val engine by lazy {
         CgsGameEngine.INSTANCE
     }
@@ -80,6 +98,8 @@ object CgsGameTeamEngine
                 return true
             }
         }
+        // well
+
 
         return false
     }
