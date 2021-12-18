@@ -39,7 +39,7 @@ object CgsGameEventListener : Listener
     private val engine = CgsGameEngine.INSTANCE
 
     @EventHandler(
-        priority = EventPriority.HIGHEST
+        priority = EventPriority.HIGH
     )
     fun onCgsParticipantConnect(
         event: CgsGameEngine.CgsGameParticipantConnectEvent
