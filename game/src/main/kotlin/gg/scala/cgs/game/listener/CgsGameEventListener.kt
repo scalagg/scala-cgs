@@ -75,9 +75,13 @@ object CgsGameEventListener : Listener
             VisibilityHandler.update(event.participant)
 
             event.participant refresh (false to GameMode.SURVIVAL)
-            event.participant.teleport(
-                engine.gameArena.getPreLobbyLocation()
-            )
+
+            if (engine.gameState == CgsGameState.WAITING)
+            {
+                event.participant.teleport(
+                    engine.gameArena.getPreLobbyLocation()
+                )
+            }
 
             if (participantSize >= engine.gameInfo.minimumPlayers)
             {
