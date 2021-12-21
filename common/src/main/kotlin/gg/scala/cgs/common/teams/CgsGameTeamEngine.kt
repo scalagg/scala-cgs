@@ -13,25 +13,8 @@ import kotlin.properties.Delegates
  * @author GrowlyX
  * @since 12/1/2021
  */
-// objects - singletons
-// you can access them through "Class.INSTANCE" in java, or just directly the class
-
-typealias d = CgsGameTeamEngine
 object CgsGameTeamEngine
 {
-    // typalaiases
-    // uhhh
-
-    init
-    {
-        Bukkit.getPlayer("") poop true
-    }
-
-
-    infix fun Player.poop(boolean: Boolean )
-    {
-    }
-
     private val engine by lazy {
         CgsGameEngine.INSTANCE
     }

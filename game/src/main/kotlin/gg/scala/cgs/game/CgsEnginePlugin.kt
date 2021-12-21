@@ -9,6 +9,7 @@ import gg.scala.cgs.game.listener.CgsGameGeneralListener
 import gg.scala.cgs.game.locator.CgsInstanceLocator
 import gg.scala.cgs.game.command.AnnounceCommand
 import gg.scala.cgs.game.command.ForceStartCommand
+import gg.scala.cgs.game.command.ReviveCommand
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.lemon.Lemon
 import net.evilblock.cubed.command.manager.CubedCommandManager
@@ -58,8 +59,10 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
                 val manager = CubedCommandManager(
                     CgsGameEngine.INSTANCE.plugin
                 )
+
                 manager.registerCommand(AnnounceCommand)
                 manager.registerCommand(ForceStartCommand)
+                manager.registerCommand(ReviveCommand)
             }
         }
     }

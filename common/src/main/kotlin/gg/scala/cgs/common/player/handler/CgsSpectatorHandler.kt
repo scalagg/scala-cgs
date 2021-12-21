@@ -3,6 +3,7 @@ package gg.scala.cgs.common.player.handler
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.adventure
 import gg.scala.cgs.common.refresh
+import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
@@ -53,6 +54,25 @@ object CgsSpectatorHandler
         Component.text("Better luck next time!")
             .color(TextColor.fromHexString("#FFFFFF"))
     )
+
+    fun removeSpectator(
+        player: Player
+    )
+    {
+        if (player.hasMetadata("spectator"))
+        {
+            player.removeMetadata("spectator", engine.plugin)
+        }
+
+        player refresh (false to GameMode.SURVIVAL)
+        player.playerListName = QuickAccess.coloredName(player)
+
+        player.inventory.clear()
+        player.updateInventory()
+
+        VisibilityHandler.update(player)
+        NametagHandler.reloadPlayer(player)
+    }
 
     @JvmOverloads
     fun setSpectator(

@@ -1,7 +1,7 @@
 package gg.scala.cgs.game.command
 
 import gg.scala.cgs.common.CgsGameEngine
-import gg.scala.cgs.common.CgsGameState
+import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.runnable.state.StartingStateRunnable
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException

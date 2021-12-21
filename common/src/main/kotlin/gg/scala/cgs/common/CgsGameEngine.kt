@@ -16,6 +16,7 @@ import gg.scala.cgs.common.player.visibility.CgsGameVisibility
 import gg.scala.cgs.common.player.visibility.CgsGameVisibilityAdapter
 import gg.scala.cgs.common.runnable.state.EndedStateRunnable
 import gg.scala.cgs.common.snapshot.CgsSnapshot
+import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.teams.CgsGameTeam
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
 import gg.scala.commons.ExtendedScalaPlugin
@@ -40,10 +41,8 @@ import org.bukkit.entity.Player
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
-import org.bukkit.event.player.AsyncPlayerChatEvent
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.event.player.PlayerPreLoginEvent
 import java.util.*
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
@@ -306,7 +305,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     ) : CgsGameEvent()
 
     class CgsGameParticipantReinstateEvent(
-        val participant: Player, val gameTeam: CgsGameTeam
+        val participant: Player,
+        val connected: Boolean
     ) : CgsGameEvent()
 
     class CgsGameParticipantDisconnectEvent(

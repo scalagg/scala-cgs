@@ -1,7 +1,7 @@
 package gg.scala.ktp
 
 import gg.scala.cgs.common.CgsGameEngine
-import gg.scala.cgs.common.CgsGameState
+import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.information.CgsGameGeneralInfo
 import gg.scala.cgs.common.information.mode.CgsGameMode
 import gg.scala.commons.ExtendedScalaPlugin

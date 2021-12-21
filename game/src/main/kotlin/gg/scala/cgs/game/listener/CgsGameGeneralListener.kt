@@ -1,7 +1,7 @@
 package gg.scala.cgs.game.listener
 
 import gg.scala.cgs.common.CgsGameEngine
-import gg.scala.cgs.common.CgsGameState
+import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.menu.CgsGameSpectateMenu
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.cooldown.type.PlayerStaticCooldown

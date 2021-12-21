@@ -1,7 +1,7 @@
 package gg.scala.cgs.common.instance.game
 
 import gg.scala.cgs.common.CgsGameEngine
-import gg.scala.cgs.common.CgsGameState
+import gg.scala.cgs.common.states.CgsGameState
 import org.bukkit.Bukkit
 import java.util.*
 

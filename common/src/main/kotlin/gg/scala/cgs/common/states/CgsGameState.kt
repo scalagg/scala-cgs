@@ -1,4 +1,4 @@
-package gg.scala.cgs.common
+package gg.scala.cgs.common.states
 
 /**
  * @author GrowlyX

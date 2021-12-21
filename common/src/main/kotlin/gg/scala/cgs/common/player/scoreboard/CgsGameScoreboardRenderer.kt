@@ -1,6 +1,6 @@
 package gg.scala.cgs.common.player.scoreboard
 
-import gg.scala.cgs.common.CgsGameState
+import gg.scala.cgs.common.states.CgsGameState
 import org.bukkit.entity.Player
 import java.util.*
 

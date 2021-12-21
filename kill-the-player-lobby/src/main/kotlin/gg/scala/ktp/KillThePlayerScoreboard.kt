@@ -1,15 +1,11 @@
 package gg.scala.ktp
 
-import gg.scala.cgs.common.CgsGameEngine
-import gg.scala.cgs.common.CgsGameState
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
-import gg.scala.cgs.common.runnable.state.StartingStateRunnable
 import gg.scala.cgs.lobby.updater.CgsGameInfoUpdater
 import gg.scala.lemon.Lemon
 import net.evilblock.cubed.scoreboard.ScoreboardAdapter
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.time.TimeUtil
-import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*
 

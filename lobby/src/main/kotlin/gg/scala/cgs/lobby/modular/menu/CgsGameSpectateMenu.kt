@@ -1,6 +1,6 @@
 package gg.scala.cgs.lobby.modular.menu
 
-import gg.scala.cgs.common.CgsGameState
+import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 import gg.scala.cgs.lobby.updater.CgsGameInfoUpdater
 import net.evilblock.cubed.menu.Button

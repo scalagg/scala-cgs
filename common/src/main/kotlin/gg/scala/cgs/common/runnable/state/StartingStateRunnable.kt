@@ -1,7 +1,7 @@
 package gg.scala.cgs.common.runnable.state
 
 import gg.scala.cgs.common.CgsGameEngine
-import gg.scala.cgs.common.CgsGameState
+import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.runnable.StateRunnable
 import gg.scala.lemon.Lemon
 import net.evilblock.cubed.util.CC

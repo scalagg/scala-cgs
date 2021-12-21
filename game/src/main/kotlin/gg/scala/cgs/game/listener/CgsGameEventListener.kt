@@ -1,7 +1,7 @@
 package gg.scala.cgs.game.listener
 
 import gg.scala.cgs.common.CgsGameEngine
-import gg.scala.cgs.common.CgsGameState
+import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.player.handler.CgsGameDisqualificationHandler
 import gg.scala.cgs.common.player.handler.CgsDeathHandler
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
@@ -116,11 +116,9 @@ object CgsGameEventListener : Listener
             cgsGameTeam.eliminated.remove(event.participant.uniqueId)
 
             val cgsParticipantReinstate = CgsGameEngine
-                .CgsGameParticipantReinstateEvent(event.participant, cgsGameTeam)
+                .CgsGameParticipantReinstateEvent(event.participant, true)
 
             cgsParticipantReinstate.callNow()
-
-            event.participant.sendMessage("${CC.D_GREEN}✓ ${CC.GREEN}You've been added back into the game.")
         } else
         {
             CgsSpectatorHandler.setSpectator(
@@ -186,10 +184,6 @@ object CgsGameEventListener : Listener
             }
         }
     }
-    // for what?
-    // ?
-    // no i cant hear u lmao
-    // OH yes we use notion & github projects as well as pull requests & issues
 
     @EventHandler(
         priority = EventPriority.HIGHEST
@@ -264,6 +258,21 @@ object CgsGameEventListener : Listener
         Tasks.asyncTimer(
             StartedStateRunnable,
             0L, 20L
+        )
+    }
+
+    @EventHandler
+    fun onCgsGameParticipantReinstate(
+        event: CgsGameEngine.CgsGameParticipantReinstateEvent
+    )
+    {
+        if (!event.connected)
+        {
+            CgsSpectatorHandler.removeSpectator(event.participant)
+        }
+
+        event.participant.sendMessage(
+            "${CC.D_GREEN}✓ ${CC.GREEN}You've been added back into the game."
         )
     }
 
