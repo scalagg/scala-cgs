@@ -3,6 +3,7 @@ package gg.scala.cgs.game.command
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.runnable.state.StartingStateRunnable
+import gg.scala.cgs.game.listener.CgsGameEventListener
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -34,13 +35,16 @@ object ForceStartCommand : BaseCommand()
 
         StartingStateRunnable.hasBeenForceStarted = true
 
-        engine.gameState = CgsGameState.STARTING
+        engine.onAsyncPreStartResourceInitialization()
+            .thenAccept {
+                engine.gameState = CgsGameState.STARTING
 
-        val cgsGameForceStart = CgsGameEngine
-            .CgsGameForceStartEvent(sender)
+                val cgsGameForceStart = CgsGameEngine
+                    .CgsGameForceStartEvent(sender)
 
-        cgsGameForceStart.callNow()
+                cgsGameForceStart.callNow()
 
-        StartingStateRunnable.startingTime = 11
+                StartingStateRunnable.startingTime = 11
+            }
     }
 }

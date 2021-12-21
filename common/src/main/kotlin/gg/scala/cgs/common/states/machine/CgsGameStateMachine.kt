@@ -8,9 +8,11 @@ import kotlin.time.Duration
  */
 interface CgsGameStateMachine
 {
+    fun isAvailable()
+
     fun onEnd()
     fun onStart()
 
-    fun onSecondTick()
+    fun onUpdate()
     fun getDuration(): Duration
 }

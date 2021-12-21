@@ -85,7 +85,10 @@ object CgsGameEventListener : Listener
 
             if (participantSize >= engine.gameInfo.minimumPlayers)
             {
-                engine.gameState = CgsGameState.STARTING
+                engine.onAsyncPreStartResourceInitialization()
+                    .thenAccept {
+                        engine.gameState = CgsGameState.STARTING
+                    }
             } else {
                 engine.broadcast("${CC.SEC}The game requires ${CC.PRI + (engine.gameInfo.minimumPlayers - participantSize) + CC.SEC} more players to start.")
             }

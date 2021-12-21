@@ -44,6 +44,7 @@ import org.bukkit.event.HandlerList
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import java.util.*
+import java.util.concurrent.CompletableFuture
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
@@ -275,6 +276,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     private fun compare(oldState: CgsGameState, expected: CgsGameState, newState: CgsGameState): Boolean
     {
         return oldState == expected && newState == gameState
+    }
+
+    open fun onAsyncPreStartResourceInitialization(): CompletableFuture<Boolean>
+    {
+        return CompletableFuture.supplyAsync { true }
     }
 
     abstract fun getScoreboardRenderer(): CgsGameScoreboardRenderer
