@@ -3,6 +3,7 @@ package gg.scala.cgs.common.runnable.state
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.runnable.StateRunnable
+import gg.scala.cgs.common.states.CgsGameStateEngine
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
@@ -16,11 +17,30 @@ object StartedStateRunnable : StateRunnable(
 )
 {
     private val engine = CgsGameEngine.INSTANCE
+    private val machine = CgsGameStateEngine
 
     override fun onTick()
     {
         val teamsWithAlivePlayers = CgsGameTeamEngine.teams
             .values.filter { it.alive.isNotEmpty() }
+
+        if (machine.stateMachines.isNotEmpty())
+        {
+            var current = machine.current()!!
+
+            if (System.currentTimeMillis() >= current.startTimestamp() + current.getTimeout())
+            {
+                machine.stateMachines
+                    .removeFirst()?.onEnd()
+
+                current = machine.current()
+                current.onStart()
+
+                println("[CGS] Moving onto ${current.id()} due to timeout.")
+            }
+
+            current.onUpdate()
+        }
 
         if (teamsWithAlivePlayers.size == 1)
         {

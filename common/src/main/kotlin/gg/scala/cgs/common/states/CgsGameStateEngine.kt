@@ -9,5 +9,12 @@ import java.util.*
  */
 object CgsGameStateEngine
 {
-    val stateMachines = mutableMapOf<CgsGameState, LinkedList<CgsGameStateMachine>>()
+    val stateMachines = LinkedList<CgsGameStateMachine>()
+
+    fun register(stateMachine: CgsGameStateMachine)
+    {
+        stateMachines.add(stateMachine)
+    }
+
+    fun current() = stateMachines.peek()
 }

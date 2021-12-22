@@ -81,8 +81,6 @@ object CgsGameTeamEngine
                 return true
             }
         }
-        // well
-
 
         return false
     }
