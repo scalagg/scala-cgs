@@ -30,7 +30,10 @@ object CgsGameNametag : NametagProvider(
         val viewer = CgsPlayerHandler.find(toRefresh)!!
         val target = CgsPlayerHandler.find(refreshFor)!!
 
-        if (toRefresh.hasMetadata("spectator") && refreshFor.hasMetadata("spectator"))
+        if (
+            toRefresh.hasMetadata("spectator") &&
+            refreshFor.hasMetadata("spectator")
+        )
         {
             return SPECTATOR
         }
