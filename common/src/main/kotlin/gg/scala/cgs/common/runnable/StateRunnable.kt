@@ -1,6 +1,7 @@
 package gg.scala.cgs.common.runnable
 
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.printStackTraceV2
 import gg.scala.cgs.common.states.CgsGameState
 import org.bukkit.scheduler.BukkitRunnable
 
@@ -16,7 +17,9 @@ abstract class StateRunnable(
 
     override fun run()
     {
-        if (CgsGameEngine.INSTANCE.gameState != gameState)
+        if (
+            CgsGameEngine.INSTANCE.gameState != gameState
+        )
         {
             cancel()
             return
@@ -25,14 +28,12 @@ abstract class StateRunnable(
         try
         {
             onTick()
-
-            CgsGameEngine.INSTANCE.onTick(
-                gameState, currentTick
-            )
         } catch (exception: Exception)
         {
-            CgsGameEngine.INSTANCE.plugin.logger.info(
-                "An exception was thrown! Here's the exception message: ${exception.message}"
+            exception.printStackTraceV2(
+                "StateRunnable for ${
+                    CgsGameEngine.INSTANCE.gameState.name
+                }"
             )
         }
 

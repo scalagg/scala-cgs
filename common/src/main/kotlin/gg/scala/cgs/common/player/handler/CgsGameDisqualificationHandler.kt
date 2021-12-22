@@ -2,7 +2,6 @@ package gg.scala.cgs.common.player.handler
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.giveCoins
-import gg.scala.cgs.common.runnable.state.EndedStateRunnable
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
@@ -34,7 +33,7 @@ object CgsGameDisqualificationHandler
             player giveCoins (CgsGameEngine.INSTANCE.gameInfo.awards.participationCoinRange.random() to "Playing a game")
         } else if (broadcastNotification)
         {
-            CgsGameEngine.INSTANCE.broadcast(
+            CgsGameEngine.INSTANCE.sendMessage(
                 "${player.displayName}${CC.SEC} has been disqualified."
             )
 

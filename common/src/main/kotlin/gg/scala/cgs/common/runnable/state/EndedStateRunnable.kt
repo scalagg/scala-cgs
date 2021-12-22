@@ -7,6 +7,7 @@ import gg.scala.cgs.common.giveCoins
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.runnable.StateRunnable
 import gg.scala.lemon.util.CubedCacheUtil
+import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -63,7 +64,7 @@ object EndedStateRunnable : StateRunnable(
             description.add(" ${CC.GREEN}Thanks for playing ${engine.gameInfo.fancyNameRender}!")
             description.add("")
 
-            engine.broadcast(
+            engine.sendMessage(
                 FancyMessage().withMessage(*description.toTypedArray())
             )
 
@@ -91,7 +92,7 @@ object EndedStateRunnable : StateRunnable(
 
         if (alertTicks.contains(10 - currentTick))
         {
-            engine.broadcast("${CC.B_RED}The server will automatically reboot in ${10 - currentTick} seconds.")
+            engine.sendMessage("${CC.B_RED}The server will automatically reboot in ${10 - currentTick} seconds.")
         }
 
         if (currentTick == 10)
@@ -109,9 +110,11 @@ object EndedStateRunnable : StateRunnable(
 
             allowedToJoin = false
 
-            Tasks.delayed(40L) {
-                Bukkit.shutdown()
-            }
+            Schedulers.sync().runLater(
+                {
+                    Bukkit.shutdown()
+                }, 40L
+            )
         }
     }
 }

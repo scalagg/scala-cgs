@@ -3,15 +3,13 @@ package gg.scala.cgs.common.runnable.state
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.runnable.StateRunnable
-import gg.scala.lemon.Lemon
+import gg.scala.cgs.common.startMessage
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.time.TimeUtil
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
-import net.md_5.bungee.api.chat.ClickEvent
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 
@@ -61,8 +59,8 @@ object StartingStateRunnable : StateRunnable(
             )
 
             engine.sendTitle(currentTitle)
-            engine.playSound(Sound.ORB_PICKUP)
-            engine.broadcast("${CC.SEC}The game starts in ${getCurrentColor()}${
+            engine.playSound(Sound.NOTE_STICKS)
+            engine.sendMessage("${CC.SEC}The game starts in ${getCurrentColor()}${
                 TimeUtil.formatIntoDetailedString((startingTime))
             }${CC.SEC}.")
         }
@@ -80,29 +78,11 @@ object StartingStateRunnable : StateRunnable(
 
             engine.sendTitle(currentTitle)
             engine.playSound(Sound.LEVEL_UP)
-            engine.broadcast("${CC.GREEN}The game has commenced!")
+            engine.sendMessage("${CC.GREEN}The game has commenced!")
 
             if (engine.gameInfo.gameVersion < 1.0)
             {
-                val fancyMessage = FancyMessage()
-                fancyMessage.withMessage(
-                    "",
-                    " ${CC.B_RED}${engine.gameInfo.fancyNameRender} is currently in BETA!",
-                    " ${CC.RED}Remember, there may be bugs/incomplete features!",
-                    "",
-                    " ${CC.RED}If you think you have found a bug, report it at:",
-                    " ${CC.WHITE}${Lemon.instance.lemonWebData.discord}",
-                    ""
-                )
-                fancyMessage.andHoverOf(
-                    "${CC.WHITE}Click to join our discord!"
-                )
-                fancyMessage.andCommandOf(
-                    ClickEvent.Action.OPEN_URL,
-                    Lemon.instance.lemonWebData.discord
-                )
-
-                engine.broadcast(fancyMessage)
+                engine.sendMessage(startMessage)
             }
         }
     }

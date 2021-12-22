@@ -14,7 +14,10 @@ import gg.scala.cgs.common.player.scoreboard.CgsGameScoreboardRenderer
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.player.visibility.CgsGameVisibility
 import gg.scala.cgs.common.player.visibility.CgsGameVisibilityAdapter
+import gg.scala.cgs.common.runnable.StateRunnableRegistrar
 import gg.scala.cgs.common.runnable.state.EndedStateRunnable
+import gg.scala.cgs.common.runnable.state.StartedStateRunnable
+import gg.scala.cgs.common.runnable.state.StartingStateRunnable
 import gg.scala.cgs.common.snapshot.CgsSnapshot
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.teams.CgsGameTeam
@@ -98,6 +101,19 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
                 )
             }
 
+            // default state runnables
+            StateRunnableRegistrar.registerOrOverride(
+                CgsGameState.STARTING, StartingStateRunnable
+            )
+
+            StateRunnableRegistrar.registerOrOverride(
+                CgsGameState.STARTED, StartedStateRunnable
+            )
+
+            StateRunnableRegistrar.registerOrOverride(
+                CgsGameState.ENDED, EndedStateRunnable
+            )
+
             ScoreboardHandler.configure(
                 CgsGameScoreboardProvider(this)
             )
@@ -150,7 +166,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         return cgsGamePlayer.gameSpecificStatistics[statisticType.simpleName]!! as S
     }
 
-    fun broadcast(message: String)
+    fun sendMessage(message: String)
     {
         for (team in CgsGameTeamEngine.teams.values)
         {
@@ -221,7 +237,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         }
     }
 
-    fun broadcast(fancyMessage: FancyMessage)
+    fun sendMessage(fancyMessage: FancyMessage)
     {
         for (team in CgsGameTeamEngine.teams.values)
         {
@@ -246,6 +262,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
      * The method which is called in addition to the [onTick]
      * method within the [StateRunnable] instance.
      */
+    @Deprecated(
+        message = "Replaced with State machines",
+        level = DeprecationLevel.ERROR
+    )
     abstract fun onTick(state: CgsGameState, tickOfState: Int): Boolean
 
     lateinit var winningTeam: CgsGameTeam

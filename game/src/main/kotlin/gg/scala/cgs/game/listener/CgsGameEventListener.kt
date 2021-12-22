@@ -11,9 +11,11 @@ import gg.scala.cgs.common.runnable.state.EndedStateRunnable
 import gg.scala.cgs.common.runnable.state.StartedStateRunnable
 import gg.scala.cgs.common.runnable.state.StartingStateRunnable
 import gg.scala.cgs.common.player.handler.CgsSpectatorHandler
+import gg.scala.cgs.common.runnable.StateRunnableRegistrar
 import gg.scala.cgs.common.teams.CgsGameTeamEngine
 import gg.scala.lemon.disguise.update.event.PreDisguiseEvent
 import gg.scala.lemon.util.QuickAccess.coloredName
+import me.lucko.helper.Schedulers
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants.HEART_SYMBOL
@@ -64,7 +66,7 @@ object CgsGameEventListener : Listener
                 }
             }
 
-            engine.broadcast(
+            engine.sendMessage(
                 "${coloredName(event.participant)}${CC.SEC} has joined ${CC.AQUA}(${
                     "${participantSize}/${Bukkit.getMaxPlayers()}"
                 })${CC.YELLOW}!"
@@ -90,7 +92,7 @@ object CgsGameEventListener : Listener
                         engine.gameState = CgsGameState.STARTING
                     }
             } else {
-                engine.broadcast("${CC.SEC}The game requires ${CC.PRI + (engine.gameInfo.minimumPlayers - participantSize) + CC.SEC} more players to start.")
+                engine.sendMessage("${CC.SEC}The game requires ${CC.PRI + (engine.gameInfo.minimumPlayers - participantSize) + CC.SEC} more players to start.")
             }
         } else if (!event.reconnectCalled)
         {
@@ -151,7 +153,7 @@ object CgsGameEventListener : Listener
         {
             CgsGameTeamEngine.removePlayerFromTeam(event.participant)
 
-            engine.broadcast(
+            engine.sendMessage(
                 "${event.participant.name}${CC.SEC} has left ${CC.AQUA}(${
                     "${Bukkit.getOnlinePlayers().size - 1}/${Bukkit.getMaxPlayers()}"
                 })${CC.YELLOW}!"
@@ -258,10 +260,8 @@ object CgsGameEventListener : Listener
             NametagHandler.reloadPlayer(it)
         }
 
-        Tasks.asyncTimer(
-            StartedStateRunnable,
-            0L, 20L
-        )
+        StateRunnableRegistrar
+            .startRunningAsync(CgsGameState.STARTED)
     }
 
     @EventHandler
@@ -284,10 +284,8 @@ object CgsGameEventListener : Listener
         event: CgsGameEngine.CgsGamePreStartEvent
     )
     {
-        Tasks.timer(
-            0L, 20L,
-            StartingStateRunnable
-        )
+        StateRunnableRegistrar
+            .startRunningAsync(CgsGameState.STARTING)
     }
 
     @EventHandler
@@ -295,10 +293,8 @@ object CgsGameEventListener : Listener
         event: CgsGameEngine.CgsGameEndEvent
     )
     {
-        Tasks.timer(
-            0L, 20L,
-            EndedStateRunnable
-        )
+        StateRunnableRegistrar
+            .startRunningAsync(CgsGameState.ENDED)
     }
 
     @EventHandler(
@@ -308,7 +304,7 @@ object CgsGameEventListener : Listener
         event: CgsGameEngine.CgsGameForceStartEvent
     )
     {
-        engine.broadcast("${CC.GREEN}The game has been force-started. ${CC.GRAY}(by ${
+        engine.sendMessage("${CC.GREEN}The game has been force-started. ${CC.GRAY}(by ${
             if (event.starter is Player) event.starter.name else "Console"
         })")
     }

@@ -2,6 +2,7 @@ package gg.scala.cgs.common.player.nametag
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
+import gg.scala.cgs.common.teams.CgsGameTeamEngine
 import net.evilblock.cubed.nametag.NametagInfo
 import net.evilblock.cubed.nametag.NametagProvider
 import net.evilblock.cubed.util.CC
@@ -18,17 +19,29 @@ object CgsGameNametag : NametagProvider(
     @JvmStatic
     val SPECTATOR = createNametag(CC.GRAY, "")
 
-    override fun fetchNametag(toRefresh: Player, refreshFor: Player): NametagInfo?
+    @JvmStatic
+    val GREEN = createNametag(CC.GREEN, "")
+
+    @JvmStatic
+    val RED = createNametag(CC.RED, "")
+
+    override fun fetchNametag(toRefresh: Player, refreshFor: Player): NametagInfo
     {
-        val viewer = CgsPlayerHandler.find(refreshFor)!!
-        val target = CgsPlayerHandler.find(toRefresh)!!
+        val viewer = CgsPlayerHandler.find(toRefresh)!!
+        val target = CgsPlayerHandler.find(refreshFor)!!
 
         if (toRefresh.hasMetadata("spectator") && refreshFor.hasMetadata("spectator"))
         {
             return SPECTATOR
         }
 
-        return CgsGameEngine.INSTANCE.getNametagAdapter()
+        val computed = CgsGameEngine.INSTANCE.getNametagAdapter()
             .computeNametag(viewer, target)
+
+        val teamOfViewer = CgsGameTeamEngine.getTeamOf(toRefresh)
+        val teamOfTarget = CgsGameTeamEngine.getTeamOf(refreshFor)
+
+        return computed ?:
+            if (teamOfTarget == teamOfViewer) GREEN else RED
     }
 }

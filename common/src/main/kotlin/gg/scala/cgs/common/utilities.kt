@@ -1,10 +1,13 @@
 package gg.scala.cgs.common
 
 import gg.scala.grape.GrapeSpigotPlugin
+import gg.scala.lemon.Lemon
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.nms.MinecraftReflection
 import net.kyori.adventure.audience.Audience
+import net.md_5.bungee.api.chat.ClickEvent
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
@@ -15,6 +18,45 @@ import java.lang.reflect.Method
  * @author GrowlyX
  * @since 12/2/2021
  */
+val startMessage by lazy {
+    FancyMessage().apply {
+        withMessage(
+            "",
+            " ${CC.B_PRI}${
+                CgsGameEngine.INSTANCE.gameInfo.fancyNameRender
+            } is currently in BETA!",
+            " ${CC.SEC}Remember, there may be bugs/incomplete features!",
+            "",
+            " ${CC.SEC}If you think you have found a bug, report it at:",
+            " ${CC.WHITE}${Lemon.instance.lemonWebData.discord}",
+            ""
+        )
+        andHoverOf(
+            "${CC.YELLOW}Click to join our discord server!"
+        )
+        andCommandOf(
+            ClickEvent.Action.OPEN_URL,
+            Lemon.instance.lemonWebData.discord
+        )
+    }
+}
+
+fun Exception.printStackTraceV2(
+    rootedFrom: String = "N/A"
+)
+{
+    CgsGameEngine.INSTANCE.plugin.logger.severe {
+        """
+            An exception was thrown from $rootedFrom!
+              Compressed: $message
+              Localized: $localizedMessage
+              
+            Complete stack trace:
+            ${stackTraceToString()}
+        """.trimIndent()
+    }
+}
+
 infix fun Player.refresh(
     information: Pair<Boolean, GameMode>
 )
