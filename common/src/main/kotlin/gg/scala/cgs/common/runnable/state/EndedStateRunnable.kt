@@ -3,7 +3,7 @@ package gg.scala.cgs.common.runnable.state
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.adventure
-import gg.scala.cgs.common.editor.EditableField
+import gg.scala.cgs.common.enviornment.EditableField
 import gg.scala.cgs.common.giveCoins
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.runnable.StateRunnable
@@ -11,7 +11,6 @@ import gg.scala.lemon.util.CubedCacheUtil
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
-import net.evilblock.cubed.util.bukkit.Tasks
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -27,6 +26,7 @@ object EndedStateRunnable : StateRunnable(
     CgsGameState.ENDED
 )
 {
+    @JvmField
     @EditableField("ALLOWED_TO_JOIN")
     var allowedToJoin = true
 

@@ -1,4 +1,4 @@
-package gg.scala.cgs.common.editor
+package gg.scala.cgs.common.enviornment
 
 /**
  * @author GrowlyX

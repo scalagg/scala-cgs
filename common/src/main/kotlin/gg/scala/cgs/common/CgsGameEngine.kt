@@ -1,5 +1,6 @@
 package gg.scala.cgs.common
 
+import gg.scala.cgs.common.enviornment.editor.EnvironmentEditor
 import gg.scala.cgs.common.information.CgsGameGeneralInfo
 import gg.scala.cgs.common.information.arena.CgsGameArena
 import gg.scala.cgs.common.information.arena.CgsGameArenaHandler
@@ -101,7 +102,6 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
                 )
             }
 
-            // default state runnables
             StateRunnableRegistrar.registerOrOverride(
                 CgsGameState.STARTING, StartingStateRunnable
             )
@@ -132,6 +132,9 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             NametagHandler.registerProvider(
                 CgsGameNametag
             )
+
+            EnvironmentEditor.registerAllEditables(StartingStateRunnable)
+            EnvironmentEditor.registerAllEditables(EndedStateRunnable)
 
             Events.subscribe(AsyncPlayerPreLoginEvent::class.java).handler {
                 if (!EndedStateRunnable.allowedToJoin)
