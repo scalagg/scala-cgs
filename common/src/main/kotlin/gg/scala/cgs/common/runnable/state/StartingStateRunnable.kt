@@ -1,6 +1,7 @@
 package gg.scala.cgs.common.runnable.state
 
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.editor.EditableField
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.runnable.StateRunnable
 import gg.scala.cgs.common.startMessage
@@ -25,6 +26,7 @@ object StartingStateRunnable : StateRunnable(
 
     var hasBeenForceStarted = false
 
+    @EditableField("PRE_START_TIME")
     var startingTime = engine.gameInfo
         .startingCountdownSec + 1
 
