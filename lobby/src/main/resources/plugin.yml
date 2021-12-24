@@ -1,5 +1,5 @@
 name: cgs-lobby
-version: 1.0.0
+version: @version
 main: gg.scala.cgs.lobby.CgsLobbyPlugin
 
 author: Scala

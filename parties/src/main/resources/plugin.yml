@@ -1,5 +1,5 @@
 name: parties
-version: 1.0.0
+version: @version
 main: gg.scala.parties.PartySpigotPlugin
 
 author: Scala
