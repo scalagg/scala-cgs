@@ -13,6 +13,7 @@ import gg.scala.cgs.game.command.ReviveCommand
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.lemon.Lemon
 import net.evilblock.cubed.command.manager.CubedCommandManager
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
 import kotlin.properties.Delegates
 
@@ -66,6 +67,16 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
                 manager.registerCommand(ForceStartCommand)
                 manager.registerCommand(ReviveCommand)
             }
+
+            Tasks.asyncTimer({
+                Lemon.instance.localInstance
+                    .metaData["game-state"] = CgsGameEngine.INSTANCE
+                        .gameState.name.replace("STARTED", "IN_GAME")
+
+                Lemon.instance.localInstance
+                    .metaData["remaining"] = Bukkit.getOnlinePlayers()
+                    .count { !it.hasMetadata("spectator") }.toString()
+            }, 0L, 20L)
         }
     }
 
