@@ -12,6 +12,8 @@ import gg.scala.cgs.game.command.ForceStartCommand
 import gg.scala.cgs.game.command.ReviveCommand
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.RedisHandler
+import gg.scala.lemon.handler.RedisHandler.buildMessage
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
@@ -68,6 +70,18 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
                 manager.registerCommand(ReviveCommand)
             }
 
+            buildMessage(
+                "add-server",
+                "id" to Lemon.instance
+                    .settings.id,
+                "address" to "127.0.0.1",
+                "port" to Bukkit.getPort()
+                    .toString()
+            ).dispatch(
+                "cocoa",
+                Lemon.instance.banana
+            )
+
             Tasks.asyncTimer({
                 Lemon.instance.localInstance
                     .metaData["game-state"] = CgsGameEngine.INSTANCE
@@ -82,6 +96,15 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
 
     override fun disable()
     {
+        buildMessage(
+            "remove-server",
+            "id" to Lemon.instance
+                .settings.id
+        ).dispatch(
+            "cocoa",
+            Lemon.instance.banana
+        )
+
         CgsInstanceHandler.service.runCommand {
            it.hdel("cgs:servers", Lemon.instance.settings.id)
         }
