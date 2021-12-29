@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture
  * @since 11/30/2021
  */
 class CgsGamePlayer(
+    @JvmField
     @Transient
     val uniqueId: UUID
 ) : Savable

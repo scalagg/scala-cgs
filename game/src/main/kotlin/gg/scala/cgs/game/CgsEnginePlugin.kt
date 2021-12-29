@@ -60,6 +60,8 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
                     CgsGameEngine.INSTANCE.plugin
                 )
 
+                Lemon.instance.registerCompletionsAndContexts(manager)
+
                 manager.registerCommand(AnnounceCommand)
                 manager.registerCommand(ForceStartCommand)
                 manager.registerCommand(ReviveCommand)

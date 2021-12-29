@@ -26,7 +26,8 @@ object CgsGameArenaHandler
             ?: return
 
         val childDirectory = File(
-            Bukkit.getWorldContainer(), arena.getBukkitWorldName()
+            Bukkit.getWorldContainer(),
+            arena.getBukkitWorldName()
         )
 
         FileUtils.copyDirectory(directory.toFile(), childDirectory, true)
