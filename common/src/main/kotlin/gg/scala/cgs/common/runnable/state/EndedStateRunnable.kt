@@ -11,6 +11,7 @@ import gg.scala.lemon.util.CubedCacheUtil
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
+import net.evilblock.cubed.util.bukkit.Tasks
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -105,9 +106,11 @@ object EndedStateRunnable : StateRunnable(
                 CubedCacheUtil.fetchName(it) ?: "???"
             } + CC.GREEN + " won the game. Thanks for playing!"
 
-            for (onlinePlayer in Bukkit.getOnlinePlayers())
-            {
-                onlinePlayer.kickPlayer(kickMessage)
+            Tasks.sync {
+                for (onlinePlayer in Bukkit.getOnlinePlayers())
+                {
+                    onlinePlayer.kickPlayer(kickMessage)
+                }
             }
 
             allowedToJoin = false
