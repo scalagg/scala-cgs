@@ -1,8 +1,7 @@
 package gg.scala.cgs.common.runnable
 
-import gg.scala.cgs.common.runnable.state.StartingStateRunnable
 import gg.scala.cgs.common.states.CgsGameState
-import me.lucko.helper.Schedulers
+import net.evilblock.cubed.util.bukkit.Tasks
 
 /**
  * @author GrowlyX
@@ -22,9 +21,7 @@ object StateRunnableRegistrar
     fun startRunningAsync(state: CgsGameState)
     {
         registered[state]?.let {
-            Schedulers.async().runRepeating(
-                it, 0L, 20L
-            )
+            Tasks.asyncTimer(it, 0L, 20L)
         }
     }
 }
