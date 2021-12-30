@@ -269,7 +269,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         message = "Replaced with State machines",
         level = DeprecationLevel.ERROR
     )
-    abstract fun onTick(state: CgsGameState, tickOfState: Int): Boolean
+    open fun onTick(state: CgsGameState, tickOfState: Int): Boolean
+    {
+        return true
+    }
 
     lateinit var winningTeam: CgsGameTeam
 
