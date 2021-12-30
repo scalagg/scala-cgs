@@ -43,12 +43,10 @@ object EditCommand : BaseCommand()
 
         sender.sendMessage("${CC.SEC}You set ${CC.PRI}${
             entry.field.name
-        }${CC.SEC} from ${CC.PRI}${
-            current
-        }${CC.SEC} to ${
+        }${CC.SEC} to ${CC.WHITE}${
             entry.field.get(
                 entry.instance
             )
-        }")
+        }${CC.SEC}. ${CC.GRAY}(previously $current)")
     }
 }
