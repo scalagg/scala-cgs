@@ -3,7 +3,6 @@ package gg.scala.cgs.common.runnable.state
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.adventure
-import gg.scala.cgs.common.enviornment.EditableField
 import gg.scala.cgs.common.giveCoins
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.runnable.StateRunnable
@@ -28,8 +27,7 @@ object EndedStateRunnable : StateRunnable(
 )
 {
     @JvmField
-    @EditableField("ALLOWED_TO_JOIN")
-    var allowedToJoin = true
+    var ALLOWED_TO_JOIN = true
 
     private val engine = CgsGameEngine.INSTANCE
 
@@ -113,7 +111,7 @@ object EndedStateRunnable : StateRunnable(
                 }
             }
 
-            allowedToJoin = false
+            ALLOWED_TO_JOIN = false
 
             Schedulers.sync().runLater(
                 {

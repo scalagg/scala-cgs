@@ -1,6 +1,7 @@
 package gg.scala.cgs.game
 
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.enviornment.editor.EnvironmentEditor
 import gg.scala.cgs.common.instance.handler.CgsInstanceHandler
 import gg.scala.cgs.common.information.arena.CgsGameArenaHandler
 import gg.scala.cgs.common.instance.CgsServerType
@@ -8,6 +9,7 @@ import gg.scala.cgs.game.listener.CgsGameEventListener
 import gg.scala.cgs.game.listener.CgsGameGeneralListener
 import gg.scala.cgs.game.locator.CgsInstanceLocator
 import gg.scala.cgs.game.command.AnnounceCommand
+import gg.scala.cgs.game.command.EditCommand
 import gg.scala.cgs.game.command.ForceStartCommand
 import gg.scala.cgs.game.command.ReviveCommand
 import gg.scala.commons.ExtendedScalaPlugin
@@ -65,8 +67,15 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
 
                 Lemon.instance.registerCompletionsAndContexts(manager)
 
+                manager.commandCompletions
+                    .registerAsyncCompletion("fields") {
+                        return@registerAsyncCompletion EnvironmentEditor
+                            .editable.map { it.field.name }
+                    }
+
                 manager.registerCommand(AnnounceCommand)
                 manager.registerCommand(ForceStartCommand)
+                manager.registerCommand(EditCommand)
                 manager.registerCommand(ReviveCommand)
             }
 

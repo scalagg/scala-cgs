@@ -7,7 +7,6 @@ import java.lang.reflect.Field
  * @since 12/22/2021
  */
 data class EditableFieldEntry(
-    val info: EditableField,
     val field: Field,
     val instance: Any
 )

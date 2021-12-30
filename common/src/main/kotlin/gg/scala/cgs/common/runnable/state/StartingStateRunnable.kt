@@ -1,7 +1,6 @@
 package gg.scala.cgs.common.runnable.state
 
 import gg.scala.cgs.common.CgsGameEngine
-import gg.scala.cgs.common.enviornment.EditableField
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.runnable.StateRunnable
 import gg.scala.cgs.common.startMessage
@@ -27,8 +26,7 @@ object StartingStateRunnable : StateRunnable(
     var hasBeenForceStarted = false
 
     @JvmField
-    @EditableField("PRE_START_TIME")
-    var startingTime = engine.gameInfo
+    var PRE_START_TIME = engine.gameInfo
         .startingCountdownSec + 1
 
     private val alertTicks = listOf(
@@ -44,7 +42,7 @@ object StartingStateRunnable : StateRunnable(
 
     override fun onTick()
     {
-        startingTime--
+        PRE_START_TIME--
 
         if (Bukkit.getOnlinePlayers().size < engine.gameInfo.minimumPlayers && !hasBeenForceStarted)
         {
@@ -52,10 +50,10 @@ object StartingStateRunnable : StateRunnable(
             return
         }
 
-        if (alertTicks.contains(startingTime))
+        if (alertTicks.contains(PRE_START_TIME))
         {
             val currentTitle = Title.title(
-                Component.text(startingTime)
+                Component.text(PRE_START_TIME)
                     .decorate(TextDecoration.BOLD)
                     .color(TextColor.fromHexString("#2acc29")),
                 Component.text("The game is starting!")
@@ -64,11 +62,11 @@ object StartingStateRunnable : StateRunnable(
             engine.sendTitle(currentTitle)
             engine.playSound(Sound.NOTE_STICKS)
             engine.sendMessage("${CC.SEC}The game starts in ${getCurrentColor()}${
-                TimeUtil.formatIntoDetailedString((startingTime))
+                TimeUtil.formatIntoDetailedString((PRE_START_TIME))
             }${CC.SEC}.")
         }
 
-        if (startingTime <= 0)
+        if (PRE_START_TIME <= 0)
         {
             val currentTitle = Title.title(
                 Component.text("BEGIN")
@@ -93,7 +91,7 @@ object StartingStateRunnable : StateRunnable(
     private fun getCurrentColor(): String
     {
         return rangeToColor.entries
-            .firstOrNull { it.key.contains(startingTime) }?.value
+            .firstOrNull { it.key.contains(PRE_START_TIME) }?.value
             ?: CC.GREEN
     }
 }

@@ -1,5 +1,6 @@
 package gg.scala.cgs.common
 
+import gg.scala.cgs.common.enviornment.EditableFieldCaster
 import gg.scala.cgs.common.enviornment.editor.EnvironmentEditor
 import gg.scala.cgs.common.information.CgsGameGeneralInfo
 import gg.scala.cgs.common.information.arena.CgsGameArena
@@ -136,8 +137,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             EnvironmentEditor.registerAllEditables(StartingStateRunnable)
             EnvironmentEditor.registerAllEditables(EndedStateRunnable)
 
+            EditableFieldCaster.initialLoad()
+
             Events.subscribe(AsyncPlayerPreLoginEvent::class.java).handler {
-                if (!EndedStateRunnable.allowedToJoin)
+                if (!EndedStateRunnable.ALLOWED_TO_JOIN)
                 {
                     it.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, "${CC.RED}This server is currently whitelisted.")
                 }

@@ -1,6 +1,5 @@
 package gg.scala.cgs.common.enviornment.editor
 
-import gg.scala.cgs.common.enviornment.EditableField
 import gg.scala.cgs.common.enviornment.EditableFieldEntry
 
 /**
@@ -9,7 +8,7 @@ import gg.scala.cgs.common.enviornment.EditableFieldEntry
  */
 object EnvironmentEditor
 {
-    private val editable = mutableListOf<EditableFieldEntry>()
+    val editable = mutableListOf<EditableFieldEntry>()
 
     fun registerAllEditables(
         `object`: Any
@@ -18,18 +17,19 @@ object EnvironmentEditor
         val fields = `object`.javaClass
             .declaredFields
 
+        // Only @JvmFields will be registered,
+        // so no checks are needed.
         for (field in fields)
         {
-            val annotation = field
-                .getAnnotation(EditableField::class.java)
-                ?: continue
+            // lmao
+            if (!field.name.contains("_"))
+                continue
 
             editable.add(
                 EditableFieldEntry(
-                    annotation, field, `object`
+                    field, `object`
                 )
             )
         }
     }
-
 }
