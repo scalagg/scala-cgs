@@ -1,13 +1,13 @@
 package gg.scala.cgs.common.player.handler
 
-import com.solexgames.datastore.commons.connection.impl.mongo.UriMongoConnection
-import com.solexgames.datastore.commons.layer.impl.MongoStorageLayer
 import gg.scala.cgs.common.CgsGameEngine
-import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.instance.handler.CgsInstanceHandler
 import gg.scala.cgs.common.player.CgsGamePlayer
-import gg.scala.lemon.Lemon
+import gg.scala.cgs.common.states.CgsGameState
+import gg.scala.store.controller.DataStoreObjectController
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.Events
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
@@ -29,32 +29,30 @@ object CgsPlayerHandler
     @JvmStatic
     val RE_LOG_DELTA = TimeUnit.MINUTES.toMillis(2L)
 
-    lateinit var handle: MongoStorageLayer<CgsGamePlayer>
-    private val players = ConcurrentHashMap<UUID, CgsGamePlayer>()
+    lateinit var handle: DataStoreObjectController<CgsGamePlayer>
+
+    private val players: ConcurrentHashMap<UUID, CgsGamePlayer>
+        get() = handle.localCache
 
     fun find(uniqueId: UUID): CgsGamePlayer? = players[uniqueId]
     fun find(player: Player): CgsGamePlayer? = players[player.uniqueId]
 
     fun initialLoad()
     {
-        handle = MongoStorageLayer(
-            UriMongoConnection(Lemon.instance.mongoConfig.uri),
-            "Scala", "cgs_global_players",
-            CgsGamePlayer::class.java
-        )
-
-        handle.supplyWithCustomGson(Serializers.gson)
+        handle = DataStoreObjectControllerCache.create()
+        handle.provideCustomSerializer(Serializers.gson)
 
         Events.subscribe(
             AsyncPlayerPreLoginEvent::class.java,
             EventPriority.LOWEST
         ).handler { event ->
-            handle.fetchEntryByKey(
-                event.uniqueId.toString()
-            ).whenComplete { it, throwable ->
-                throwable?.printStackTrace()
-                players[event.uniqueId] = it ?: CgsGamePlayer(event.uniqueId)
-            }
+            handle.loadAndCache(
+                event.uniqueId,
+                {
+                    CgsGamePlayer(event.uniqueId)
+                },
+                DataStoreStorageType.MONGO
+            )
         }
 
         if (isGameServer())

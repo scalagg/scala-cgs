@@ -4,6 +4,8 @@ import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.common.Savable
 import gg.scala.lemon.util.CubedCacheUtil
+import gg.scala.store.storage.storable.IDataStoreObject
+import gg.scala.store.storage.type.DataStoreStorageType
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -15,8 +17,11 @@ class CgsGamePlayer(
     @JvmField
     @Transient
     val uniqueId: UUID
-) : Savable
+) : Savable, IDataStoreObject
 {
+    override val identifier: UUID
+        get() = uniqueId
+
     var lastPlayedGameId: UUID? = null
     var lastPlayedGameDisconnectionTimestamp: Long? = null
 
@@ -32,6 +37,7 @@ class CgsGamePlayer(
 
     override fun save(): CompletableFuture<Void>
     {
-        return CgsPlayerHandler.handle.saveEntry(uniqueId.toString(), this)
+        return CgsPlayerHandler.handle
+            .save(this, DataStoreStorageType.MONGO)
     }
 }

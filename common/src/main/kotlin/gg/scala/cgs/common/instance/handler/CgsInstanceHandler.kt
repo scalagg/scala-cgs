@@ -1,11 +1,14 @@
 package gg.scala.cgs.common.instance.handler
 
-import com.solexgames.datastore.commons.layer.impl.RedisStorageLayer
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.instance.CgsServerInstance
 import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.instance.game.CgsGameServerInfo
 import gg.scala.lemon.Lemon
+import gg.scala.store.controller.DataStoreObjectController
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.type.DataStoreStorageType
+import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
 import kotlin.properties.Delegates
@@ -17,7 +20,7 @@ import kotlin.properties.Delegates
 object CgsInstanceHandler
 {
     var current by Delegates.notNull<CgsServerInstance>()
-    var service by Delegates.notNull<RedisStorageLayer<CgsServerInstance>>()
+    var service by Delegates.notNull<DataStoreObjectController<CgsServerInstance>>()
 
     fun initialLoad(type: CgsServerType)
     {
@@ -34,10 +37,8 @@ object CgsInstanceHandler
             )
         }
 
-        service = RedisStorageLayer(
-            Lemon.instance.redisConnection,
-            "cgs:servers", CgsServerInstance::class.java
-        )
+        service = DataStoreObjectControllerCache.create()
+        service.provideCustomSerializer(Serializers.gson)
 
         Tasks.asyncTimer(0L, 55L) {
             if (current.gameServerInfo != null)
@@ -47,7 +48,7 @@ object CgsInstanceHandler
 
             current.online = Bukkit.getOnlinePlayers().size
 
-            service.saveEntry(current.internalServerId, current)
+            service.save(current, DataStoreStorageType.REDIS)
         }
     }
 }
