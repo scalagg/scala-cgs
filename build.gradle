@@ -49,7 +49,7 @@ subprojects {
     dependencies {
         compileOnly "org.jetbrains.kotlin:kotlin-stdlib"
 
-        compileOnly "gg.scala.lemon:bukkit:1.0.0"
+        compileOnly "gg.scala.lemon:bukkit:1.1.0"
         compileOnly "gg.scala:sspigot-server:1.0-SNAPSHOT"
 
         compileOnly fileTree("library")
