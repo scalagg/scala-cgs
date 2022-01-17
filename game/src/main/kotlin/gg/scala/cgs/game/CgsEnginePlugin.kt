@@ -16,6 +16,8 @@ import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.handler.RedisHandler.buildMessage
+import me.lucko.helper.plugin.ap.Plugin
+import me.lucko.helper.plugin.ap.PluginDependency
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
@@ -25,6 +27,15 @@ import kotlin.properties.Delegates
  * @author GrowlyX
  * @since 11/30/2021
  */
+@Plugin(
+    name = "CGS-Engine",
+    description = "CGS Game Engine",
+    depends = [
+        PluginDependency("Cubed"),
+        PluginDependency("helper"),
+        PluginDependency("Lemon")
+    ]
+)
 class CgsEnginePlugin : ExtendedScalaPlugin()
 {
     companion object
@@ -114,7 +125,7 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
             Lemon.instance.banana
         )
 
-        CgsInstanceHandler.service.runCommand {
+        Lemon.instance.banana.useResource {
            it.hdel("cgs:servers", Lemon.instance.settings.id)
         }
 

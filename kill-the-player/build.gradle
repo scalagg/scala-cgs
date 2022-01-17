@@ -1,5 +1,0 @@
-dependencies {
-    compileOnly project(":common")
-    compileOnly project(":parties")
-    compileOnly project(":game")
-}

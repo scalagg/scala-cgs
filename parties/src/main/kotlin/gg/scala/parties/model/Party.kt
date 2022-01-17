@@ -3,8 +3,10 @@ package gg.scala.parties.model
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.parties.service.PartyService
+import gg.scala.parties.stream.PartyMessageStream
 import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
+import net.evilblock.cubed.util.bukkit.FancyMessage
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -22,6 +24,11 @@ data class Party(
 
     val members = mutableMapOf<UUID, PartyMember>()
     val settings = mutableMapOf<PartySetting, Boolean>()
+
+    fun sendMessage(message: FancyMessage)
+    {
+        PartyMessageStream.pushToStream(this, message)
+    }
 
     fun saveAndUpdateParty(): CompletableFuture<Void>
     {

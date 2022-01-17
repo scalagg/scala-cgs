@@ -3,6 +3,7 @@ package gg.scala.parties.channel
 import gg.scala.lemon.player.channel.Channel
 import gg.scala.lemon.player.rank.Rank
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.Constants
 import org.bukkit.entity.Player
 
 /**
@@ -22,7 +23,12 @@ object PartyChannel : Channel
         rank: Rank, receiver: Player
     ): String
     {
-        return "${CC.GREEN}[P] ${CC.GRAY}[$sender]: ${CC.WHITE}$message"
+        return "${CC.B_GREEN}Party ${CC.GRAY}${Constants.DOUBLE_ARROW_RIGHT} $sender${CC.WHITE}: $message"
+    }
+
+    override fun hasPermission(t: Player): Boolean
+    {
+        TODO("add sender parameter to lemon project")
     }
 
     @Deprecated(
