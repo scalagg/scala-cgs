@@ -10,6 +10,7 @@ import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.statistics.CgsStatisticProvider
 import gg.scala.cgs.common.statistics.CgsStatisticService
+import gg.scala.cgs.lobby.command.CgsCommandService
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEngine
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.cgs.lobby.modular.CgsLobbyModule
@@ -17,14 +18,11 @@ import gg.scala.cgs.lobby.modular.CgsLobbyModuleItems
 import gg.scala.cgs.lobby.updater.CgsGameInfoUpdater
 import gg.scala.flavor.Flavor
 import gg.scala.tangerine.TangerineSpigotPlugin
-import me.lucko.helper.Events
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.scoreboard.ScoreboardAdapter
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
-import org.bukkit.event.player.PlayerJoinEvent
 import kotlin.properties.Delegates
-import kotlin.reflect.KClass
 
 /**
  * @author GrowlyX
@@ -59,14 +57,15 @@ abstract class CgsGameLobby<S : GameSpecificStatistics> : CgsStatisticProvider<S
         CgsPlayerHandler.configure()
 
         TangerineSpigotPlugin.instance.hubModule = CgsLobbyModule
-
-        CgsLobbyModuleItems.initialLoad()
         CgsGameInfoUpdater.start()
-        CgsLobbyRankingEngine.initialLoad()
 
         val flavor = Flavor.create<CgsGameLobby<S>>()
         flavor.bind<CgsStatisticProvider<S>>() to this
         flavor.injected<CgsStatisticService<S>>().configure()
+
+        flavor.inject(CgsLobbyModuleItems)
+        flavor.inject(CgsLobbyRankingEngine)
+        flavor.inject(CgsCommandService)
     }
 
     private val type = this::class.getType()

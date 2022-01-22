@@ -1,4 +1,4 @@
-package gg.scala.cgs.lobby.command
+package gg.scala.cgs.lobby.command.commands
 
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingHologram

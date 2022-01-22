@@ -3,6 +3,9 @@ package gg.scala.cgs.lobby.modular
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 import gg.scala.cgs.lobby.modular.menu.CgsGameJoinMenu
 import gg.scala.cgs.lobby.modular.menu.CgsGameSpectateMenu
+import gg.scala.flavor.inject.Inject
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
 import gg.scala.tangerine.items.ConfigurableItemHandler
 import gg.scala.tangerine.module.impl.HubModuleItemAdapter
 import me.lucko.helper.Events
@@ -18,6 +21,7 @@ import org.bukkit.inventory.ItemStack
  * @author GrowlyX
  * @since 12/4/2021
  */
+@Service
 object CgsLobbyModuleItems : HubModuleItemAdapter
 {
     private val spectateItem = ItemBuilder(Material.WATCH)
@@ -27,11 +31,14 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
         )
         .glow().build()
 
+    @Inject
+    lateinit var engine: CgsGameLobby<*>
+
     // We need to wait for CgsGameLobby.INSTANCE to initialize
     private val joinGameItem by lazy {
         ItemBuilder(Material.NETHER_STAR)
             .name("${CC.B_PRI}Play ${
-                CgsGameLobby.INSTANCE.getGameInfo().fancyNameRender
+                engine.getGameInfo().fancyNameRender
             }")
             .addToLore(
                 "${CC.GRAY}Join a new game."
@@ -39,7 +46,8 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
             .glow().build()
     }
 
-    fun initialLoad()
+    @Configure
+    fun configure()
     {
         Events.subscribe(PlayerJoinEvent::class.java).handler {
             ConfigurableItemHandler.items.forEach { (index, itemStack) ->
