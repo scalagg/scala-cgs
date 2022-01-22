@@ -20,7 +20,7 @@ import java.util.*
  */
 object PartyMessageStream : BananaHandler
 {
-    val banana = BananaBuilder()
+    private val banana = BananaBuilder()
         .options(
             BananaOptions(
                 channel = "party:message_stream",

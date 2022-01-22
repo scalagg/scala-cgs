@@ -2,7 +2,7 @@ package gg.scala.cgs.lobby.updater
 
 import gg.scala.cgs.common.instance.CgsServerInstance
 import gg.scala.cgs.common.instance.CgsServerType
-import gg.scala.cgs.common.instance.handler.CgsInstanceHandler
+import gg.scala.cgs.common.instance.handler.CgsInstanceService
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 
 /**
@@ -25,7 +25,7 @@ object CgsGameInfoUpdater : Thread("CGS - Instance Info Updater")
         {
             val engine = CgsGameLobby.INSTANCE
 
-            val instances = CgsInstanceHandler.service
+            val instances = CgsInstanceService.service
                 .fetchAllEntriesSync()
 
             lobbies.clear()

@@ -2,9 +2,13 @@ package gg.scala.cgs.common.player.handler
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.instance.CgsServerType
-import gg.scala.cgs.common.instance.handler.CgsInstanceHandler
+import gg.scala.cgs.common.instance.handler.CgsInstanceService
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.cgs.common.states.CgsGameState
+import gg.scala.flavor.inject.Inject
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
+import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -24,10 +28,15 @@ import java.util.concurrent.TimeUnit
  * @author GrowlyX
  * @since 11/30/2021
  */
+@Service
+@IgnoreAutoScan
 object CgsPlayerHandler
 {
     @JvmStatic
     val RE_LOG_DELTA = TimeUnit.MINUTES.toMillis(2L)
+
+    @Inject
+    lateinit var engine: CgsGameEngine<*>
 
     lateinit var handle: DataStoreObjectController<CgsGamePlayer>
 
@@ -37,7 +46,8 @@ object CgsPlayerHandler
     fun find(uniqueId: UUID): CgsGamePlayer? = players[uniqueId]
     fun find(player: Player): CgsGamePlayer? = players[player.uniqueId]
 
-    fun initialLoad()
+    @Configure
+    fun configure()
     {
         handle = DataStoreObjectControllerCache.create()
         handle.provideCustomSerializer(Serializers.gson)
@@ -72,11 +82,11 @@ object CgsPlayerHandler
 
                 // Checking if the last played game is this current game instance.
                 // If this is true, we will call the reconnect event for bukkit to handle.
-                if (cgsGamePlayer.lastPlayedGameId == CgsGameEngine.INSTANCE.uniqueId)
+                if (cgsGamePlayer.lastPlayedGameId == engine.uniqueId)
                 {
                     // Only allowing players to go through the reconnection
                     // logic if the game is still in progress.
-                    if (CgsGameEngine.INSTANCE.gameState != CgsGameState.STARTED)
+                    if (engine.gameState != CgsGameState.STARTED)
                         return@handler
 
                     val logoutTimestamp = cgsGamePlayer
@@ -110,7 +120,7 @@ object CgsPlayerHandler
 
                 cgsParticipantDisconnect.callNow()
 
-                it.player.removeMetadata("spectator", CgsGameEngine.INSTANCE.plugin)
+                it.player.removeMetadata("spectator", engine.plugin)
             }
         }
 
@@ -122,5 +132,5 @@ object CgsPlayerHandler
         }
     }
 
-    private fun isGameServer() = CgsInstanceHandler.current.type == CgsServerType.GAME_SERVER
+    private fun isGameServer() = CgsInstanceService.current.type == CgsServerType.GAME_SERVER
 }

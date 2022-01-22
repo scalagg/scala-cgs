@@ -2,10 +2,10 @@ package gg.scala.cgs.game.locator
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.game.CgsEnginePlugin
+import gg.scala.flavor.inject.Inject
 import me.lucko.helper.Schedulers
 import me.lucko.helper.scheduler.Task
 import org.bukkit.Bukkit
-import org.bukkit.scheduler.BukkitRunnable
 
 /**
  * @author GrowlyX
@@ -13,14 +13,17 @@ import org.bukkit.scheduler.BukkitRunnable
  */
 object CgsInstanceLocator : Runnable
 {
-    var found = false
+    @Inject
+    lateinit var plugin: CgsEnginePlugin
+
+    private var found = false
 
     private var attempts = -1
     private var lambda = {}
 
     private lateinit var task: Task
 
-    fun initialLoad(lambda: () -> Unit)
+    fun configure(lambda: () -> Unit)
     {
         task = Schedulers.sync().runRepeating(
             this, 0L, 20L
@@ -53,7 +56,7 @@ object CgsInstanceLocator : Runnable
                 """.trimIndent()
             )
 
-            CgsEnginePlugin.INSTANCE.logger.info(
+            plugin.logger.info(
                 "CGS found an implementation, now booting into the WAITING state..."
             )
 
@@ -67,7 +70,7 @@ object CgsInstanceLocator : Runnable
 
             if (attempts >= 5)
             {
-                CgsEnginePlugin.INSTANCE.logger.severe(
+                plugin.logger.severe(
                     "*** IMPLEMENTATION WAS NOT FOUND, SHUTTING DOWN ***"
                 )
 
@@ -75,7 +78,7 @@ object CgsInstanceLocator : Runnable
                 return
             }
 
-            CgsEnginePlugin.INSTANCE.logger.warning(
+            plugin.logger.warning(
                 "Waiting for implementation to be located..."
             )
         }

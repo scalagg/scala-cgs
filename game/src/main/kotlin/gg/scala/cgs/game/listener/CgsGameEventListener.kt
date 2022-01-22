@@ -7,9 +7,9 @@ import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.player.handler.CgsSpectatorHandler
 import gg.scala.cgs.common.refresh
 import gg.scala.cgs.common.respawnPlayer
-import gg.scala.cgs.common.runnable.StateRunnableRegistrar
+import gg.scala.cgs.common.runnable.StateRunnableService
 import gg.scala.cgs.common.states.CgsGameState
-import gg.scala.cgs.common.teams.CgsGameTeamEngine
+import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.lemon.disguise.update.event.PreDisguiseEvent
 import gg.scala.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.nametag.NametagHandler
@@ -50,10 +50,10 @@ object CgsGameEventListener : Listener
         {
             val participantSize = Bukkit.getOnlinePlayers().size
 
-            if (!CgsGameTeamEngine.allocatePlayersToAvailableTeam(cgsGamePlayer))
+            if (!CgsGameTeamService.allocatePlayersToAvailableTeam(cgsGamePlayer))
             {
                 if (
-                    !CgsGameTeamEngine.allocatePlayersToAvailableTeam(
+                    !CgsGameTeamService.allocatePlayersToAvailableTeam(
                         cgsGamePlayer, forceRandom = true
                     )
                 )
@@ -113,7 +113,7 @@ object CgsGameEventListener : Listener
         if (event.connectedWithinTimeframe)
         {
             // The CGS game team should never be null.
-            val cgsGameTeam = CgsGameTeamEngine.getTeamOf(event.participant)!!
+            val cgsGameTeam = CgsGameTeamService.getTeamOf(event.participant)!!
             cgsGameTeam.eliminated.remove(event.participant.uniqueId)
 
             val cgsParticipantReinstate = CgsGameEngine
@@ -147,7 +147,7 @@ object CgsGameEventListener : Listener
     {
         if (engine.gameState == CgsGameState.WAITING || engine.gameState == CgsGameState.STARTING)
         {
-            CgsGameTeamEngine.removePlayerFromTeam(event.participant)
+            CgsGameTeamService.removePlayerFromTeam(event.participant)
 
             engine.sendMessage(
                 "${event.participant.name}${CC.SEC} has left ${CC.AQUA}(${
@@ -256,7 +256,7 @@ object CgsGameEventListener : Listener
             NametagHandler.reloadPlayer(it)
         }
 
-        StateRunnableRegistrar
+        StateRunnableService
             .startRunningAsync(CgsGameState.STARTED)
     }
 
@@ -280,7 +280,7 @@ object CgsGameEventListener : Listener
         event: CgsGameEngine.CgsGamePreStartEvent
     )
     {
-        StateRunnableRegistrar
+        StateRunnableService
             .startRunningAsync(CgsGameState.STARTING)
     }
 
@@ -289,7 +289,7 @@ object CgsGameEventListener : Listener
         event: CgsGameEngine.CgsGameEndEvent
     )
     {
-        StateRunnableRegistrar
+        StateRunnableService
             .startRunningAsync(CgsGameState.ENDED)
     }
 
@@ -315,7 +315,7 @@ object CgsGameEventListener : Listener
 
         if (entity is Player && damagedBy is Player)
         {
-            val cgsGameTeam = CgsGameTeamEngine
+            val cgsGameTeam = CgsGameTeamService
                 .getTeamOf(damagedBy)!!
 
             if (cgsGameTeam.participants.contains(entity.uniqueId))

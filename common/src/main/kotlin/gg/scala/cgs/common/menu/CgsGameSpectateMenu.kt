@@ -1,6 +1,6 @@
 package gg.scala.cgs.common.menu
 
-import gg.scala.cgs.common.teams.CgsGameTeamEngine
+import gg.scala.cgs.common.teams.CgsGameTeamService
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
@@ -21,7 +21,7 @@ class CgsGameSpectateMenu : PaginatedMenu()
     override fun getAllPagesButtons(player: Player): Map<Int, Button>
     {
         return mutableMapOf<Int, Button>().also { buttons ->
-            CgsGameTeamEngine.teams.values.forEach { team ->
+            CgsGameTeamService.teams.values.forEach { team ->
                 team.alive.mapNotNull {
                     Bukkit.getPlayer(it)
                 }.forEach {

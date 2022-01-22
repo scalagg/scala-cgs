@@ -1,41 +1,36 @@
 package gg.scala.cgs.common
 
-import gg.scala.cgs.common.enviornment.EditableFieldCaster
-import gg.scala.cgs.common.enviornment.editor.EnvironmentEditor
+import gg.scala.cgs.common.ClassReifiedParameterUtil.getType
+import gg.scala.cgs.common.enviornment.EditableFieldService
+import gg.scala.cgs.common.enviornment.editor.EnvironmentEditorService
+import gg.scala.cgs.common.frontend.CgsFrontendService
 import gg.scala.cgs.common.information.CgsGameGeneralInfo
 import gg.scala.cgs.common.information.arena.CgsGameArena
 import gg.scala.cgs.common.information.arena.CgsGameArenaHandler
 import gg.scala.cgs.common.information.mode.CgsGameMode
 import gg.scala.cgs.common.player.CgsGamePlayer
-import gg.scala.cgs.common.player.channel.CgsOverridingSpectatorChannel
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
-import gg.scala.cgs.common.player.nametag.CgsGameNametag
 import gg.scala.cgs.common.player.nametag.CgsGameNametagAdapter
-import gg.scala.cgs.common.player.scoreboard.CgsGameScoreboardProvider
 import gg.scala.cgs.common.player.scoreboard.CgsGameScoreboardRenderer
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
-import gg.scala.cgs.common.player.visibility.CgsGameVisibility
 import gg.scala.cgs.common.player.visibility.CgsGameVisibilityAdapter
-import gg.scala.cgs.common.runnable.StateRunnableRegistrar
+import gg.scala.cgs.common.runnable.StateRunnableService
 import gg.scala.cgs.common.runnable.state.EndedStateRunnable
-import gg.scala.cgs.common.runnable.state.StartedStateRunnable
-import gg.scala.cgs.common.runnable.state.StartingStateRunnable
-import gg.scala.cgs.common.snapshot.CgsSnapshot
 import gg.scala.cgs.common.states.CgsGameState
+import gg.scala.cgs.common.statistics.CgsStatisticProvider
+import gg.scala.cgs.common.statistics.CgsStatisticService
 import gg.scala.cgs.common.teams.CgsGameTeam
-import gg.scala.cgs.common.teams.CgsGameTeamEngine
+import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.commons.ExtendedScalaPlugin
+import gg.scala.flavor.Flavor
+import gg.scala.flavor.FlavorOptions
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.handler.ChatHandler
 import me.lucko.helper.Events
-import net.evilblock.cubed.nametag.NametagHandler
-import net.evilblock.cubed.scoreboard.ScoreboardHandler
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
-import net.evilblock.cubed.visibility.VisibilityHandler
 import net.kyori.adventure.platform.bukkit.BukkitAudiences
 import net.kyori.adventure.title.Title
 import org.bukkit.Bukkit
@@ -47,12 +42,11 @@ import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
-import org.bukkit.event.player.PlayerJoinEvent
 import java.util.*
 import java.util.concurrent.CompletableFuture
+import java.util.logging.Logger
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 /**
@@ -63,7 +57,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     val plugin: ExtendedScalaPlugin,
     val gameInfo: CgsGameGeneralInfo,
     val gameMode: CgsGameMode
-)
+) : CgsStatisticProvider<S>
 {
     companion object
     {
@@ -71,7 +65,6 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         var INSTANCE by Delegates.notNull<CgsGameEngine<*>>()
     }
 
-    lateinit var statisticType: KClass<*>
     lateinit var gameArena: CgsGameArena
 
     val uniqueId: UUID = UUID.randomUUID()
@@ -82,10 +75,9 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     val audience = BukkitAudiences.create(plugin)
 
-    inline fun <reified T : GameSpecificStatistics> withStatistics()
-    {
-        statisticType = T::class
-    }
+    val flavor = Flavor.create<CgsGameEngine<*>>(
+        FlavorOptions(Logger.getLogger("CgsGameEngine"))
+    )
 
     fun initialLoad()
     {
@@ -95,6 +87,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     fun initialResourceLoad()
     {
+        flavor.bind<CgsGameEngine<S>>() to this
+
         plugin.invokeTrackedTask("initial loading CGS resources") {
             Serializers.useGsonBuilderThenRebuild {
                 it.registerTypeAdapter(
@@ -103,60 +97,27 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
                 )
             }
 
-            StateRunnableRegistrar.registerOrOverride(
-                CgsGameState.STARTING, StartingStateRunnable
-            )
+            flavor.inject(StateRunnableService)
 
-            StateRunnableRegistrar.registerOrOverride(
-                CgsGameState.STARTED, StartedStateRunnable
-            )
+            flavor.inject(CgsPlayerHandler)
+            flavor.inject(CgsGameTeamService)
 
-            StateRunnableRegistrar.registerOrOverride(
-                CgsGameState.ENDED, EndedStateRunnable
-            )
+            flavor.inject(CgsFrontendService)
+            flavor.inject(EnvironmentEditorService)
 
-            ScoreboardHandler.configure(
-                CgsGameScoreboardProvider(this)
-            )
-
-            CgsPlayerHandler.initialLoad()
-            CgsGameTeamEngine.initialLoad()
-
-            ChatHandler.registerChannelOverride(
-                CgsOverridingSpectatorChannel
-            )
-
-            VisibilityHandler.registerAdapter(
-                "cgs", CgsGameVisibility
-            )
-
-            NametagHandler.registerProvider(
-                CgsGameNametag
-            )
-
-            EnvironmentEditor.registerAllEditables(StartingStateRunnable)
-            EnvironmentEditor.registerAllEditables(EndedStateRunnable)
-
-            EditableFieldCaster.initialLoad()
+            flavor.inject(EditableFieldService)
 
             Events.subscribe(AsyncPlayerPreLoginEvent::class.java).handler {
                 if (!EndedStateRunnable.ALLOWED_TO_JOIN)
                 {
-                    it.disallow(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST, "${CC.RED}This server is currently whitelisted.")
+                    it.disallow(
+                        AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST,
+                        "${CC.RED}This server is currently whitelisted."
+                    )
                 }
             }
 
-            Events.subscribe(PlayerJoinEvent::class.java).handler {
-                CgsPlayerHandler.find(it.player)?.let { player ->
-                    try
-                    {
-                        getStatistics(player)
-                    } catch (ignored: Exception)
-                    {
-                        player.gameSpecificStatistics[statisticType.java.simpleName] = statisticType.java.newInstance() as S
-                    }
-                }
-            }
+            flavor.injected<CgsStatisticService<S>>().configure()
 
             Lemon.instance.localInstance
                 .metaData["game-server"] = "true"
@@ -166,15 +127,9 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun getStatistics(cgsGamePlayer: CgsGamePlayer): S
-    {
-        return cgsGamePlayer.gameSpecificStatistics[statisticType.simpleName]!! as S
-    }
-
     fun sendMessage(message: String)
     {
-        for (team in CgsGameTeamEngine.teams.values)
+        for (team in CgsGameTeamService.teams.values)
         {
             team.participants.forEach { uuid ->
                 val bukkitPlayer = Bukkit.getPlayer(uuid)
@@ -195,7 +150,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     fun sendTitle(title: Title)
     {
-        for (team in CgsGameTeamEngine.teams.values)
+        for (team in CgsGameTeamService.teams.values)
         {
             team.participants.forEach { uuid ->
                 val bukkitPlayer = Bukkit.getPlayer(uuid)
@@ -220,7 +175,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     fun playSound(sound: Sound)
     {
-        for (team in CgsGameTeamEngine.teams.values)
+        for (team in CgsGameTeamService.teams.values)
         {
             team.participants.forEach { uuid ->
                 val bukkitPlayer = Bukkit.getPlayer(uuid)
@@ -245,7 +200,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     fun sendMessage(fancyMessage: FancyMessage)
     {
-        for (team in CgsGameTeamEngine.teams.values)
+        for (team in CgsGameTeamService.teams.values)
         {
             team.participants.forEach { uuid ->
                 val bukkitPlayer = Bukkit.getPlayer(uuid)
@@ -264,17 +219,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         }
     }
 
-    /**
-     * The method which is called in addition to the [onTick]
-     * method within the [StateRunnable] instance.
-     */
-    @Deprecated(
-        message = "Replaced with State machines",
-        level = DeprecationLevel.ERROR
-    )
-    open fun onTick(state: CgsGameState, tickOfState: Int): Boolean
+    private val type = this::class.getType()
+
+    override fun getStatistics(cgsGamePlayer: CgsGamePlayer): S
     {
-        return true
+        return cgsGamePlayer.gameSpecificStatistics[type.java.simpleName]!! as S
     }
 
     lateinit var winningTeam: CgsGameTeam
@@ -316,7 +265,6 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     abstract fun getVisibilityAdapter(): CgsGameVisibilityAdapter
     abstract fun getNametagAdapter(): CgsGameNametagAdapter
-    abstract fun getSnapshotCreator(): CgsSnapshot
 
     abstract fun getExtraWinInformation(): List<String>
 
@@ -359,7 +307,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     abstract class CgsGameEvent : Event(), Cancellable
     {
-        companion object {
+        companion object
+        {
             @JvmStatic
             val handlerList = HandlerList()
         }

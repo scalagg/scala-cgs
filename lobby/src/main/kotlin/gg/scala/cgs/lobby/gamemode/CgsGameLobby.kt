@@ -1,19 +1,21 @@
 package gg.scala.cgs.lobby.gamemode
 
+import gg.scala.cgs.common.ClassReifiedParameterUtil.getType
 import gg.scala.cgs.common.information.CgsGameGeneralInfo
 import gg.scala.cgs.common.instance.CgsServerInstance
 import gg.scala.cgs.common.instance.CgsServerType
-import gg.scala.cgs.common.instance.game.CgsGameServerInfo
-import gg.scala.cgs.common.instance.handler.CgsInstanceHandler
+import gg.scala.cgs.common.instance.handler.CgsInstanceService
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
+import gg.scala.cgs.common.statistics.CgsStatisticProvider
+import gg.scala.cgs.common.statistics.CgsStatisticService
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEngine
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
-import gg.scala.cgs.lobby.locator.CgsInstanceLocator
 import gg.scala.cgs.lobby.modular.CgsLobbyModule
 import gg.scala.cgs.lobby.modular.CgsLobbyModuleItems
 import gg.scala.cgs.lobby.updater.CgsGameInfoUpdater
+import gg.scala.flavor.Flavor
 import gg.scala.tangerine.TangerineSpigotPlugin
 import me.lucko.helper.Events
 import net.evilblock.cubed.menu.Button
@@ -28,7 +30,7 @@ import kotlin.reflect.KClass
  * @author GrowlyX
  * @since 12/4/2021
  */
-abstract class CgsGameLobby<S : GameSpecificStatistics>
+abstract class CgsGameLobby<S : GameSpecificStatistics> : CgsStatisticProvider<S>
 {
     companion object
     {
@@ -44,8 +46,6 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>
     abstract fun getGameModeButtons(): Map<Int, Button>
     abstract fun getFormattedButton(info: CgsServerInstance): Button
 
-    var statisticType by Delegates.notNull<KClass<S>>()
-
     fun initialResourceLoad()
     {
         Serializers.useGsonBuilderThenRebuild {
@@ -55,8 +55,8 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>
             )
         }
 
-        CgsInstanceHandler.initialLoad(CgsServerType.LOBBY)
-        CgsPlayerHandler.initialLoad()
+        CgsInstanceService.configure(CgsServerType.LOBBY)
+        CgsPlayerHandler.configure()
 
         TangerineSpigotPlugin.instance.hubModule = CgsLobbyModule
 
@@ -64,22 +64,15 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>
         CgsGameInfoUpdater.start()
         CgsLobbyRankingEngine.initialLoad()
 
-        Events.subscribe(PlayerJoinEvent::class.java).handler {
-            CgsPlayerHandler.find(it.player)?.let { player ->
-                try
-                {
-                    getStatistics(player)
-                } catch (ignored: Exception)
-                {
-                    player.gameSpecificStatistics[statisticType.java.simpleName] = statisticType.java.newInstance() as S
-                }
-            }
-        }
+        val flavor = Flavor.create<CgsGameLobby<S>>()
+        flavor.bind<CgsStatisticProvider<S>>() to this
+        flavor.injected<CgsStatisticService<S>>().configure()
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun getStatistics(cgsGamePlayer: CgsGamePlayer): S
+    private val type = this::class.getType()
+
+    override fun getStatistics(cgsGamePlayer: CgsGamePlayer): S
     {
-        return cgsGamePlayer.gameSpecificStatistics[statisticType.java.simpleName]!! as S
+        return cgsGamePlayer.gameSpecificStatistics[type.java.simpleName]!! as S
     }
 }

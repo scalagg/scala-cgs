@@ -15,5 +15,4 @@ class CgsGameTeam(
 
     val alive: List<UUID>
         get() = participants.filter { !eliminated.contains(it) }
-
 }
