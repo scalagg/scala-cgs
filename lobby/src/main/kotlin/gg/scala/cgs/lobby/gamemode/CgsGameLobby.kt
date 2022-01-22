@@ -70,7 +70,10 @@ abstract class CgsGameLobby<S : GameSpecificStatistics> : CgsStatisticProvider<S
 
         CloudSyncDiscoveryService
             .discoverable.assets
-            .add("gg.scala.cgs:lobby:cgs-lobby")
+            .apply {
+                add("gg.scala.cgs:lobby:cgs-lobby")
+                add("gg.scala.cgs:parties:cgs-parties")
+            }
     }
 
     private val type = this::class.getType()

@@ -55,7 +55,10 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
 
         CloudSyncDiscoveryService
             .discoverable.assets
-            .add("gg.scala.cgs:game:cgs-game")
+            .apply {
+                add("gg.scala.cgs:game:cgs-game")
+                add("gg.scala.cgs:parties:cgs-parties")
+            }
     }
 
     override fun disable()
