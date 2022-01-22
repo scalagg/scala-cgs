@@ -20,7 +20,7 @@ object PartyService
 
     private val loadedParties = mutableMapOf<UUID, Party>()
 
-    fun initialLoad()
+    fun configure()
     {
         service = DataStoreObjectControllerCache.create()
         service.provideCustomSerializer(Serializers.gson)

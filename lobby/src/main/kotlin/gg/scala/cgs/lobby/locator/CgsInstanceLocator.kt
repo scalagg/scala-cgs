@@ -1,6 +1,5 @@
 package gg.scala.cgs.lobby.locator
 
-import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.lobby.CgsLobbyPlugin
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 import me.lucko.helper.Schedulers
@@ -20,7 +19,7 @@ object CgsInstanceLocator : Runnable
 
     private lateinit var task: Task
 
-    fun initialLoad(lambda: () -> Unit)
+    fun configure(lambda: () -> Unit)
     {
         task = Schedulers.sync().runRepeating(
             this, 0L, 20L

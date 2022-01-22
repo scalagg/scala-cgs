@@ -16,6 +16,7 @@ import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.cgs.lobby.modular.CgsLobbyModule
 import gg.scala.cgs.lobby.modular.CgsLobbyModuleItems
 import gg.scala.cgs.lobby.updater.CgsGameInfoUpdater
+import gg.scala.cloudsync.discovery.CloudSyncDiscoveryService
 import gg.scala.flavor.Flavor
 import gg.scala.tangerine.TangerineSpigotPlugin
 import net.evilblock.cubed.menu.Button
@@ -66,6 +67,10 @@ abstract class CgsGameLobby<S : GameSpecificStatistics> : CgsStatisticProvider<S
         flavor.inject(CgsLobbyModuleItems)
         flavor.inject(CgsLobbyRankingEngine)
         flavor.inject(CgsCommandService)
+
+        CloudSyncDiscoveryService
+            .discoverable.assets
+            .add("gg.scala.cgs:lobby:cgs-lobby")
     }
 
     private val type = this::class.getType()

@@ -32,7 +32,7 @@ class CgsLobbyPlugin : ExtendedScalaPlugin()
     {
         INSTANCE = this
 
-        CgsInstanceLocator.initialLoad {
+        CgsInstanceLocator.configure {
             invokeTrackedTask("lobby loading") {
                 CgsGameLobby.INSTANCE.initialResourceLoad()
             }

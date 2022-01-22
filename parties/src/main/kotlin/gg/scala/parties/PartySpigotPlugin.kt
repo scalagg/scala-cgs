@@ -1,5 +1,6 @@
 package gg.scala.parties
 
+import gg.scala.cloudsync.discovery.CloudSyncDiscoveryService
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.parties.service.PartyService
 import me.lucko.helper.plugin.ap.Plugin
@@ -22,7 +23,11 @@ class PartySpigotPlugin : ExtendedScalaPlugin()
     override fun enable()
     {
         invokeTrackedTask("party resources") {
-            PartyService.initialLoad()
+            PartyService.configure()
         }
+
+        CloudSyncDiscoveryService
+            .discoverable.assets
+            .add("gg.scala.cgs:parties:cgs-parties")
     }
 }

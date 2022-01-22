@@ -4,6 +4,7 @@ import gg.scala.cgs.common.information.arena.CgsGameArenaHandler
 import gg.scala.cgs.game.command.CgsCommandService
 import gg.scala.cgs.game.engine.CgsEngineConfigurationService
 import gg.scala.cgs.game.locator.CgsInstanceLocator
+import gg.scala.cloudsync.discovery.CloudSyncDiscoveryService
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.flavor.Flavor
 import gg.scala.flavor.FlavorOptions
@@ -51,6 +52,10 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
             flavor.inject(CgsCommandService)
             flavor.inject(CgsEngineConfigurationService)
         }
+
+        CloudSyncDiscoveryService
+            .discoverable.assets
+            .add("gg.scala.cgs:game:cgs-game")
     }
 
     override fun disable()
