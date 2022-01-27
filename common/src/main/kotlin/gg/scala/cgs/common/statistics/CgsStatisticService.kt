@@ -1,6 +1,5 @@
 package gg.scala.cgs.common.statistics
 
-import gg.scala.cgs.common.ClassReifiedParameterUtil.getType
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.flavor.inject.Inject
@@ -15,7 +14,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 class CgsStatisticService<S : GameSpecificStatistics>
 {
     @Inject
-    lateinit var engine: CgsStatisticProvider<S>
+    lateinit var provider: CgsStatisticProvider<S>
 
     @Configure
     fun configure()
@@ -24,12 +23,11 @@ class CgsStatisticService<S : GameSpecificStatistics>
             CgsPlayerHandler.find(it.player)?.let { player ->
                 try
                 {
-                    engine.getStatistics(player)
+                    provider.getStatistics(player)
                 } catch (ignored: Exception)
                 {
-                    val type = this::class.getType()
-
-                    player.gameSpecificStatistics[type.java.simpleName] = type.java.newInstance() as S
+                    player.gameSpecificStatistics[provider.statisticType.java.simpleName] =
+                        provider.statisticType.java.newInstance() as S
                 }
             }
         }

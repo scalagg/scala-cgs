@@ -1,6 +1,5 @@
 package gg.scala.cgs.lobby.gamemode
 
-import gg.scala.cgs.common.ClassReifiedParameterUtil.getType
 import gg.scala.cgs.common.information.CgsGameGeneralInfo
 import gg.scala.cgs.common.instance.CgsServerInstance
 import gg.scala.cgs.common.instance.CgsServerType
@@ -24,12 +23,15 @@ import net.evilblock.cubed.scoreboard.ScoreboardAdapter
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
 import kotlin.properties.Delegates
+import kotlin.reflect.KClass
 
 /**
  * @author GrowlyX
  * @since 12/4/2021
  */
-abstract class CgsGameLobby<S : GameSpecificStatistics> : CgsStatisticProvider<S>
+abstract class CgsGameLobby<S : GameSpecificStatistics>(
+    override val statisticType: KClass<S>
+) : CgsStatisticProvider<S>
 {
     companion object
     {
@@ -76,10 +78,8 @@ abstract class CgsGameLobby<S : GameSpecificStatistics> : CgsStatisticProvider<S
             }
     }
 
-    private val type = this::class.getType()
-
     override fun getStatistics(cgsGamePlayer: CgsGamePlayer): S
     {
-        return cgsGamePlayer.gameSpecificStatistics[type.java.simpleName]!! as S
+        return cgsGamePlayer.gameSpecificStatistics[statisticType.java.simpleName]!! as S
     }
 }

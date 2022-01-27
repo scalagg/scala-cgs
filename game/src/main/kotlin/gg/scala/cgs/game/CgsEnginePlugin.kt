@@ -20,7 +20,9 @@ import me.lucko.helper.plugin.ap.PluginDependency
     depends = [
         PluginDependency("Cubed"),
         PluginDependency("helper"),
-        PluginDependency("Lemon")
+        PluginDependency("Lemon"),
+        PluginDependency("Parties"),
+        PluginDependency("cloudsync")
     ]
 )
 class CgsEnginePlugin : ExtendedScalaPlugin()

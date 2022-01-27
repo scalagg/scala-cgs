@@ -17,7 +17,8 @@ import kotlin.properties.Delegates
         PluginDependency("Cubed"),
         PluginDependency("helper"),
         PluginDependency("Lemon"),
-        PluginDependency("Tangerine")
+        PluginDependency("Tangerine"),
+        PluginDependency("cloudsync")
     ]
 )
 class CgsLobbyPlugin : ExtendedScalaPlugin()

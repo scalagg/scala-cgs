@@ -13,6 +13,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 
@@ -140,25 +141,5 @@ fun respawnPlayer(event: PlayerDeathEvent)
             MinecraftReflection.getHandle(event.entity),
             0, false
         )
-    }
-}
-
-object ClassReifiedParameterUtil
-{
-    @JvmStatic
-    fun KClass<*>.getType(): KClass<*>
-    {
-        return getKTypes()[0]
-    }
-
-    @JvmStatic
-    fun KClass<*>.getKTypes(): List<KClass<*>>
-    {
-        return (this.java.genericSuperclass as ParameterizedType)
-            .actualTypeArguments
-            .map {
-                (it as Class<*>).kotlin
-            }
-            .toList()
     }
 }

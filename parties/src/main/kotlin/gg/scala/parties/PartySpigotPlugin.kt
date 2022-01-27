@@ -1,6 +1,6 @@
 package gg.scala.parties
 
-import gg.scala.cloudsync.discovery.CloudSyncDiscoveryService
+import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.parties.service.PartyService
 import me.lucko.helper.plugin.ap.Plugin
@@ -15,7 +15,9 @@ import me.lucko.helper.plugin.ap.PluginDependency
     depends = [
         PluginDependency("Cubed"),
         PluginDependency("helper"),
-        PluginDependency("Lemon")
+        PluginDependency("Lemon"),
+        PluginDependency("store-spigot"),
+        PluginDependency("cloudsync")
     ]
 )
 class PartySpigotPlugin : ExtendedScalaPlugin()

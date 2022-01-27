@@ -1,6 +1,5 @@
 package gg.scala.cgs.common
 
-import gg.scala.cgs.common.ClassReifiedParameterUtil.getType
 import gg.scala.cgs.common.enviornment.EditableFieldService
 import gg.scala.cgs.common.enviornment.editor.EnvironmentEditorService
 import gg.scala.cgs.common.frontend.CgsFrontendService
@@ -47,6 +46,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.logging.Logger
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 /**
@@ -56,7 +56,8 @@ import kotlin.reflect.KProperty
 abstract class CgsGameEngine<S : GameSpecificStatistics>(
     val plugin: ExtendedScalaPlugin,
     val gameInfo: CgsGameGeneralInfo,
-    val gameMode: CgsGameMode
+    val gameMode: CgsGameMode,
+    override val statisticType: KClass<S>
 ) : CgsStatisticProvider<S>
 {
     companion object
@@ -117,6 +118,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
                 }
             }
 
+            flavor.bind<CgsStatisticProvider<S>>() to this
             flavor.injected<CgsStatisticService<S>>().configure()
 
             Lemon.instance.localInstance
@@ -219,11 +221,9 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         }
     }
 
-    private val type = this::class.getType()
-
     override fun getStatistics(cgsGamePlayer: CgsGamePlayer): S
     {
-        return cgsGamePlayer.gameSpecificStatistics[type.java.simpleName]!! as S
+        return cgsGamePlayer.gameSpecificStatistics[statisticType.java.simpleName]!! as S
     }
 
     lateinit var winningTeam: CgsGameTeam
