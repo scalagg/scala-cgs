@@ -230,24 +230,15 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     protected fun onStateChange(oldState: CgsGameState)
     {
-        var event: CgsGameEvent? = null
-
-        if (compare(oldState, CgsGameState.WAITING, CgsGameState.STARTING))
-        {
-            event = CgsGamePreStartEvent()
-        } else if (compare(oldState, CgsGameState.STARTING, CgsGameState.WAITING))
-        {
-            event = CgsGamePreStartCancelEvent()
-        } else if (compare(oldState, CgsGameState.STARTING, CgsGameState.STARTED))
-        {
-            event = CgsGameStartEvent()
-        } else if (compare(oldState, CgsGameState.STARTED, CgsGameState.ENDED))
-        {
-            event = CgsGameEndEvent()
+        var event: CgsGameEvent = when {
+            compare(oldState, CgsGameState.WAITING, CgsGameState.STARTING) -> CgsGamePreStartEvent()
+            compare(oldState, CgsGameState.STARTING, CgsGameState.WAITING) -> CgsGamePreStartCancelEvent()
+            compare(oldState, CgsGameState.STARTING, CgsGameState.STARTED) -> CgsGameStartEvent()
+            compare(oldState, CgsGameState.STARTED, CgsGameState.ENDED) -> event = CgsGameEndEvent()
         }
 
         Tasks.sync {
-            event?.callNow()
+            event.callNow()
         }
     }
 
