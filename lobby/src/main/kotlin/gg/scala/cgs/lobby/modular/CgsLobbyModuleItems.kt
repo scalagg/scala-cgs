@@ -4,7 +4,6 @@ import gg.scala.cgs.lobby.command.commands.RecentGamesCommand
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 import gg.scala.cgs.lobby.modular.menu.CgsGameJoinMenu
 import gg.scala.cgs.lobby.modular.menu.CgsGameSpectateMenu
-import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.tangerine.items.ConfigurableItemHandler
@@ -25,18 +24,15 @@ import org.bukkit.inventory.ItemStack
 @Service
 object CgsLobbyModuleItems : HubModuleItemAdapter
 {
-    @Inject
-    lateinit var engine: CgsGameLobby<*>
-
     private val spectateItem = ItemBuilder(Material.WATCH)
-        .name("${CC.B_PRI}Spectate Game")
+        .name("${CC.D_AQUA}Spectate Game ${CC.GRAY}(Right Click)")
         .addToLore(
             "${CC.GRAY}Spectate an ongoing game."
         )
         .glow().build()
 
     private val recentGamesItem = ItemBuilder(Material.REDSTONE_COMPARATOR)
-        .name("${CC.B_PRI}Recent Games")
+        .name("${CC.GREEN}Recent Games ${CC.GRAY}(Right Click)")
         .addToLore(
             "${CC.GRAY}View your recently played games."
         ).build()
@@ -44,9 +40,10 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
     // We need to wait for CgsGameLobby.INSTANCE to initialize
     private val joinGameItem by lazy {
         ItemBuilder(Material.NETHER_STAR)
-            .name("${CC.B_PRI}Play ${
-                engine.getGameInfo().fancyNameRender
-            }")
+            .name("${CC.GOLD}Play ${
+                CgsGameLobby.INSTANCE
+                    .getGameInfo().fancyNameRender
+            } ${CC.GRAY}(Right Click)")
             .addToLore(
                 "${CC.GRAY}Join a new game."
             )

@@ -2,7 +2,9 @@ package gg.scala.cgs.lobby.updater
 
 import gg.scala.cgs.common.instance.CgsServerInstance
 import gg.scala.cgs.common.instance.CgsServerType
+import gg.scala.cgs.common.instance.game.CgsGameServerInfo
 import gg.scala.cgs.common.instance.handler.CgsInstanceService
+import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 import gg.scala.store.storage.type.DataStoreStorageType
 
@@ -19,6 +21,17 @@ object CgsGameInfoUpdater : Thread("CGS - Instance Info Updater")
 
     var lobbyTotalCount = 0
     var playingTotalCount = 0
+
+    fun findAvailableServer(gameMode: String, gameType: String): CgsServerInstance?
+    {
+        return gameServers
+            .asSequence()
+            .filter { it.gameServerInfo != null }
+            .filter { it.gameServerInfo!!.gameType == gameType }
+            .filter { it.gameServerInfo!!.gameMode == gameMode }
+            .filter { it.gameServerInfo!!.state == CgsGameState.WAITING || it.gameServerInfo!!.state == CgsGameState.STARTING }
+            .firstOrNull()
+    }
 
     override fun run()
     {
@@ -48,12 +61,14 @@ object CgsGameInfoUpdater : Thread("CGS - Instance Info Updater")
             {
                 gameModeCounts[gameMode.getId()] = instances.values
                     .filter { it.type == CgsServerType.GAME_SERVER }
+                    .filter { it.gameServerInfo!!.gameType == CgsGameLobby.INSTANCE.getGameInfo().fancyNameRender }
                     .filter { it.gameServerInfo!!.gameMode == gameMode.getId() }
                     .sumOf { it.gameServerInfo!!.participants.size }
             }
 
             playingTotalCount = instances.values
                 .filter { it.type == CgsServerType.GAME_SERVER }
+                .filter { it.gameServerInfo!!.gameType == CgsGameLobby.INSTANCE.getGameInfo().fancyNameRender }
                 .sumOf { it.gameServerInfo!!.participants.size }
 
             playingTotalCount = instances.values
@@ -66,7 +81,7 @@ object CgsGameInfoUpdater : Thread("CGS - Instance Info Updater")
 
         try
         {
-            sleep(1000L)
+            sleep(500L)
         } catch (e: Exception)
         {
             e.printStackTrace()

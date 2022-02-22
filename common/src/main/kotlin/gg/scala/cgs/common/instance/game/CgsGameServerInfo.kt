@@ -12,7 +12,8 @@ import java.util.*
 class CgsGameServerInfo(
     val uniqueId: UUID,
     var arenaId: String,
-    var gameMode: String
+    var gameMode: String,
+    var gameType: String,
 )
 {
     var state = CgsGameState.WAITING
@@ -27,9 +28,12 @@ class CgsGameServerInfo(
             .filter { it.hasMetadata("spectator") }
             .map { it.uniqueId }.toMutableList()
 
+        maxPlayers = Bukkit.getMaxPlayers()
         state = CgsGameEngine.INSTANCE.gameState
     }
 
     var participants = mutableListOf<UUID>()
     var spectators = mutableListOf<UUID>()
+
+    var maxPlayers = 0
 }

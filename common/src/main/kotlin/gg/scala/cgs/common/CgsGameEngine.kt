@@ -16,6 +16,7 @@ import gg.scala.cgs.common.player.visibility.CgsGameVisibilityAdapter
 import gg.scala.cgs.common.runnable.StateRunnableService
 import gg.scala.cgs.common.runnable.state.EndedStateRunnable
 import gg.scala.cgs.common.snapshot.CgsGameSnapshot
+import gg.scala.cgs.common.snapshot.CgsGameSnapshotEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.statistics.CgsStatisticProvider
 import gg.scala.cgs.common.statistics.CgsStatisticService
@@ -110,6 +111,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             flavor.inject(EnvironmentEditorService)
 
             flavor.inject(EditableFieldService)
+            flavor.inject(CgsGameSnapshotEngine)
 
             Events.subscribe(AsyncPlayerPreLoginEvent::class.java).handler {
                 if (!EndedStateRunnable.ALLOWED_TO_JOIN)

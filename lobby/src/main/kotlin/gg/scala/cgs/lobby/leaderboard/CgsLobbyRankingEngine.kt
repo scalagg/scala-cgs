@@ -21,9 +21,6 @@ object CgsLobbyRankingEngine
     @JvmStatic
     val ID_TO_FORMAT = mutableMapOf<String, List<String>>()
 
-    @Inject
-    lateinit var engine: CgsGameLobby<*>
-
     var entries by Delegates.notNull<List<CgsLobbyRankingEntry>>()
 
     fun findEntry(id: String): CgsLobbyRankingEntry?
@@ -36,7 +33,8 @@ object CgsLobbyRankingEngine
     @Configure
     fun configure()
     {
-        entries = engine.getRankingEntries().toList()
+        entries = CgsGameLobby.INSTANCE
+            .getRankingEntries().toList()
 
         Schedulers.async().runRepeating(Runnable {
             CgsPlayerHandler.handle

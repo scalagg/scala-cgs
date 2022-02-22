@@ -7,6 +7,7 @@ import gg.scala.cgs.common.instance.game.CgsGameServerInfo
 import gg.scala.lemon.Lemon
 import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.impl.RedisDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -24,23 +25,27 @@ object CgsInstanceService
 
     fun configure(type: CgsServerType)
     {
-        current = CgsServerInstance(
-            Lemon.instance.settings.id, type
-        )
+        service = DataStoreObjectControllerCache.create()
+        service.provideCustomSerializer(Serializers.gson)
+
+        current = service
+            .useLayerWithReturn<RedisDataStoreStorageLayer<CgsServerInstance>, CgsServerInstance>(DataStoreStorageType.REDIS) {
+                this.loadWithFilterSync {
+                    it.internalServerId == Lemon.instance.settings.id
+                } ?: CgsServerInstance(Lemon.instance.settings.id, type)
+            }
 
         if (type == CgsServerType.GAME_SERVER)
         {
             current.gameServerInfo = CgsGameServerInfo(
                 CgsGameEngine.INSTANCE.uniqueId,
                 CgsGameEngine.INSTANCE.gameArena.getId(),
-                CgsGameEngine.INSTANCE.gameMode.getId()
+                CgsGameEngine.INSTANCE.gameMode.getId(),
+                CgsGameEngine.INSTANCE.gameInfo.fancyNameRender,
             )
         }
 
-        service = DataStoreObjectControllerCache.create()
-        service.provideCustomSerializer(Serializers.gson)
-
-        Tasks.asyncTimer(0L, 55L) {
+        Tasks.asyncTimer(0L, 20L) {
             if (current.gameServerInfo != null)
             {
                 current.gameServerInfo!!.refresh()

@@ -13,9 +13,9 @@ import java.util.concurrent.TimeUnit
  */
 class CgsLobbyRankingHologram(
     location: Location,
-    private val entry: CgsLobbyRankingEntry
+    private val entryId: String
 ) : FormatUpdatingHologramEntity(
-    entry.getId(), location
+    entryId, location
 )
 {
     fun initialLoad()
@@ -27,12 +27,12 @@ class CgsLobbyRankingHologram(
     }
 
     override fun getNewLines() = mutableListOf<String>().also {
-        it.add("")
+        it.add(CC.GRAY)
         it.add("${CC.B_PRI}${CgsGameLobby.INSTANCE.getGameInfo().fancyNameRender}")
-        it.add("${CC.GRAY}${entry.getDisplay()}")
-        it.add("")
-        it.addAll(CgsLobbyRankingEngine.ID_TO_FORMAT[entry.getId()] ?: listOf())
-        it.add("")
+        it.add("${CC.GRAY}Top 10 ${entryId.capitalize()}")
+        it.add(CC.GRAY)
+        it.addAll(CgsLobbyRankingEngine.ID_TO_FORMAT[entryId] ?: listOf())
+        it.add(CC.GRAY)
     }
 
     override fun getTickInterval() = TimeUnit.SECONDS.toMillis(90)

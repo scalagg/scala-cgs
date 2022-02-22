@@ -11,11 +11,10 @@ import java.util.*
 class CgsServerInstance(
     val internalServerId: String,
     val type: CgsServerType,
-    var online: Int = 0
+    var online: Int = 0,
+    override val identifier: UUID =
+        UUID.randomUUID()
 ) : IDataStoreObject
 {
-    override val identifier: UUID
-        get() = UUID.randomUUID()
-
     var gameServerInfo: CgsGameServerInfo? = null
 }

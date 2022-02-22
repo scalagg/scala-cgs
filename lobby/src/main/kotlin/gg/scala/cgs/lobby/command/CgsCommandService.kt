@@ -5,7 +5,6 @@ import gg.scala.cgs.lobby.command.commands.LeaderboardPlacementCommand
 import gg.scala.cgs.lobby.command.commands.RecentGamesCommand
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEngine
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
-import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -18,13 +17,11 @@ import net.evilblock.cubed.command.manager.CubedCommandManager
 @Service
 object CgsCommandService
 {
-    @Inject
-    lateinit var plugin: CgsLobbyPlugin
-
     @Configure
     fun configure()
     {
-        val manager = CubedCommandManager(plugin)
+        val manager = CubedCommandManager(
+            CgsLobbyPlugin.INSTANCE)
 
         manager.commandContexts.registerContext(
             CgsLobbyRankingEntry::class.java

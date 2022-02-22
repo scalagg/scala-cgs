@@ -38,7 +38,7 @@ class CgsGameSpectateMenu : PaginatedMenu()
                 .filter { it.gameServerInfo!!.state.isAfter(CgsGameState.STARTED) }
                 .forEach { server ->
                     it[it.size] = CgsGameLobby.INSTANCE
-                        .getFormattedButton(server)
+                        .getFormattedButton(server, player)
                 }
         }
     }

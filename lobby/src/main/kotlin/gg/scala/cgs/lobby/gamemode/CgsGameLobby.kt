@@ -7,8 +7,10 @@ import gg.scala.cgs.common.instance.handler.CgsInstanceService
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
+import gg.scala.cgs.common.snapshot.CgsGameSnapshotEngine
 import gg.scala.cgs.common.statistics.CgsStatisticProvider
 import gg.scala.cgs.common.statistics.CgsStatisticService
+import gg.scala.cgs.lobby.CgsLobbyPlugin
 import gg.scala.cgs.lobby.command.CgsCommandService
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEngine
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
@@ -22,6 +24,7 @@ import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.scoreboard.ScoreboardAdapter
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
+import org.bukkit.entity.Player
 import kotlin.properties.Delegates
 import kotlin.reflect.KClass
 
@@ -45,7 +48,7 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>(
     abstract fun getRankingEntries(): Collection<CgsLobbyRankingEntry>
 
     abstract fun getGameModeButtons(): Map<Int, Button>
-    abstract fun getFormattedButton(info: CgsServerInstance): Button
+    abstract fun getFormattedButton(info: CgsServerInstance, player: Player): Button
 
     fun initialResourceLoad()
     {
@@ -63,12 +66,16 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>(
         CgsGameInfoUpdater.start()
 
         val flavor = Flavor.create<CgsGameLobby<S>>()
+        flavor.bind<CgsGameLobby<S>>() to this
+        flavor.bind<CgsLobbyPlugin>() to CgsLobbyPlugin.INSTANCE
         flavor.bind<CgsStatisticProvider<S>>() to this
+
         flavor.injected<CgsStatisticService<S>>().configure()
 
         flavor.inject(CgsLobbyModuleItems)
         flavor.inject(CgsLobbyRankingEngine)
         flavor.inject(CgsCommandService)
+        flavor.inject(CgsGameSnapshotEngine)
 
         CloudSyncDiscoveryService
             .discoverable.assets

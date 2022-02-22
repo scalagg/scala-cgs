@@ -21,7 +21,7 @@ object LeaderboardPlacementCommand : BaseCommand()
     fun onPlaceLeaderboard(player: Player, entry: CgsLobbyRankingEntry)
     {
         val hologram = CgsLobbyRankingHologram(
-            player.eyeLocation, entry
+            player.eyeLocation, entry.getId()
         )
         hologram.initialLoad()
 

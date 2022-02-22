@@ -16,7 +16,10 @@ class CgsGameJoinMenu : Menu(
     init
     {
         autoUpdate = true
+        placeholder = true
     }
+
+    override fun size(buttons: Map<Int, Button>) = 27
 
     override fun getButtons(player: Player): Map<Int, Button>
     {
