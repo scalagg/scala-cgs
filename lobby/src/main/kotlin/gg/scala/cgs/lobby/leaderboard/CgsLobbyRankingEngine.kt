@@ -24,9 +24,9 @@ object CgsLobbyRankingEngine
     @Inject
     lateinit var engine: CgsGameLobby<*>
 
-    var entries by Delegates.notNull<List<CgsLobbyRankingEntry<*>>>()
+    var entries by Delegates.notNull<List<CgsLobbyRankingEntry>>()
 
-    fun findEntry(id: String): CgsLobbyRankingEntry<*>?
+    fun findEntry(id: String): CgsLobbyRankingEntry?
     {
         return entries.firstOrNull {
             it.getId().equals(id, true)

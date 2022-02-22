@@ -1,5 +1,6 @@
 package gg.scala.cgs.common.teams
 
+import gg.scala.cgs.common.BigHorseClass
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.flavor.inject.Inject

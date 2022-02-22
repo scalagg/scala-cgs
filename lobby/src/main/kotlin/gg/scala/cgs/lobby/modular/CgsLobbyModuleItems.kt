@@ -1,5 +1,6 @@
 package gg.scala.cgs.lobby.modular
 
+import gg.scala.cgs.lobby.command.commands.RecentGamesCommand
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 import gg.scala.cgs.lobby.modular.menu.CgsGameJoinMenu
 import gg.scala.cgs.lobby.modular.menu.CgsGameSpectateMenu
@@ -24,6 +25,9 @@ import org.bukkit.inventory.ItemStack
 @Service
 object CgsLobbyModuleItems : HubModuleItemAdapter
 {
+    @Inject
+    lateinit var engine: CgsGameLobby<*>
+
     private val spectateItem = ItemBuilder(Material.WATCH)
         .name("${CC.B_PRI}Spectate Game")
         .addToLore(
@@ -31,8 +35,11 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
         )
         .glow().build()
 
-    @Inject
-    lateinit var engine: CgsGameLobby<*>
+    private val recentGamesItem = ItemBuilder(Material.REDSTONE_COMPARATOR)
+        .name("${CC.B_PRI}Recent Games")
+        .addToLore(
+            "${CC.GRAY}View your recently played games."
+        ).build()
 
     // We need to wait for CgsGameLobby.INSTANCE to initialize
     private val joinGameItem by lazy {
@@ -57,6 +64,8 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
             it.player.inventory.setItem(4, joinGameItem)
             it.player.inventory.setItem(6, spectateItem)
 
+            it.player.inventory.setItem(1, recentGamesItem)
+
             it.player.updateInventory()
         }
 
@@ -69,6 +78,11 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
                 } else if (it.item.isSimilar(joinGameItem))
                 {
                     CgsGameJoinMenu().openMenu(it.player)
+                } else if (it.item.isSimilar(recentGamesItem))
+                {
+                    // just performing command to prevent
+                    RecentGamesCommand
+                        .onRecentGames(it.player, null)
                 }
             }
     }

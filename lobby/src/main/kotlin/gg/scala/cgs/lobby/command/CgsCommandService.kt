@@ -2,6 +2,7 @@ package gg.scala.cgs.lobby.command
 
 import gg.scala.cgs.lobby.CgsLobbyPlugin
 import gg.scala.cgs.lobby.command.commands.LeaderboardPlacementCommand
+import gg.scala.cgs.lobby.command.commands.RecentGamesCommand
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEngine
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.flavor.inject.Inject
@@ -42,5 +43,6 @@ object CgsCommandService
         }
 
         manager.registerCommand(LeaderboardPlacementCommand)
+        manager.registerCommand(RecentGamesCommand)
     }
 }

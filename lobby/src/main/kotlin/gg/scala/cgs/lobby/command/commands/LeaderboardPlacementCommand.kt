@@ -18,7 +18,7 @@ object LeaderboardPlacementCommand : BaseCommand()
     @CommandAlias("place-leaderboard")
     @CommandPermission("op")
     @CommandCompletion("@leaderboards")
-    fun onPlaceLeaderboard(player: Player, entry: CgsLobbyRankingEntry<*>)
+    fun onPlaceLeaderboard(player: Player, entry: CgsLobbyRankingEntry)
     {
         val hologram = CgsLobbyRankingHologram(
             player.eyeLocation, entry

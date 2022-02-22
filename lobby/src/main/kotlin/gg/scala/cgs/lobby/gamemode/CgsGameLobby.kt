@@ -42,7 +42,7 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>(
     abstract fun getScoreboardAdapter(): ScoreboardAdapter
     abstract fun getGameInfo(): CgsGameGeneralInfo
 
-    abstract fun getRankingEntries(): Collection<CgsLobbyRankingEntry<*>>
+    abstract fun getRankingEntries(): Collection<CgsLobbyRankingEntry>
 
     abstract fun getGameModeButtons(): Map<Int, Button>
     abstract fun getFormattedButton(info: CgsServerInstance): Button

@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit
  */
 class CgsLobbyRankingHologram(
     location: Location,
-    private val entry: CgsLobbyRankingEntry<*>
+    private val entry: CgsLobbyRankingEntry
 ) : FormatUpdatingHologramEntity(
     entry.getId(), location
 )
