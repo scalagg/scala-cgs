@@ -9,12 +9,14 @@ import java.util.*
  */
 object CgsGameStateService
 {
-    val stateMachines = LinkedList<CgsGameStateMachine>()
+    val stateMachines =
+        LinkedList<CgsGameStateMachine>()
 
     fun register(stateMachine: CgsGameStateMachine)
     {
         stateMachines.add(stateMachine)
     }
 
-    fun current() = stateMachines.peek()
+    fun current(): CgsGameStateMachine =
+        stateMachines.peek()
 }

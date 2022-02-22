@@ -12,10 +12,6 @@ import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
 import java.lang.reflect.Method
-import java.lang.reflect.ParameterizedType
-import java.lang.reflect.Type
-import kotlin.reflect.KClass
-
 
 /**
  * @author GrowlyX
@@ -34,9 +30,11 @@ val startMessage by lazy {
             " ${CC.WHITE}${Lemon.instance.lemonWebData.discord}",
             ""
         )
+
         andHoverOf(
             "${CC.YELLOW}Click to join our discord server!"
         )
+
         andCommandOf(
             ClickEvent.Action.OPEN_URL,
             Lemon.instance.lemonWebData.discord
@@ -119,27 +117,10 @@ infix fun Player.giveCoins(
     }
 }
 
-val ENTITY_PLAYER = MinecraftReflection.getNMSClass("EntityPlayer")
-val MINECRAFT_SERVER = MinecraftReflection.getMinecraftServer()
-
-val PLAYER_LIST: Any = MINECRAFT_SERVER.javaClass
-    .getDeclaredMethod("getPlayerList")
-    .invoke(MINECRAFT_SERVER)
-
-val WORLD_MOVEMENT: Method = PLAYER_LIST.javaClass.getMethod(
-    "moveToWorld", ENTITY_PLAYER,
-    Int::class.javaPrimitiveType,
-    Boolean::class.javaPrimitiveType
-)
-
 fun respawnPlayer(event: PlayerDeathEvent)
 {
-    Tasks.delayed(2L)
+    Tasks.delayed(1L)
     {
-        WORLD_MOVEMENT.invoke(
-            PLAYER_LIST,
-            MinecraftReflection.getHandle(event.entity),
-            0, false
-        )
+        event.entity.spigot().respawn()
     }
 }

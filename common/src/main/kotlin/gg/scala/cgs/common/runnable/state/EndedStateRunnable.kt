@@ -6,6 +6,7 @@ import gg.scala.cgs.common.adventure
 import gg.scala.cgs.common.giveCoins
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.runnable.StateRunnable
+import gg.scala.cgs.common.snapshot.CgsGameSnapshotEngine
 import gg.scala.lemon.util.CubedCacheUtil
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
@@ -59,7 +60,7 @@ object EndedStateRunnable : StateRunnable(
             }")
 
             description.add("")
-            description.addAll(engine.getExtraWinInformation())
+            description.addAll(engine.getGameSnapshot().getExtraInformation())
             description.add("")
 
             description.add(" ${CC.GREEN}Thanks for playing ${engine.gameInfo.fancyNameRender}!")
@@ -89,6 +90,8 @@ object EndedStateRunnable : StateRunnable(
                     audi.showTitle(currentTitle)
                 }
             }
+
+            CgsGameSnapshotEngine.submitWrappedSnapshot()
         }
 
         if (alertTicks.contains(10 - currentTick))

@@ -15,6 +15,7 @@ import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.player.visibility.CgsGameVisibilityAdapter
 import gg.scala.cgs.common.runnable.StateRunnableService
 import gg.scala.cgs.common.runnable.state.EndedStateRunnable
+import gg.scala.cgs.common.snapshot.CgsGameSnapshot
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.statistics.CgsStatisticProvider
 import gg.scala.cgs.common.statistics.CgsStatisticService
@@ -72,7 +73,9 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     var gameState by SmartCgsState()
 
     var gameStart = 0L
-    var originalRemaining = 0
+
+    var originalRemaining =
+        mutableListOf<UUID>()
 
     val audience = BukkitAudiences.create(plugin)
 
@@ -266,7 +269,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     abstract fun getVisibilityAdapter(): CgsGameVisibilityAdapter
     abstract fun getNametagAdapter(): CgsGameNametagAdapter
 
-    abstract fun getExtraWinInformation(): List<String>
+    abstract fun getGameSnapshot(): CgsGameSnapshot
 
     class CgsGameEndEvent : CgsGameEvent()
 

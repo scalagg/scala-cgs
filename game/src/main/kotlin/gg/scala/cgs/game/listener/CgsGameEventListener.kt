@@ -250,7 +250,10 @@ object CgsGameEventListener : Listener
             .filter { !it.hasMetadata("spectator") }
 
         engine.gameStart = System.currentTimeMillis()
-        engine.originalRemaining = participants.size
+
+        engine.originalRemaining = participants
+            .map { it.uniqueId }
+            .toMutableList()
 
         participants.forEach {
             NametagHandler.reloadPlayer(it)

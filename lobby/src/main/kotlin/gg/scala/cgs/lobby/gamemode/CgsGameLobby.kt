@@ -15,7 +15,7 @@ import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.cgs.lobby.modular.CgsLobbyModule
 import gg.scala.cgs.lobby.modular.CgsLobbyModuleItems
 import gg.scala.cgs.lobby.updater.CgsGameInfoUpdater
-import gg.scala.cloudsync.discovery.CloudSyncDiscoveryService
+import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.flavor.Flavor
 import gg.scala.tangerine.TangerineSpigotPlugin
 import net.evilblock.cubed.menu.Button

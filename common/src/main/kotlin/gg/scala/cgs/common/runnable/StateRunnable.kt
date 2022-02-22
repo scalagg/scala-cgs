@@ -18,7 +18,8 @@ abstract class StateRunnable(
     override fun run()
     {
         if (
-            CgsGameEngine.INSTANCE.gameState != gameState
+            CgsGameEngine.INSTANCE
+                .gameState != gameState
         )
         {
             cancel()
