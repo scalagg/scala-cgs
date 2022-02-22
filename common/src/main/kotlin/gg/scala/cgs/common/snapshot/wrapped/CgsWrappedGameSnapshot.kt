@@ -37,7 +37,7 @@ class CgsWrappedGameSnapshot(
         .settings.id
 
     val players = CgsGameEngine.INSTANCE
-        .originalRemaining.size
+        .originalRemaining
 
     val icon = CgsGameEngine.INSTANCE
         .gameMode.getMaterial().first.name
