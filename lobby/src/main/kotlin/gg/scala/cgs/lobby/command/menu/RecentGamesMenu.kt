@@ -93,7 +93,7 @@ class RecentGamesMenu(
                     "",
                     *recentGame.extraInformation
                         .map {
-                            it.removePrefix("  ")
+                            it.removePrefix(" ")
                         }
                         .toTypedArray(),
                     "",

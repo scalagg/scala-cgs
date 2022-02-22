@@ -44,7 +44,7 @@ object CgsLobbyRankingEngine
                     {
                         val topTen = it.entries
                             .sortedByDescending { mapping -> entry.getValue(mapping.value) }
-                            .subList(0, 9)
+                            .take(10)
 
                         val formatted = mutableListOf<String>()
 
