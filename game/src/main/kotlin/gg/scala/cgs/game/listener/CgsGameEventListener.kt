@@ -10,6 +10,7 @@ import gg.scala.cgs.common.respawnPlayer
 import gg.scala.cgs.common.runnable.StateRunnableService
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.teams.CgsGameTeamService
+import gg.scala.cgs.game.client.CgsLunarClientService
 import gg.scala.lemon.disguise.update.event.PreDisguiseEvent
 import gg.scala.lemon.util.QuickAccess.coloredName
 import net.evilblock.cubed.nametag.NametagHandler
@@ -26,6 +27,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
+import java.util.*
 import kotlin.math.ceil
 
 /**
@@ -257,6 +259,11 @@ object CgsGameEventListener : Listener
 
         participants.forEach {
             NametagHandler.reloadPlayer(it)
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("LunarClient-API") != null)
+        {
+            CgsLunarClientService.configure()
         }
 
         StateRunnableService

@@ -22,7 +22,8 @@ import me.lucko.helper.plugin.ap.PluginDependency
         PluginDependency("helper"),
         PluginDependency("Lemon"),
         PluginDependency("Parties"),
-        PluginDependency("cloudsync")
+        PluginDependency("cloudsync"),
+        PluginDependency("LunarClient-API", soft = true),
     ]
 )
 class CgsEnginePlugin : ExtendedScalaPlugin()

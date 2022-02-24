@@ -10,7 +10,7 @@ class CgsGameTeam(
     val id: Int
 )
 {
-    val participants = mutableSetOf<UUID>()
+    val participants = mutableListOf<UUID>()
     val eliminated = mutableSetOf<UUID>()
 
     val alive: List<UUID>

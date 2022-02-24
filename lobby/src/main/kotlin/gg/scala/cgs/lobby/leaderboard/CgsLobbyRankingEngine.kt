@@ -2,7 +2,6 @@ package gg.scala.cgs.lobby.leaderboard
 
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
-import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.util.CubedCacheUtil
@@ -42,9 +41,13 @@ object CgsLobbyRankingEngine
                 .thenAccept {
                     for (entry in entries)
                     {
-                        val topTen = it.entries
+                        var topTen = it.entries
                             .sortedByDescending { mapping -> entry.getValue(mapping.value) }
-                            .take(10)
+
+                        if (topTen.size > 10)
+                        {
+                            topTen = topTen.subList(0, 9)
+                        }
 
                         val formatted = mutableListOf<String>()
 

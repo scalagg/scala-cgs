@@ -63,7 +63,7 @@ object CgsGameInfoUpdater : Thread("CGS - Instance Info Updater")
                     .filter { it.type == CgsServerType.GAME_SERVER }
                     .filter { it.gameServerInfo!!.gameType == CgsGameLobby.INSTANCE.getGameInfo().fancyNameRender }
                     .filter { it.gameServerInfo!!.gameMode == gameMode.getId() }
-                    .sumOf { it.gameServerInfo!!.participants.size }
+                    .sumOf { it.online }
             }
 
             playingTotalCount = instances.values
