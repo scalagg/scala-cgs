@@ -4,7 +4,6 @@ import com.lunarclient.bukkitapi.LunarClientAPI
 import com.lunarclient.bukkitapi.nethandler.client.LCPacketTeammates
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.teams.CgsGameTeamService
-import gg.scala.cgs.game.listener.CgsGameEventListener
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
@@ -36,7 +35,7 @@ object CgsLunarClientService : Runnable
                 .newSingleThreadScheduledExecutor()
 
             executor.scheduleAtFixedRate(
-                this, 0L, 10L,
+                this, 0L, 50L,
                 TimeUnit.MILLISECONDS
             )
         }
@@ -50,6 +49,9 @@ object CgsLunarClientService : Runnable
 
             for (participant in team.value.participants)
             {
+                if (!team.value.alive.contains(participant))
+                    continue
+
                 val bukkitPlayer = Bukkit
                     .getPlayer(participant)
                     ?: continue
