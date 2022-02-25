@@ -26,5 +26,10 @@ object PartyCommand : BaseCommand()
     {
         val existing = PartyService
             .findPartyByUniqueId(player)
+
+        if (existing != null)
+        {
+
+        }
     }
 }

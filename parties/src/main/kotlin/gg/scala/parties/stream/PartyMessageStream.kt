@@ -48,7 +48,9 @@ object PartyMessageStream : BananaHandler
         PartyService
             .findPartyByUniqueId(partyUniqueId)
             ?.let { party ->
-                party.members.forEach {
+                party.members.toMutableMap().apply {
+                    put(party.leader.uniqueId, party.leader)
+                }.forEach {
                     val bukkitPlayer = Bukkit
                         .getPlayer(it.value.uniqueId)
                         ?: return@forEach
