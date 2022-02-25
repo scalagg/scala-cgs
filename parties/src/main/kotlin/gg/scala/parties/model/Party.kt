@@ -25,6 +25,11 @@ data class Party(
     val members = mutableMapOf<UUID, PartyMember>()
     val settings = mutableMapOf<PartySetting, Boolean>()
 
+    fun isEnabled(setting: PartySetting): Boolean
+    {
+        return settings[setting] ?: false
+    }
+
     fun sendMessage(message: FancyMessage)
     {
         PartyMessageStream.pushToStream(this, message)
