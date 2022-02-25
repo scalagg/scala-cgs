@@ -1,5 +1,6 @@
 package gg.scala.parties.model
 
+import gg.scala.lemon.util.QuickAccess
 import org.bukkit.Bukkit
 import java.util.*
 
@@ -14,8 +15,8 @@ class PartyMember(
 {
     fun sendMessage(message: String)
     {
-        Bukkit.getPlayer(uniqueId)?.sendMessage(message)
+        QuickAccess.sendGlobalPlayerMessage(message, uniqueId)
     }
 
-    fun isOnline(): Boolean = Bukkit.getPlayer(uniqueId) != null
+    fun isOnline() = Bukkit.getPlayer(uniqueId) != null
 }
