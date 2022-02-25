@@ -23,11 +23,20 @@ data class Party(
         get() = uniqueId
 
     val members = mutableMapOf<UUID, PartyMember>()
-    val settings = mutableMapOf<PartySetting, Boolean>()
+
+    private val settings = mutableMapOf<PartySetting, Boolean>()
 
     fun isEnabled(setting: PartySetting): Boolean
     {
         return settings[setting] ?: false
+    }
+
+    fun update(
+        setting: PartySetting, value: Boolean
+    )
+    {
+        settings[setting] = value
+        saveAndUpdateParty()
     }
 
     fun sendMessage(message: FancyMessage)

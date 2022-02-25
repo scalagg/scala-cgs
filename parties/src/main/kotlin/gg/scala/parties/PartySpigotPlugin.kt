@@ -2,7 +2,8 @@ package gg.scala.parties
 
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.commons.ExtendedScalaPlugin
-import gg.scala.parties.service.PartyService
+import gg.scala.flavor.Flavor
+import gg.scala.flavor.FlavorOptions
 import me.lucko.helper.plugin.ap.Plugin
 import me.lucko.helper.plugin.ap.PluginDependency
 
@@ -25,7 +26,12 @@ class PartySpigotPlugin : ExtendedScalaPlugin()
     override fun enable()
     {
         invokeTrackedTask("party resources") {
-            PartyService.configure()
+            val flavor = Flavor.create<PartySpigotPlugin>(
+                FlavorOptions(this.logger)
+            )
+
+            flavor.bind<PartySpigotPlugin>() to this
+            flavor.startup()
         }
 
         CloudSyncDiscoveryService
