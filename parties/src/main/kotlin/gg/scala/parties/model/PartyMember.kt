@@ -15,7 +15,8 @@ class PartyMember(
 {
     fun sendMessage(message: String)
     {
-        QuickAccess.sendGlobalPlayerMessage(message, uniqueId)
+        QuickAccess
+            .sendGlobalPlayerMessage(message, uniqueId)
     }
 
     fun isOnline() = Bukkit.getPlayer(uniqueId) != null

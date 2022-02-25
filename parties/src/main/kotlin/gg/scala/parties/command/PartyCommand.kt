@@ -1,9 +1,12 @@
 package gg.scala.parties.command
 
+import gg.scala.parties.service.PartyService
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.annotation.Default
 import net.evilblock.cubed.acf.annotation.HelpCommand
+import net.evilblock.cubed.acf.annotation.Subcommand
+import org.bukkit.entity.Player
 
 /**
  * @author GrowlyX
@@ -16,5 +19,12 @@ object PartyCommand : BaseCommand()
     fun onHelp(help: CommandHelp)
     {
         help.showHelp()
+    }
+
+    @Subcommand("create")
+    fun onCreate(player: Player)
+    {
+        val existing = PartyService
+            .findPartyByUniqueId(player)
     }
 }

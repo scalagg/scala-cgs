@@ -6,8 +6,10 @@ import gg.scala.parties.model.Party
 import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
+import me.lucko.helper.Events
 import net.evilblock.cubed.serializers.Serializers
 import org.bukkit.entity.Player
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
@@ -29,6 +31,11 @@ object PartyService
     {
         service = DataStoreObjectControllerCache.create()
         service.provideCustomSerializer(Serializers.gson)
+
+        Events.subscribe(AsyncPlayerPreLoginEvent::class.java)
+            .handler {
+                this.loadPartyOfPlayerIfAbsent(it.uniqueId)
+            }
     }
 
     fun findPartyByUniqueId(uniqueId: UUID): Party?
@@ -64,34 +71,31 @@ object PartyService
             }
     }
 
-    fun loadPartyOfPlayerIfAbsent(player: Player): CompletableFuture<Party?>
+    fun loadPartyOfPlayerIfAbsent(uniqueId: UUID): CompletableFuture<Party?>
     {
-        val loadedParty = findPartyByUniqueId(player)
+        val loadedParty = findPartyByUniqueId(uniqueId)
 
         if (loadedParty != null)
         {
-            val completable = CompletableFuture<Party?>()
-            completable.complete(loadedParty)
-
-            return completable
-        } else
-        {
-            return service
-                .loadAll(DataStoreStorageType.REDIS)
-                .thenApply {
-                    val found = it.values.firstOrNull { playerParty ->
-                        playerParty.members.containsKey(player.uniqueId)
-                    }
-
-                    if (found != null)
-                    {
-                        kotlin.run {
-                            loadedParties[found.uniqueId] = found
-                        }
-                    }
-
-                    return@thenApply found
-                }
+            return CompletableFuture
+                .completedFuture(loadedParty)
         }
+
+        return service
+            .loadAll(DataStoreStorageType.REDIS)
+            .thenApply {
+                val found = it.values.firstOrNull { party ->
+                    party.members.containsKey(uniqueId) || party.leader.uniqueId == uniqueId
+                }
+
+                if (found != null)
+                {
+                    kotlin.run {
+                        loadedParties[found.uniqueId] = found
+                    }
+                }
+
+                return@thenApply found
+            }
     }
 }
