@@ -2,7 +2,6 @@ package gg.scala.parties.receiver
 
 import gg.scala.banana.Banana
 import gg.scala.banana.annotate.Subscribe
-import gg.scala.banana.credentials.BananaCredentials
 import gg.scala.banana.message.Message
 import gg.scala.banana.options.BananaOptions
 import gg.scala.banana.subscribe.marker.BananaHandler

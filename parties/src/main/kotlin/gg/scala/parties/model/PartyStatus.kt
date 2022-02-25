@@ -11,5 +11,6 @@ enum class PartyStatus(
 )
 {
     PUBLIC("${CC.GREEN}Public"),
-    PRIVATE("${CC.RED}Private")
+    PROTECTED("${CC.RED}Password Protected"),
+    PRIVATE("${CC.RED}Private"),
 }
