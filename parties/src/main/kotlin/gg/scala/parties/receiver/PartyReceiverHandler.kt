@@ -9,6 +9,9 @@ import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
 import gg.scala.parties.service.PartyService
+import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bungee.BungeeUtil
+import org.bukkit.Bukkit
 import java.util.*
 
 /**
@@ -34,6 +37,36 @@ object PartyReceiverHandler : BananaHandler
     {
         banana.registerClass(this)
         banana.subscribe()
+    }
+
+    @Subscribe("party-warp")
+    fun onPartyWarp(message: Message)
+    {
+        val uniqueId = UUID.fromString(
+            message["uniqueId"]
+        )
+
+        val party = PartyService
+            .loadedParties.values
+            .firstOrNull {
+                it.uniqueId == uniqueId
+            }
+            ?: return
+
+        val server = message["server"]!!
+
+        for (uuid in party.members.keys)
+        {
+            val bukkitPlayer = Bukkit
+                .getPlayer(uuid)
+                ?: continue
+
+            bukkitPlayer.sendMessage("${CC.SEC}You're being warped to ${CC.PRI}$server${CC.SEC}...")
+
+            BungeeUtil.sendToServer(
+                bukkitPlayer, server
+            )
+        }
     }
 
     @Subscribe("party-update")

@@ -2,6 +2,8 @@ package gg.scala.parties.menu
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.cookie.settings.builder.MultiOptionPlayerSettingsBuilder
+import gg.scala.lemon.Lemon
+import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.metadata.Metadata
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.parties.command.PartyCommand
@@ -10,6 +12,7 @@ import gg.scala.parties.model.PartyRole
 import gg.scala.parties.model.PartySetting
 import gg.scala.parties.model.PartyStatus
 import gg.scala.parties.prefix
+import gg.scala.parties.receiver.PartyReceiverHandler
 import gg.scala.parties.stream.PartyMessageStream
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.menu.Button
@@ -225,6 +228,28 @@ class PartyManageMenu(
                     party.saveAndUpdateParty().thenRun {
                         player.sendMessage("${CC.GREEN}Your party's password has been reset.")
                     }
+                }
+
+            this[7] = ItemBuilder(Material.BEACON)
+                .name("${CC.GREEN}Warp your party")
+                .addToLore(
+                    "${CC.GRAY}Send all your party members",
+                    "${CC.GRAY}to your current server!",
+                    "",
+                    "${CC.YELLOW}Click to warp members!"
+                )
+                .toButton { _, _ ->
+                    RedisHandler.buildMessage(
+                        "party-warp",
+                        "uniqueId" to party.uniqueId.toString(),
+                        "server" to Lemon.instance.settings.id
+                    ).dispatch(
+                        "party:backbone",
+                        PartyReceiverHandler.banana,
+                    )
+
+                    player.closeInventory()
+                    player.sendMessage("$prefix${CC.GREEN}You've warped party members to your server!")
                 }
 
             if (role == PartyRole.LEADER)
