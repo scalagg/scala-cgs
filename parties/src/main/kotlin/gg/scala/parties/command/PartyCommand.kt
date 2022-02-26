@@ -46,7 +46,7 @@ object PartyCommand : BaseCommand()
             throw ConditionFailedException("You do not have permission to access the party management menu! Your role is: ${member.role.formatted}")
         }
 
-        PartyManageMenu(existing)
+        PartyManageMenu(existing, member.role)
             .openMenu(player)
     }
 
