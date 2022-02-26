@@ -1,9 +1,11 @@
 package gg.scala.parties.command
 
+import gg.scala.lemon.util.QuickAccess
 import gg.scala.parties.menu.PartyManageMenu
 import gg.scala.parties.model.*
 import gg.scala.parties.prefix
 import gg.scala.parties.service.PartyService
+import gg.scala.parties.stream.PartyMessageStream
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -13,6 +15,7 @@ import net.evilblock.cubed.acf.annotation.Description
 import net.evilblock.cubed.acf.annotation.HelpCommand
 import net.evilblock.cubed.acf.annotation.Subcommand
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.FancyMessage
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -28,6 +31,31 @@ object PartyCommand : BaseCommand()
     fun onHelp(help: CommandHelp)
     {
         help.showHelp()
+    }
+
+    @Subcommand("chat")
+    @Description("Send a message in party chat!")
+    fun onPartyChat(player: Player, message: String)
+    {
+        val existing = PartyService
+            .findPartyByUniqueId(player)
+            ?: throw ConditionFailedException("You're not in a party.")
+
+        val member = existing
+            .findMember(player.uniqueId)!!
+
+        val disabled = existing
+            .isEnabled(PartySetting.CHAT_MUTED)
+
+        if (disabled && !(member.role over PartyRole.MODERATOR))
+        {
+            throw ConditionFailedException("You do not have permission to talk while the chat is muted! Your role is: ${member.role.formatted}")
+        }
+
+        val fancy = FancyMessage()
+        fancy.withMessage("$prefix${QuickAccess.coloredName(player)}${CC.WHITE}: $message")
+
+        PartyMessageStream.pushToStream(existing, fancy)
     }
 
     @Subcommand("manage")
