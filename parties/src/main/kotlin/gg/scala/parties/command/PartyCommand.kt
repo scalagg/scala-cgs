@@ -32,13 +32,14 @@ object PartyCommand : BaseCommand()
     }
 
     @Subcommand("disband")
+    @Description("Disband your party!")
     fun onDisband(player: Player)
     {
         val existing = PartyService
             .findPartyByUniqueId(player)
             ?: throw ConditionFailedException("You're not in a party.")
 
-        existing.gracefullyForget()
+        existing.gracefullyForget().join()
     }
 
     @Subcommand("create")
@@ -65,6 +66,8 @@ object PartyCommand : BaseCommand()
         party.saveAndUpdateParty().thenRun {
             player.sendMessage("$prefix${CC.GREEN}Your new party has been setup!")
             player.sendMessage("$prefix${CC.YELLOW}Use ${CC.AQUA}/party help${CC.YELLOW} to view all party-related commands!")
+
+            PartyService.loadedParties[party.identifier] = party
         }
     }
 }

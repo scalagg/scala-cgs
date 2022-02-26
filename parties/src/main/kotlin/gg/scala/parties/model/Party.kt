@@ -61,6 +61,7 @@ data class Party(
                 "party-update",
                 "uniqueId" to uniqueId.toString()
             ).dispatch(
+                "party:backbone",
                 PartyReceiverHandler.banana
             )
         }
@@ -76,7 +77,7 @@ data class Party(
         return forget()
     }
 
-    fun forget(): CompletableFuture<Void>
+    private fun forget(): CompletableFuture<Void>
     {
         return PartyService.service.delete(
             this.identifier, DataStoreStorageType.REDIS
@@ -85,6 +86,7 @@ data class Party(
                 "party-forget",
                 "uniqueId" to uniqueId.toString()
             ).dispatch(
+                "party:backbone",
                 PartyReceiverHandler.banana
             )
         }
