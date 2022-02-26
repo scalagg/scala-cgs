@@ -23,8 +23,7 @@ import kotlin.properties.Delegates
 object PartyService
 {
     var service by Delegates.notNull<DataStoreObjectController<Party>>()
-
-    private val loadedParties = ConcurrentHashMap<UUID, Party>()
+    val loadedParties = ConcurrentHashMap<UUID, Party>()
 
     @Configure
     fun configure()

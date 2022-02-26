@@ -23,8 +23,7 @@ object PartyMessageStream : BananaHandler
     private val banana = BananaBuilder()
         .options(
             BananaOptions(
-                channel = "party:message_stream",
-                async = true
+                channel = "party:message_stream"
             )
         )
         .credentials(

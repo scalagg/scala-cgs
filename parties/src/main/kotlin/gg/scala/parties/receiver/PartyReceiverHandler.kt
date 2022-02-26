@@ -1,6 +1,7 @@
 package gg.scala.parties.receiver
 
 import gg.scala.banana.Banana
+import gg.scala.banana.BananaBuilder
 import gg.scala.banana.annotate.Subscribe
 import gg.scala.banana.message.Message
 import gg.scala.banana.options.BananaOptions
@@ -21,10 +22,16 @@ object PartyReceiverHandler : BananaHandler
     @Configure
     fun configure()
     {
-        val banana = Banana(
-            Lemon.instance.credentials,
-            BananaOptions("parties")
-        )
+        val banana = BananaBuilder()
+            .options(
+                BananaOptions(
+                    channel = "party:backbone"
+                )
+            )
+            .credentials(
+                Lemon.instance.credentials
+            )
+            .build()
 
         banana.registerClass(this)
         banana.subscribe()
@@ -38,5 +45,16 @@ object PartyReceiverHandler : BananaHandler
         )
 
         PartyService.reloadPartyByUniqueId(uniqueId)
+    }
+
+    @Subscribe("party-forget")
+    fun onPartyForget(message: Message)
+    {
+        val uniqueId = UUID.fromString(
+            message["uniqueId"]
+        )
+
+        PartyService.loadedParties
+            .remove(uniqueId)
     }
 }

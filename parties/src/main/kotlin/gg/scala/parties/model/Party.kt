@@ -6,6 +6,7 @@ import gg.scala.parties.service.PartyService
 import gg.scala.parties.stream.PartyMessageStream
 import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
+import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -57,6 +58,28 @@ data class Party(
         ).thenRun {
             RedisHandler.buildMessage(
                 "party-update",
+                "uniqueId" to uniqueId.toString()
+            ).dispatch(Lemon.instance.banana)
+        }
+    }
+
+    fun gracefullyForget(): CompletableFuture<Void>
+    {
+        PartyMessageStream.pushToStream(
+            this, FancyMessage()
+                .withMessage("${CC.D_AQUA}[Party] ${CC.RED}Your party was disbanded!")
+        )
+
+        return forget()
+    }
+
+    fun forget(): CompletableFuture<Void>
+    {
+        return PartyService.service.delete(
+            this.identifier, DataStoreStorageType.REDIS
+        ).thenRun {
+            RedisHandler.buildMessage(
+                "party-forget",
                 "uniqueId" to uniqueId.toString()
             ).dispatch(Lemon.instance.banana)
         }
