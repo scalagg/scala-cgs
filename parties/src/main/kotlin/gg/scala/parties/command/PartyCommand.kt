@@ -8,6 +8,7 @@ import gg.scala.parties.service.PartyService
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.ConditionFailedException
+import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.Default
 import net.evilblock.cubed.acf.annotation.Description
 import net.evilblock.cubed.acf.annotation.HelpCommand
@@ -20,6 +21,7 @@ import java.util.*
  * @author GrowlyX
  * @since 12/17/2021
  */
+@CommandAlias("party|p|parties")
 object PartyCommand : BaseCommand()
 {
     @Default
@@ -27,6 +29,16 @@ object PartyCommand : BaseCommand()
     fun onHelp(help: CommandHelp)
     {
         help.showHelp()
+    }
+
+    @Subcommand("disband")
+    fun onDisband(player: Player)
+    {
+        val existing = PartyService
+            .findPartyByUniqueId(player)
+            ?: throw ConditionFailedException("You're not in a party.")
+
+        existing.gracefullyForget()
     }
 
     @Subcommand("create")
@@ -48,7 +60,7 @@ object PartyCommand : BaseCommand()
             )
         )
 
-        player.sendMessage("$prefix${CC.GREEN}Setting up your new party...")
+        player.sendMessage("$prefix${CC.GOLD}Setting up your new party...")
 
         party.saveAndUpdateParty().thenRun {
             player.sendMessage("$prefix${CC.GREEN}Your new party has been setup!")

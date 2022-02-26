@@ -5,6 +5,8 @@ import gg.scala.banana.annotate.Subscribe
 import gg.scala.banana.message.Message
 import gg.scala.banana.options.BananaOptions
 import gg.scala.banana.subscribe.marker.BananaHandler
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.parties.model.Party
@@ -18,9 +20,10 @@ import java.util.*
  * @author GrowlyX
  * @since 12/31/2021
  */
+@Service
 object PartyMessageStream : BananaHandler
 {
-    private val banana = BananaBuilder()
+    val banana = BananaBuilder()
         .options(
             BananaOptions(
                 channel = "party:message_stream"
@@ -30,6 +33,13 @@ object PartyMessageStream : BananaHandler
             Lemon.instance.credentials
         )
         .build()
+
+    @Configure
+    fun configure()
+    {
+        banana.registerClass(this)
+        banana.subscribe()
+    }
 
     @Subscribe("pm_stream")
     fun onPmStream(message: Message)

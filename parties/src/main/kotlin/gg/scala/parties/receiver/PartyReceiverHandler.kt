@@ -1,6 +1,5 @@
 package gg.scala.parties.receiver
 
-import gg.scala.banana.Banana
 import gg.scala.banana.BananaBuilder
 import gg.scala.banana.annotate.Subscribe
 import gg.scala.banana.message.Message
@@ -19,20 +18,20 @@ import java.util.*
 @Service
 object PartyReceiverHandler : BananaHandler
 {
+    val banana = BananaBuilder()
+        .options(
+            BananaOptions(
+                channel = "party:backbone"
+            )
+        )
+        .credentials(
+            Lemon.instance.credentials
+        )
+        .build()
+
     @Configure
     fun configure()
     {
-        val banana = BananaBuilder()
-            .options(
-                BananaOptions(
-                    channel = "party:backbone"
-                )
-            )
-            .credentials(
-                Lemon.instance.credentials
-            )
-            .build()
-
         banana.registerClass(this)
         banana.subscribe()
     }

@@ -2,6 +2,7 @@ package gg.scala.parties.model
 
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RedisHandler
+import gg.scala.parties.receiver.PartyReceiverHandler
 import gg.scala.parties.service.PartyService
 import gg.scala.parties.stream.PartyMessageStream
 import gg.scala.store.storage.storable.IDataStoreObject
@@ -59,7 +60,9 @@ data class Party(
             RedisHandler.buildMessage(
                 "party-update",
                 "uniqueId" to uniqueId.toString()
-            ).dispatch(Lemon.instance.banana)
+            ).dispatch(
+                PartyReceiverHandler.banana
+            )
         }
     }
 
@@ -81,7 +84,9 @@ data class Party(
             RedisHandler.buildMessage(
                 "party-forget",
                 "uniqueId" to uniqueId.toString()
-            ).dispatch(Lemon.instance.banana)
+            ).dispatch(
+                PartyReceiverHandler.banana
+            )
         }
     }
 }

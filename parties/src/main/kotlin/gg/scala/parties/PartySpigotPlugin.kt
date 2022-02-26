@@ -4,6 +4,12 @@ import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.flavor.Flavor
 import gg.scala.flavor.FlavorOptions
+import gg.scala.parties.command.PartyCommand
+import gg.scala.parties.receiver.PartyReceiverHandler
+import gg.scala.parties.service.PartyCommandService
+import gg.scala.parties.service.PartyInviteService
+import gg.scala.parties.service.PartyService
+import gg.scala.parties.stream.PartyMessageStream
 import me.lucko.helper.plugin.ap.Plugin
 import me.lucko.helper.plugin.ap.PluginDependency
 
@@ -25,14 +31,18 @@ class PartySpigotPlugin : ExtendedScalaPlugin()
 {
     override fun enable()
     {
-        invokeTrackedTask("party resources") {
-            val flavor = Flavor.create<PartySpigotPlugin>(
-                FlavorOptions(this.logger)
-            )
+        val flavor = Flavor.create<PartySpigotPlugin>(
+            FlavorOptions(this.logger)
+        )
 
-            flavor.bind<PartySpigotPlugin>() to this
-            flavor.startup()
-        }
+        flavor.bind<PartySpigotPlugin>() to this
+
+        // temp - use flavor.startup in prod
+        flavor.inject(PartyService)
+        flavor.inject(PartyMessageStream)
+        flavor.inject(PartyCommandService)
+        flavor.inject(PartyInviteService)
+        flavor.inject(PartyReceiverHandler)
 
         CloudSyncDiscoveryService
             .discoverable.assets
