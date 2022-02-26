@@ -230,31 +230,31 @@ class PartyManageMenu(
                     }
                 }
 
-            this[7] = ItemBuilder(Material.BEACON)
-                .name("${CC.GREEN}Warp your party")
-                .addToLore(
-                    "${CC.GRAY}Send all your party members",
-                    "${CC.GRAY}to your current server!",
-                    "",
-                    "${CC.YELLOW}Click to warp members!"
-                )
-                .toButton { _, _ ->
-                    RedisHandler.buildMessage(
-                        "party-warp",
-                        "uniqueId" to party.uniqueId.toString(),
-                        "server" to Lemon.instance.settings.id
-                    ).dispatch(
-                        "party:backbone",
-                        PartyReceiverHandler.banana,
-                    )
-
-                    player.closeInventory()
-                    player.sendMessage("$prefix${CC.GREEN}You've warped party members to your server!")
-                }
-
             if (role == PartyRole.LEADER)
             {
                 val redDye = ColorUtil.toDyeData(ChatColor.RED)
+
+                this[7] = ItemBuilder(Material.BEACON)
+                    .name("${CC.GREEN}Warp your party")
+                    .addToLore(
+                        "${CC.GRAY}Send all your party members",
+                        "${CC.GRAY}to your current server!",
+                        "",
+                        "${CC.YELLOW}Click to warp members!"
+                    )
+                    .toButton { _, _ ->
+                        RedisHandler.buildMessage(
+                            "party-warp",
+                            "uniqueId" to party.uniqueId.toString(),
+                            "server" to Lemon.instance.settings.id
+                        ).dispatch(
+                            "party:backbone",
+                            PartyReceiverHandler.banana,
+                        )
+
+                        player.closeInventory()
+                        player.sendMessage("$prefix${CC.GREEN}You've warped party members to your server!")
+                    }
 
                 this[8] = ItemBuilder(Material.INK_SACK)
                     .data(redDye.toShort())
