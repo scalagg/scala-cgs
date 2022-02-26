@@ -22,6 +22,11 @@ class PartyManageMenu(
     private val party: Party
 ) : Menu("Party ${Constants.DOUBLE_ARROW_RIGHT} Management")
 {
+    init
+    {
+        updateAfterClick = true
+    }
+
     override fun getButtons(player: Player): Map<Int, Button>
     {
         return mutableMapOf<Int, Button>().apply {
