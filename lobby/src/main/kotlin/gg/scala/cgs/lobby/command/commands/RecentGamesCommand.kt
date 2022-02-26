@@ -1,6 +1,5 @@
 package gg.scala.cgs.lobby.command.commands
 
-import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.snapshot.CgsGameSnapshotEngine
 import gg.scala.cgs.lobby.command.menu.RecentGamesMenu
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
@@ -10,6 +9,7 @@ import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.Optional
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bungee.BungeeUtil
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -45,8 +45,12 @@ object RecentGamesCommand : BaseCommand()
             }
             ?: throw ConditionFailedException("${CC.YELLOW}$gameMode${CC.RED} is not a valid gamemode.")
 
-        CgsGameInfoUpdater.findAvailableServer(
-            gameMode, CgsGameEngine.INSTANCE.gameInfo.fancyNameRender
-        )
+        val server = CgsGameInfoUpdater.findAvailableServer(
+            gameMode, CgsGameLobby.INSTANCE.getGameInfo().fancyNameRender
+        ) ?: throw ConditionFailedException("We couldn't find a suitable server for you to play on.")
+
+        player.sendMessage("${CC.SEC}Connecting you to ${CC.PRI}${server.internalServerId}${CC.SEC}...")
+
+        BungeeUtil.sendToServer(player, server.internalServerId)
     }
 }
