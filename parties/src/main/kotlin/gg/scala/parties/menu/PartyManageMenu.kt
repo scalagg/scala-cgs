@@ -30,7 +30,7 @@ class PartyManageMenu(
     override fun getButtons(player: Player): Map<Int, Button>
     {
         return mutableMapOf<Int, Button>().apply {
-            this[buttons.size] = MultiOptionPlayerSettingsBuilder()
+            this[size] = MultiOptionPlayerSettingsBuilder()
                 .titleOf("${CC.GREEN}Visibility")
                 .materialOf(XMaterial.ENDER_EYE)
                 .descriptionOf(
