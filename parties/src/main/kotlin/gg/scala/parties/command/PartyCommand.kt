@@ -40,9 +40,9 @@ object PartyCommand : BaseCommand()
         val member = existing
             .findMember(player.uniqueId)!!
 
-        if (member.role notOver PartyRole.MODERATOR)
+        if (!(member.role over PartyRole.MODERATOR))
         {
-            throw ConditionFailedException("You do not have permission to access the party management menu!")
+            throw ConditionFailedException("You do not have permission to access the party management menu! Your role is: ${member.role.formatted}")
         }
 
         PartyManageMenu(existing)

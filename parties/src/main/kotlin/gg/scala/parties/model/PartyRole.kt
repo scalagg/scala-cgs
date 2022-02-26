@@ -17,10 +17,5 @@ enum class PartyRole(
 
 infix fun PartyRole.over(role: PartyRole): Boolean
 {
-    return role.ordinal >= this.ordinal
-}
-
-infix fun PartyRole.notOver(role: PartyRole): Boolean
-{
-    return role.ordinal < this.ordinal
+    return this.ordinal >= role.ordinal
 }
