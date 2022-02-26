@@ -10,6 +10,7 @@ import gg.scala.parties.model.PartyRole
 import gg.scala.parties.model.PartyStatus
 import gg.scala.parties.prefix
 import gg.scala.parties.stream.PartyMessageStream
+import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
@@ -80,7 +81,13 @@ class PartyManageMenu(
                         "${CC.YELLOW}Click to disband party."
                     )
                     .toButton { _, _ ->
-                        PartyCommand.onDisband(player)
+                        try
+                        {
+                            PartyCommand.onDisband(player)
+                        } catch (exception: ConditionFailedException)
+                        {
+                            player.sendMessage("${CC.RED}${exception.message}")
+                        }
 
                         // as this is an updating menu
                         Tasks.delayed(2L) {
