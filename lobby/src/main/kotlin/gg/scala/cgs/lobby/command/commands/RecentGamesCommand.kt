@@ -1,8 +1,12 @@
 package gg.scala.cgs.lobby.command.commands
 
+import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.snapshot.CgsGameSnapshotEngine
 import gg.scala.cgs.lobby.command.menu.RecentGamesMenu
+import gg.scala.cgs.lobby.gamemode.CgsGameLobby
+import gg.scala.cgs.lobby.updater.CgsGameInfoUpdater
 import net.evilblock.cubed.acf.BaseCommand
+import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.acf.annotation.Optional
 import net.evilblock.cubed.util.CC
@@ -29,5 +33,20 @@ object RecentGamesCommand : BaseCommand()
         ) {
             RecentGamesMenu(it).openMenu(player)
         }
+    }
+
+    @CommandAlias("joingame|play")
+    fun onJoinGame(player: Player, gameMode: String)
+    {
+        val gameModeType = CgsGameLobby.INSTANCE
+            .getGameInfo().gameModes
+            .firstOrNull {
+                it.getId() == gameMode
+            }
+            ?: throw ConditionFailedException("${CC.YELLOW}$gameMode${CC.RED} is not a valid gamemode.")
+
+        CgsGameInfoUpdater.findAvailableServer(
+            gameMode, CgsGameEngine.INSTANCE.gameInfo.fancyNameRender
+        )
     }
 }
