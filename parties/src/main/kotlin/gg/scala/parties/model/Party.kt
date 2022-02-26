@@ -24,7 +24,7 @@ data class Party(
     override val identifier: UUID
         get() = uniqueId
 
-    val password = ""
+    var password = ""
     var status = PartyStatus.PUBLIC
 
     val members = mutableMapOf<UUID, PartyMember>()

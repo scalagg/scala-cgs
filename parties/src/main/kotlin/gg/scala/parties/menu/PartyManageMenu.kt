@@ -7,6 +7,7 @@ import gg.scala.lemon.util.QuickAccess
 import gg.scala.parties.command.PartyCommand
 import gg.scala.parties.model.Party
 import gg.scala.parties.model.PartyRole
+import gg.scala.parties.model.PartySetting
 import gg.scala.parties.model.PartyStatus
 import gg.scala.parties.prefix
 import gg.scala.parties.stream.PartyMessageStream
@@ -15,6 +16,7 @@ import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.*
+import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -66,6 +68,164 @@ class PartyManageMenu(
                     }
                 }
                 .asButton()
+
+            this[size] = MultiOptionPlayerSettingsBuilder()
+                .titleOf("${CC.GREEN}All Invite")
+                .materialOf(XMaterial.FIRE_CHARGE)
+                .descriptionOf(
+                    "${CC.GRAY}Do you want all party",
+                    "${CC.GRAY}members to be able to",
+                    "${CC.GRAY}invite players?"
+                )
+                .orderedValuesOf(
+                    "Enabled",
+                    "Disabled"
+                )
+                .fallbackOf("Disabled")
+                .providerOverrideOf { _, _ ->
+                    if (party.isEnabled(PartySetting.ALL_INVITE))
+                        Metadata("Enabled")
+                    else
+                        Metadata("Disabled")
+                }
+                .valueOverrideOf {
+                    party.update(PartySetting.ALL_INVITE, it == "Enabled")
+                    party.saveAndUpdateParty().thenRun {
+                        PartyMessageStream.pushToStream(
+                            party, FancyMessage()
+                                .withMessage("$prefix${QuickAccess.coloredName(player)} ${
+                                    if (it == "Enabled") 
+                                        "${CC.GREEN}enabled All-Invite!" else 
+                                            "${CC.RED}disabled All-Invite."
+                                }")
+                        )
+                    }
+                }
+                .asButton()
+
+            this[size] = MultiOptionPlayerSettingsBuilder()
+                .titleOf("${CC.GREEN}Chat Muted")
+                .materialOf(XMaterial.BLAZE_POWDER)
+                .descriptionOf(
+                    "${CC.GRAY}Do you want chat to",
+                    "${CC.GRAY}be muted?",
+                )
+                .orderedValuesOf(
+                    "Enabled",
+                    "Disabled"
+                )
+                .fallbackOf("Disabled")
+                .providerOverrideOf { _, _ ->
+                    if (party.isEnabled(PartySetting.CHAT_MUTED))
+                        Metadata("Enabled")
+                    else
+                        Metadata("Disabled")
+                }
+                .valueOverrideOf {
+                    party.update(PartySetting.CHAT_MUTED, it == "Enabled")
+                    party.saveAndUpdateParty().thenRun {
+                        PartyMessageStream.pushToStream(
+                            party, FancyMessage()
+                                .withMessage("$prefix${QuickAccess.coloredName(player)} ${
+                                    if (it == "Enabled")
+                                        "${CC.RED}disabled party chat!" else
+                                        "${CC.GREEN}enabled party chat."
+                                }")
+                        )
+                    }
+                }
+                .asButton()
+
+            this[size] = ItemBuilder(Material.SIGN)
+                .name("${CC.GREEN}Party Password")
+                .addToLore(
+                    "${CC.GRAY}Update your party password",
+                    "${CC.GRAY}which is effective during",
+                    "${CC.GRAY}party protected mode.",
+                    ""
+                )
+                .apply {
+                    if (party.status == PartyStatus.PROTECTED)
+                    {
+                        addToLore("${CC.YELLOW}Right-Click to update password.")
+                        addToLore("${CC.YELLOW}Left-Click to view password.")
+                    } else
+                    {
+                        addToLore("${CC.RED}The party must be in protected mode!")
+                    }
+                }
+                .toButton { _, type ->
+                    if (party.status != PartyStatus.PROTECTED)
+                    {
+                        player.sendMessage("${CC.RED}Your party is not in protected mode!")
+                        return@toButton
+                    }
+
+                    if (type!!.isRightClick)
+                    {
+                        player.closeInventory()
+
+                        InputPrompt().apply {
+                            this.withText("${CC.GREEN}Please enter a new server password!")
+                            this.acceptInput { _, password ->
+                                val fancyMessage = FancyMessage()
+                                party.password = password
+
+                                fancyMessage.withMessage(
+                                    "${CC.SEC}The password is now: ${CC.WHITE}${
+                                        "*".repeat(party.password.length)
+                                    } ${CC.I_GRAY}(hover over to view)"
+                                )
+
+                                fancyMessage.andHoverOf(party.password)
+
+                                party.saveAndUpdateParty().thenRun {
+                                    fancyMessage.sendToPlayer(player)
+                                }
+                            }
+
+                            this.start(player)
+                        }
+                    } else
+                    {
+                        if (party.password.isEmpty())
+                        {
+                            player.sendMessage("${CC.RED}Your party does not have a password!")
+                            return@toButton
+                        }
+
+                        val fancyMessage = FancyMessage()
+                        fancyMessage.withMessage(
+                            "$prefix${CC.SEC}The password is: ${CC.WHITE}${
+                                "*".repeat(party.password.length)
+                            } ${CC.I_GRAY}(hover over to view)"
+                        )
+
+                        fancyMessage.andHoverOf(party.password)
+                        fancyMessage.sendToPlayer(player)
+                    }
+                }
+
+            this[size] = ItemBuilder(Material.REDSTONE_COMPARATOR)
+                .name("${CC.RED}Reset Password")
+                .addToLore(
+                    "${CC.GRAY}Set your party password",
+                    "${CC.GRAY}back to its default.",
+                    "",
+                    "${CC.YELLOW}Click to reset password."
+                )
+                .toButton { _, _ ->
+                    if (party.password.isEmpty())
+                    {
+                        player.sendMessage("${CC.RED}Your party does not have a password!")
+                        return@toButton
+                    }
+
+                    party.password = ""
+                    party.saveAndUpdateParty().thenRun {
+                        player.sendMessage("${CC.GREEN}Your party's password has been reset.")
+                    }
+                }
 
             if (role == PartyRole.LEADER)
             {
