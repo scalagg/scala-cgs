@@ -3,6 +3,7 @@ package gg.scala.parties.menu
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.cookie.settings.builder.MultiOptionPlayerSettingsBuilder
 import gg.scala.lemon.player.metadata.Metadata
+import gg.scala.lemon.util.QuickAccess
 import gg.scala.parties.model.Party
 import gg.scala.parties.model.PartyStatus
 import gg.scala.parties.prefix
@@ -55,7 +56,7 @@ class PartyManageMenu(
                     party.saveAndUpdateParty().thenRun {
                         PartyMessageStream.pushToStream(
                             party, FancyMessage()
-                                .withMessage("$prefix${CC.SEC}The party's visibility is now: ${party.status.formatted}${CC.SEC}!")
+                                .withMessage("$prefix${QuickAccess.coloredName(player)} ${CC.SEC}updated party visibility to ${party.status.formatted}${CC.SEC}!")
                         )
                     }
                 }

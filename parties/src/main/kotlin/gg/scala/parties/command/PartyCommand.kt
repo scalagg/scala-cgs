@@ -31,6 +31,7 @@ object PartyCommand : BaseCommand()
     }
 
     @Subcommand("manage")
+    @Description("Manage internal settings of your party!")
     fun onManage(player: Player)
     {
         val existing = PartyService
