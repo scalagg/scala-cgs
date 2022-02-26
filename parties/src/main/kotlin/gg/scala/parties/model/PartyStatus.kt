@@ -11,7 +11,7 @@ enum class PartyStatus(
 )
 {
     PUBLIC("${CC.GREEN}Public"),
-    PROTECTED("${CC.RED}Password Protected"),
+    PROTECTED("${CC.GOLD}Password Protected"),
     PRIVATE("${CC.RED}Private");
 
     val capitalized = name.lowercase().capitalize()
