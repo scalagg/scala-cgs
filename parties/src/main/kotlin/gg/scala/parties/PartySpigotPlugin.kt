@@ -22,7 +22,8 @@ import me.lucko.helper.plugin.ap.PluginDependency
         PluginDependency("helper"),
         PluginDependency("Lemon"),
         PluginDependency("store-spigot"),
-        PluginDependency("cloudsync")
+        PluginDependency("cloudsync"),
+        PluginDependency("Cookie"),
     ]
 )
 class PartySpigotPlugin : ExtendedScalaPlugin()

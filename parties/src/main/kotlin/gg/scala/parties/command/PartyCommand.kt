@@ -1,8 +1,7 @@
 package gg.scala.parties.command
 
-import gg.scala.parties.model.Party
-import gg.scala.parties.model.PartyMember
-import gg.scala.parties.model.PartyRole
+import gg.scala.parties.menu.PartyManageMenu
+import gg.scala.parties.model.*
 import gg.scala.parties.prefix
 import gg.scala.parties.service.PartyService
 import net.evilblock.cubed.acf.BaseCommand
@@ -29,6 +28,25 @@ object PartyCommand : BaseCommand()
     fun onHelp(help: CommandHelp)
     {
         help.showHelp()
+    }
+
+    @Subcommand("manage")
+    fun onManage(player: Player)
+    {
+        val existing = PartyService
+            .findPartyByUniqueId(player)
+            ?: throw ConditionFailedException("You're not in a party.")
+
+        val member = existing
+            .findMember(player.uniqueId)!!
+
+        if (member.role notOver PartyRole.MODERATOR)
+        {
+            throw ConditionFailedException("You do not have permission to access the party management menu!")
+        }
+
+        PartyManageMenu(existing)
+            .openMenu(player)
     }
 
     @Subcommand("disband")

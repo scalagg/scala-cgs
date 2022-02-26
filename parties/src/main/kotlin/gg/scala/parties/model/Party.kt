@@ -31,8 +31,13 @@ data class Party(
 
     private val settings = mutableMapOf<PartySetting, Boolean>()
 
-    fun findMember(uniqueId: UUID): PartyMember? =
-        members[uniqueId]
+    fun findMember(uniqueId: UUID): PartyMember?
+    {
+        if (leader.uniqueId == uniqueId)
+            return leader
+
+        return members[uniqueId]
+    }
 
     fun isEnabled(setting: PartySetting): Boolean
     {
