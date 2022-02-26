@@ -11,7 +11,7 @@ enum class PartyRole(
 )
 {
     MEMBER("${CC.D_GRAY}Member"),
-    MODERATOR("${CC.D_GREEN}Mod"),
+    MODERATOR("${CC.D_GREEN}Moderator"),
     LEADER("${CC.GOLD}Leader");
 
     infix fun PartyRole.over(role: PartyRole): Boolean
