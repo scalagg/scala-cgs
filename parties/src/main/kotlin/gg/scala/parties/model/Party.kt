@@ -1,6 +1,5 @@
 package gg.scala.parties.model
 
-import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.parties.receiver.PartyReceiverHandler
 import gg.scala.parties.service.PartyService
@@ -25,7 +24,7 @@ data class Party(
         get() = uniqueId
 
     var password = ""
-    var status = PartyStatus.PUBLIC
+    var status = PartyStatus.PRIVATE
 
     val members = mutableMapOf<UUID, PartyMember>()
 
@@ -85,7 +84,7 @@ data class Party(
     private fun forget(): CompletableFuture<Void>
     {
         return PartyService.service.delete(
-            this.identifier, DataStoreStorageType.REDIS
+            this.uniqueId, DataStoreStorageType.REDIS
         ).thenRun {
             RedisHandler.buildMessage(
                 "party-forget",

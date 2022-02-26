@@ -51,7 +51,7 @@ class PartyManageMenu(
                     "Protected",
                     "Private"
                 )
-                .fallbackOf("Public")
+                .fallbackOf("Private")
                 .providerOverrideOf { _, _ ->
                     Metadata(party.status.capitalized)
                 }
