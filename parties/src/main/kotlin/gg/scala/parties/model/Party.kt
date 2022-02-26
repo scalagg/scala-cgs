@@ -25,7 +25,7 @@ data class Party(
         get() = uniqueId
 
     val password = ""
-    val status = PartyStatus.PUBLIC
+    var status = PartyStatus.PUBLIC
 
     val members = mutableMapOf<UUID, PartyMember>()
 
