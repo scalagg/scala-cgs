@@ -86,7 +86,7 @@ object PartyCommand : BaseCommand()
             .findPartyByUniqueId(player)
             ?: throw ConditionFailedException("You're not in a party.")
 
-        existing.gracefullyForget().join()
+        existing.gracefullyForget()
     }
 
     @Subcommand("create")

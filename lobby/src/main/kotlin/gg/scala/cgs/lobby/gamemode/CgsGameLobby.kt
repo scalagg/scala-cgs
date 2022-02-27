@@ -17,7 +17,6 @@ import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.cgs.lobby.modular.CgsLobbyModule
 import gg.scala.cgs.lobby.modular.CgsLobbyModuleItems
 import gg.scala.cgs.lobby.updater.CgsGameInfoUpdater
-import gg.scala.cgs.lobby.updater.CgsGameNpcUpdater
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.flavor.Flavor
 import gg.scala.tangerine.TangerineSpigotPlugin
@@ -77,7 +76,6 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>(
         flavor.inject(CgsLobbyRankingEngine)
         flavor.inject(CgsCommandService)
         flavor.inject(CgsGameSnapshotEngine)
-        flavor.inject(CgsGameNpcUpdater)
 
         CloudSyncDiscoveryService
             .discoverable.assets
