@@ -2,6 +2,7 @@ package gg.scala.parties.service
 
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
+import gg.scala.lemon.util.QuickAccess.username
 import gg.scala.parties.model.Party
 import gg.scala.parties.model.PartyMember
 import gg.scala.parties.model.PartyRole
@@ -41,6 +42,50 @@ object PartyService
         Events.subscribe(AsyncPlayerPreLoginEvent::class.java)
             .handler {
                 this.loadPartyOfPlayerIfAbsent(it.uniqueId)
+            }
+    }
+
+    fun handlePartyKick(player: Player, target: UUID): CompletableFuture<Void>
+    {
+        return loadPartyOfPlayerIfAbsent(target)
+            .thenCompose {
+                if (it == null)
+                {
+                    throw ConditionFailedException("The party you tried to kick a player from no longer exists!")
+                }
+
+                it.members.remove(target)
+
+                it.saveAndUpdateParty()
+                    .thenAccept { _ ->
+                        val message = FancyMessage().apply {
+                            withMessage("$prefix${CC.RED}${target.username()}${CC.SEC} was kicked from the party!")
+                        }
+
+                        PartyMessageStream.pushToStream(it, message)
+                    }
+            }
+    }
+
+    fun handlePartyLeave(player: Player): CompletableFuture<Void>
+    {
+        return loadPartyOfPlayerIfAbsent(player.uniqueId)
+            .thenCompose {
+                if (it == null)
+                {
+                    throw ConditionFailedException("The party you tried to leave no longer exists!")
+                }
+
+                it.members.remove(player.uniqueId)
+
+                it.saveAndUpdateParty()
+                    .thenAccept { _ ->
+                        val message = FancyMessage().apply {
+                            withMessage("$prefix${CC.RED}${player.name}${CC.SEC} left the party!")
+                        }
+
+                        PartyMessageStream.pushToStream(it, message)
+                    }
             }
     }
 

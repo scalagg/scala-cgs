@@ -15,6 +15,7 @@ import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
+import net.evilblock.cubed.acf.annotation.CommandCompletion
 import net.evilblock.cubed.acf.annotation.Default
 import net.evilblock.cubed.acf.annotation.Description
 import net.evilblock.cubed.acf.annotation.HelpCommand
@@ -44,6 +45,7 @@ object PartyCommand : BaseCommand()
     }
 
     @Subcommand("join")
+    @CommandCompletion("@players")
     @Description("Join a public and/or password protected party!")
     fun onJoin(
         player: Player, target: UUID,
@@ -113,6 +115,7 @@ object PartyCommand : BaseCommand()
     }
 
     @Subcommand("invite")
+    @CommandCompletion("@players")
     @Description("Invite a player to your party!")
     fun onInvite(player: Player, target: UUID): CompletableFuture<Void>
     {

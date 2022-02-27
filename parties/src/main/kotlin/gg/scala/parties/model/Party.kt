@@ -58,6 +58,10 @@ data class Party(
 
     fun saveAndUpdateParty(): CompletableFuture<Void>
     {
+        PartyService
+            .loadedParties[uniqueId]
+            ?: return CompletableFuture.runAsync {}
+
         return PartyService.service.save(
             this, DataStoreStorageType.REDIS
         ).thenRun {
