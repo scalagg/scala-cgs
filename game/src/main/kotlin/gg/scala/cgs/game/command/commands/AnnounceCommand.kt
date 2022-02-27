@@ -54,7 +54,7 @@ object AnnounceCommand : BaseCommand()
 
         val fancyMessage = FancyMessage()
         fancyMessage.withMessage(
-            "${CC.B_GOLD}Alert ${CC.B_GRAY}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}Come play ${CC.WHITE}${
+            "${CC.BD_AQUA}Alert ${CC.B_GRAY}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}Come play ${CC.WHITE}${
                 engine.gameInfo.fancyNameRender
             }${CC.SEC} with $lastAnnouncementCreator${CC.SEC} on ${CC.GREEN}${
                 Lemon.instance.settings.id
