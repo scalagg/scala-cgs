@@ -85,7 +85,7 @@ class PartyMemberMenu(
             clickType: ClickType, view: InventoryView
         )
         {
-            PartyService.handlePartyKick(player, member.uniqueId)
+            PartyService.handlePartyKick(member.uniqueId)
         }
     }
 }

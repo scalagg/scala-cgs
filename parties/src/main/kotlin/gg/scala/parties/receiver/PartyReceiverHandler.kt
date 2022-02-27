@@ -39,6 +39,28 @@ object PartyReceiverHandler : BananaHandler
         banana.subscribe()
     }
 
+    @Subscribe("network-disconnect")
+    fun onNetworkDisconnect(message: Message)
+    {
+        val uniqueId = UUID.fromString(
+            message["uniqueId"]
+        )
+
+        val party = PartyService
+            .loadPartyOfPlayerIfAbsent(uniqueId)
+            .join() ?: return
+
+        if (uniqueId == party.leader.uniqueId)
+        {
+            party.gracefullyForget().join()
+        } else
+        {
+            PartyService
+                .handlePartyLeave(uniqueId)
+                .join()
+        }
+    }
+
     @Subscribe("party-warp")
     fun onPartyWarp(message: Message)
     {

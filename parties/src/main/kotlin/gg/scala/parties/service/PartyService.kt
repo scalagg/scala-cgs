@@ -52,7 +52,7 @@ object PartyService
             }
     }
 
-    fun handlePartyKick(player: Player, target: UUID): CompletableFuture<Void>
+    fun handlePartyKick(target: UUID): CompletableFuture<Void>
     {
         return loadPartyOfPlayerIfAbsent(target)
             .thenCompose {
@@ -79,26 +79,26 @@ object PartyService
             }
     }
 
-    fun handlePartyLeave(player: Player): CompletableFuture<Void>
+    fun handlePartyLeave(uniqueId: UUID): CompletableFuture<Void>
     {
-        return loadPartyOfPlayerIfAbsent(player.uniqueId)
+        return loadPartyOfPlayerIfAbsent(uniqueId)
             .thenCompose {
                 if (it == null)
                 {
                     throw ConditionFailedException("The party you tried to leave no longer exists!")
                 }
 
-                it.members.remove(player.uniqueId)
+                it.members.remove(uniqueId)
 
                 it.saveAndUpdateParty()
                     .thenAccept { _ ->
                         val message = FancyMessage().apply {
-                            withMessage("$prefix${CC.RED}${player.name}${CC.SEC} left the party!")
+                            withMessage("$prefix${CC.RED}${uniqueId.username()}${CC.SEC} left the party!")
                         }
 
                         QuickAccess.sendGlobalPlayerMessage(
                             message = "${CC.RED}You've left your party!",
-                            uuid = player.uniqueId
+                            uuid = uniqueId
                         )
 
                         PartyMessageStream.pushToStream(it, message)

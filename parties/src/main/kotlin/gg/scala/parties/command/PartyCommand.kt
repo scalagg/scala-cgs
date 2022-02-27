@@ -57,7 +57,7 @@ object PartyCommand : BaseCommand()
             throw ConditionFailedException("You cannot leave your own party! Use ${CC.BOLD}/party disband${CC.RED} to disband your party.")
         }
 
-        return PartyService.handlePartyLeave(player)
+        return PartyService.handlePartyLeave(player.uniqueId)
     }
 
     @Subcommand("join")
