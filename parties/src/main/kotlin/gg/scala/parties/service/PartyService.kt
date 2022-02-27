@@ -3,6 +3,7 @@ package gg.scala.parties.service
 import gg.scala.cookie.Cookie
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
+import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.username
 import gg.scala.parties.model.Party
 import gg.scala.parties.model.PartyMember
@@ -68,6 +69,11 @@ object PartyService
                             withMessage("$prefix${CC.RED}${target.username()}${CC.SEC} was kicked from the party!")
                         }
 
+                        QuickAccess.sendGlobalPlayerMessage(
+                            message = "${CC.RED}You've been kicked from your party.",
+                            uuid = target
+                        )
+
                         PartyMessageStream.pushToStream(it, message)
                     }
             }
@@ -89,6 +95,11 @@ object PartyService
                         val message = FancyMessage().apply {
                             withMessage("$prefix${CC.RED}${player.name}${CC.SEC} left the party!")
                         }
+
+                        QuickAccess.sendGlobalPlayerMessage(
+                            message = "${CC.RED}You've left your party!",
+                            uuid = player.uniqueId
+                        )
 
                         PartyMessageStream.pushToStream(it, message)
                     }
