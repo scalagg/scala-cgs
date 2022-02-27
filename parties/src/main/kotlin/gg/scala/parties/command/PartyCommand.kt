@@ -37,13 +37,25 @@ object PartyCommand : BaseCommand()
         help.showHelp()
     }
 
+    @Subcommand("info|view|show")
+    @Description("View your party details!")
+    fun onInfo(player: Player)
+    {
+
+    }
+
     @Subcommand("leave")
     @Description("Leave your current party!")
     fun onLeave(player: Player): CompletableFuture<Void>
     {
-        PartyService
+        val existing = PartyService
             .findPartyByUniqueId(player)
             ?: throw ConditionFailedException("You're not in a party.")
+
+        if (player.uniqueId == existing.leader.uniqueId)
+        {
+            throw ConditionFailedException("You cannot leave your own party! Use ${CC.BOLD}/party disband${CC.RED} to disband your party.")
+        }
 
         return PartyService.handlePartyLeave(player)
     }

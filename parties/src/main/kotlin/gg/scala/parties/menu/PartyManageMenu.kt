@@ -7,6 +7,7 @@ import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.metadata.Metadata
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.parties.command.PartyCommand
+import gg.scala.parties.menu.members.PartyMemberMenu
 import gg.scala.parties.model.Party
 import gg.scala.parties.model.PartyRole
 import gg.scala.parties.model.PartySetting
@@ -233,6 +234,17 @@ class PartyManageMenu(
             if (role == PartyRole.LEADER)
             {
                 val redDye = ColorUtil.toDyeData(ChatColor.RED)
+
+                this[6] = ItemBuilder(Material.BEACON)
+                    .name("${CC.GREEN}Manage Players")
+                    .addToLore(
+                        "${CC.GRAY}Manage your party members!",
+                        "",
+                        "${CC.YELLOW}Click to open menu!"
+                    )
+                    .toButton { _, _ ->
+                        PartyMemberMenu(party, role).openMenu(player)
+                    }
 
                 this[7] = ItemBuilder(Material.BEACON)
                     .name("${CC.GREEN}Warp your party")
