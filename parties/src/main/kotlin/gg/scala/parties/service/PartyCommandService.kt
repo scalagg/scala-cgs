@@ -6,6 +6,7 @@ import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
 import gg.scala.parties.PartySpigotPlugin
 import gg.scala.parties.command.PartyCommand
+import gg.scala.parties.command.TogglePartyInvitesCommand
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import org.bukkit.ChatColor
 
@@ -29,5 +30,6 @@ object PartyCommandService
         )
 
         manager.registerCommand(PartyCommand)
+        manager.registerCommand(TogglePartyInvitesCommand)
     }
 }

@@ -1,5 +1,6 @@
 package gg.scala.parties.service
 
+import gg.scala.cookie.Cookie
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.util.QuickAccess.username
@@ -7,6 +8,7 @@ import gg.scala.parties.model.Party
 import gg.scala.parties.model.PartyMember
 import gg.scala.parties.model.PartyRole
 import gg.scala.parties.prefix
+import gg.scala.parties.settings.PartySettingsImpl
 import gg.scala.parties.stream.PartyMessageStream
 import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
@@ -38,6 +40,10 @@ object PartyService
     {
         service = DataStoreObjectControllerCache.create()
         service.provideCustomSerializer(Serializers.gson)
+
+        Cookie.instance.registerSettings(
+            PartySettingsImpl
+        )
 
         Events.subscribe(AsyncPlayerPreLoginEvent::class.java)
             .handler {
