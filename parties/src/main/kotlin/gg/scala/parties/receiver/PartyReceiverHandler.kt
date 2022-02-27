@@ -42,6 +42,11 @@ object PartyReceiverHandler : BananaHandler
     @Subscribe("network-disconnect")
     fun onNetworkDisconnect(message: Message)
     {
+        if (Lemon.instance.settings.id != "na-uml-1")
+        {
+            return
+        }
+
         val uniqueId = UUID.fromString(
             message["uniqueId"]
         )

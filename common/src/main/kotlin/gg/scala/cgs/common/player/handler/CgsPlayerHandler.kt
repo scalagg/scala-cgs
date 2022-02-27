@@ -62,7 +62,9 @@ object CgsPlayerHandler
                     CgsGamePlayer(event.uniqueId)
                 },
                 DataStoreStorageType.MONGO
-            )
+            ).whenComplete { _, u ->
+                u.printStackTrace()
+            }
         }
 
         if (isGameServer())
@@ -129,6 +131,9 @@ object CgsPlayerHandler
             EventPriority.LOWEST
         ).handler {
             players.remove(it.player.uniqueId)?.save()
+                ?.whenComplete { _, u ->
+                    u.printStackTrace()
+                }
         }
     }
 

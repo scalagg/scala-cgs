@@ -26,7 +26,7 @@ object StartedStateRunnable : StateRunnable(
 
         if (machine.stateMachines.isNotEmpty())
         {
-            var current = machine.current()!!
+            var current = machine.current()
 
             if (System.currentTimeMillis() >= current.startTimestamp() + current.getTimeout())
             {
