@@ -7,8 +7,11 @@ import gg.scala.lemon.Lemon
 import gg.scala.parties.PartySpigotPlugin
 import gg.scala.parties.command.PartyCommand
 import gg.scala.parties.command.TogglePartyInvitesCommand
+import net.evilblock.cubed.acf.BaseCommand
+import net.evilblock.cubed.acf.annotation.CommandAlias
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import org.bukkit.ChatColor
+import org.bukkit.entity.Player
 
 /**
  * @author GrowlyX
@@ -30,6 +33,16 @@ object PartyCommandService
         )
 
         manager.registerCommand(PartyCommand)
+
+        // proxy command call to PartyCommand
+        manager.registerCommand(object : BaseCommand() {
+            @CommandAlias("pc")
+            fun onPartyChat(player: Player, message: String)
+            {
+                PartyCommand.onPartyChat(player, message)
+            }
+        })
+
         manager.registerCommand(TogglePartyInvitesCommand)
     }
 }

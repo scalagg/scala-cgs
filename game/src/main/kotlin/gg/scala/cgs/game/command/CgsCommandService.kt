@@ -10,7 +10,9 @@ import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
+import gg.scala.parties.service.PartyCommandService
 import net.evilblock.cubed.command.manager.CubedCommandManager
+import org.bukkit.ChatColor
 
 /**
  * @author GrowlyX
@@ -25,7 +27,11 @@ object CgsCommandService
     @Configure
     fun configure()
     {
-        val manager = CubedCommandManager(plugin)
+        val manager = CubedCommandManager(
+            plugin = plugin,
+            primary = ChatColor.valueOf(Lemon.instance.lemonWebData.primary),
+            secondary = ChatColor.valueOf(Lemon.instance.lemonWebData.secondary)
+        )
 
         Lemon.instance.registerCompletionsAndContexts(manager)
 

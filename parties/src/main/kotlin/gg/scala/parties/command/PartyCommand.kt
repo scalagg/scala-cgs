@@ -180,7 +180,6 @@ object PartyCommand : BaseCommand()
                 val lemonPlayer = it ?:
                     throw ConditionFailedException("${CC.YELLOW}${target.username()}${CC.RED} has never logged on the server.")
 
-
                 val disabled = lemonPlayer
                     .getSetting("party-invites-disabled")
 
