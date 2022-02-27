@@ -44,6 +44,17 @@ object PartyCommand : BaseCommand()
         help.showHelp()
     }
 
+    @Subcommand("leave")
+    @Description("Leave your current party!")
+    fun onLeave(player: Player): CompletableFuture<Void>
+    {
+        val existing = PartyService
+            .findPartyByUniqueId(player)
+            ?: throw ConditionFailedException("You're not in a party.")
+
+        return PartyService.handlePartyLeave(player)
+    }
+
     @Subcommand("join")
     @CommandCompletion("@players")
     @Description("Join a public and/or password protected party!")
