@@ -28,12 +28,17 @@ class PartyMemberMenu(
     private val role: PartyRole
 ) : PaginatedMenu()
 {
+    init
+    {
+        updateAfterClick = true
+    }
+
     override fun getAllPagesButtons(player: Player): Map<Int, Button>
     {
         return mutableMapOf<Int, Button>().apply {
             for (member in party.members)
             {
-
+                this[size] = MemberButton(member.value)
             }
         }
     }
@@ -65,6 +70,7 @@ class PartyMemberMenu(
         {
             return ItemBuilder.of(XMaterial.SKELETON_SKULL)
                 .data(3)
+                .name("${CC.GREEN}${member.uniqueId.username()}")
                 .owner(member.uniqueId.username())
                 .addToLore(
                     "${CC.SEC}Role: ${CC.PRI}${member.role.formatted}",

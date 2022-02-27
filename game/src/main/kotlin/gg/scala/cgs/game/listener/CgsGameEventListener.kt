@@ -11,8 +11,12 @@ import gg.scala.cgs.common.runnable.StateRunnableService
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.cgs.game.client.CgsLunarClientService
+import gg.scala.lemon.Lemon
 import gg.scala.lemon.disguise.update.event.PreDisguiseEvent
+import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.util.QuickAccess.coloredName
+import gg.scala.parties.receiver.PartyReceiverHandler
+import gg.scala.parties.service.PartyService
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants.HEART_SYMBOL
@@ -27,7 +31,6 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
-import java.util.*
 import kotlin.math.ceil
 
 /**
@@ -51,6 +54,21 @@ object CgsGameEventListener : Listener
         if (engine.gameState == CgsGameState.WAITING || engine.gameState == CgsGameState.STARTING)
         {
             val participantSize = Bukkit.getOnlinePlayers().size
+
+            val party = PartyService
+                .findPartyByUniqueId(event.participant.uniqueId)
+
+            if (party != null)
+            {
+                RedisHandler.buildMessage(
+                    "party-warp",
+                    "uniqueId" to party.uniqueId.toString(),
+                    "server" to Lemon.instance.settings.id
+                ).dispatch(
+                    "party:backbone",
+                    PartyReceiverHandler.banana
+                )
+            }
 
             if (!CgsGameTeamService.allocatePlayersToAvailableTeam(cgsGamePlayer))
             {

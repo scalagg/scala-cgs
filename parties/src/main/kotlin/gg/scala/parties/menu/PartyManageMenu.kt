@@ -18,6 +18,7 @@ import gg.scala.parties.stream.PartyMessageStream
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
+import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.*
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
@@ -231,11 +232,13 @@ class PartyManageMenu(
                     }
                 }
 
+            this[size] = PaginatedMenu.PLACEHOLDER
+
             if (role == PartyRole.LEADER)
             {
                 val redDye = ColorUtil.toDyeData(ChatColor.RED)
 
-                this[6] = ItemBuilder(Material.BEACON)
+                this[6] = ItemBuilder(Material.FISHING_ROD)
                     .name("${CC.GREEN}Manage Players")
                     .addToLore(
                         "${CC.GRAY}Manage your party members!",
