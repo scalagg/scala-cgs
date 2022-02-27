@@ -2,7 +2,6 @@ package gg.scala.cgs.lobby.updater
 
 import gg.scala.cgs.common.instance.CgsServerInstance
 import gg.scala.cgs.common.instance.CgsServerType
-import gg.scala.cgs.common.instance.game.CgsGameServerInfo
 import gg.scala.cgs.common.instance.handler.CgsInstanceService
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby

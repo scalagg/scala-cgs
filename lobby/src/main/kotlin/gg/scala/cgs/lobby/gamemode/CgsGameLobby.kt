@@ -63,7 +63,7 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>(
         CgsPlayerHandler.configure()
 
         TangerineSpigotPlugin.instance.hubModule = CgsLobbyModule
-        CgsGameInfoUpdater.start()
+        CgsGameInfoUpdater.configure()
 
         val flavor = Flavor.create<CgsGameLobby<S>>()
         flavor.bind<CgsGameLobby<S>>() to this
