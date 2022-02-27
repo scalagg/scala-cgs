@@ -1,6 +1,7 @@
 package gg.scala.parties.model
 
 import net.evilblock.cubed.util.CC
+import java.util.*
 
 /**
  * @author GrowlyX
@@ -14,5 +15,6 @@ enum class PartyStatus(
     PROTECTED("${CC.GOLD}Password Protected"),
     PRIVATE("${CC.RED}Private");
 
-    val capitalized = name.lowercase().capitalize()
+    val capitalized = name.lowercase()
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 }

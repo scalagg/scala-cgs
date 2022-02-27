@@ -14,17 +14,10 @@ import gg.scala.parties.stream.PartyMessageStream
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.CommandCompletion
-import net.evilblock.cubed.acf.annotation.Default
-import net.evilblock.cubed.acf.annotation.Description
-import net.evilblock.cubed.acf.annotation.HelpCommand
-import net.evilblock.cubed.acf.annotation.Private
-import net.evilblock.cubed.acf.annotation.Subcommand
+import net.evilblock.cubed.acf.annotation.*
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.md_5.bungee.api.chat.ClickEvent
-import org.apache.logging.log4j.core.tools.picocli.CommandLine.Option
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -48,7 +41,7 @@ object PartyCommand : BaseCommand()
     @Description("Leave your current party!")
     fun onLeave(player: Player): CompletableFuture<Void>
     {
-        val existing = PartyService
+        PartyService
             .findPartyByUniqueId(player)
             ?: throw ConditionFailedException("You're not in a party.")
 
