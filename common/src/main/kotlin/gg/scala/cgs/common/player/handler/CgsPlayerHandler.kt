@@ -11,6 +11,7 @@ import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.impl.CachedDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.Events
 import net.evilblock.cubed.serializers.Serializers
@@ -41,7 +42,11 @@ object CgsPlayerHandler
     lateinit var handle: DataStoreObjectController<CgsGamePlayer>
 
     private val players: ConcurrentHashMap<UUID, CgsGamePlayer>
-        get() = handle.localCache
+        get() = handle.useLayerWithReturn<CachedDataStoreStorageLayer<CgsGamePlayer>, ConcurrentHashMap<UUID, CgsGamePlayer>>(
+            DataStoreStorageType.CACHE
+        ) {
+            this.connection.getConnection()
+        }
 
     fun find(uniqueId: UUID): CgsGamePlayer? = players[uniqueId]
     fun find(player: Player): CgsGamePlayer? = players[player.uniqueId]
@@ -50,7 +55,6 @@ object CgsPlayerHandler
     fun configure()
     {
         handle = DataStoreObjectControllerCache.create()
-        handle.provideCustomSerializer(Serializers.gson)
 
         Events.subscribe(
             AsyncPlayerPreLoginEvent::class.java,

@@ -26,7 +26,6 @@ object CgsGameSnapshotEngine
     fun configure()
     {
         controller = DataStoreObjectControllerCache.create()
-        controller.provideCustomSerializer(Serializers.gson)
     }
 
     fun submitWrappedSnapshot()

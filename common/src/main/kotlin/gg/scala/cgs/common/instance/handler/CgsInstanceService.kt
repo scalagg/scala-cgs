@@ -9,7 +9,6 @@ import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.impl.RedisDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
-import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
 import kotlin.properties.Delegates
@@ -26,7 +25,6 @@ object CgsInstanceService
     fun configure(type: CgsServerType)
     {
         service = DataStoreObjectControllerCache.create()
-        service.provideCustomSerializer(Serializers.gson)
 
         current = service
             .useLayerWithReturn<RedisDataStoreStorageLayer<CgsServerInstance>, CgsServerInstance>(DataStoreStorageType.REDIS) {

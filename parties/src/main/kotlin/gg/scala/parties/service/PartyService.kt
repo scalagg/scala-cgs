@@ -40,7 +40,6 @@ object PartyService
     fun configure()
     {
         service = DataStoreObjectControllerCache.create()
-        service.provideCustomSerializer(Serializers.gson)
 
         Cookie.instance.registerSettings(
             PartySettingsImpl
