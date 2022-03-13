@@ -12,8 +12,18 @@ object CgsInventorySnapshotEngine
     val snapshots =
         mutableMapOf<UUID, CgsInventorySnapshot>()
 
-    fun takeSnapshot(player: Player): CgsInventorySnapshot
+    fun takeSnapshot(player: Player, replace: Boolean = true): CgsInventorySnapshot
     {
+        if (!replace)
+        {
+            val existing = snapshots[player.uniqueId]
+
+            if (existing != null)
+            {
+                return existing
+            }
+        }
+
         val snapshot =
             CgsInventorySnapshot(player.uniqueId)
 

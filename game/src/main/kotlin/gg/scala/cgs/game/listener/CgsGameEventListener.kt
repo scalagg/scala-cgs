@@ -266,6 +266,9 @@ object CgsGameEventListener : Listener
             )
         }
 
+        CgsInventorySnapshotEngine
+            .takeSnapshot(player)
+
         cgsDeathEvent.callNow()
     }
 
@@ -329,6 +332,16 @@ object CgsGameEventListener : Listener
         event: CgsGameEngine.CgsGameEndEvent
     )
     {
+        engine.winningTeam.apply {
+            this.participants.forEach {
+                val bukkit = Bukkit.getPlayer(it)
+                    ?: return@forEach
+
+                CgsInventorySnapshotEngine
+                    .takeSnapshot(bukkit, false)
+            }
+        }
+
         StateRunnableService
             .startRunningAsync(CgsGameState.ENDED)
     }
