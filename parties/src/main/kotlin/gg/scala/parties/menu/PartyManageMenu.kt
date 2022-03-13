@@ -1,6 +1,7 @@
 package gg.scala.parties.menu
 
 import com.cryptomorin.xseries.XMaterial
+import gg.scala.aware.message.AwareMessage
 import gg.scala.cookie.settings.builder.MultiOptionPlayerSettingsBuilder
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RedisHandler
@@ -258,14 +259,11 @@ class PartyManageMenu(
                         "${CC.YELLOW}Click to warp members!"
                     )
                     .toButton { _, _ ->
-                        RedisHandler.buildMessage(
-                            "party-warp",
+                        AwareMessage.of(
+                            "party-warp", PartyReceiverHandler.aware,
                             "uniqueId" to party.uniqueId.toString(),
                             "server" to Lemon.instance.settings.id
-                        ).dispatch(
-                            "party:backbone",
-                            PartyReceiverHandler.banana,
-                        )
+                        ).publish()
 
                         player.closeInventory()
                         player.sendMessage("$prefix${CC.GREEN}You've warped party members to your server!")

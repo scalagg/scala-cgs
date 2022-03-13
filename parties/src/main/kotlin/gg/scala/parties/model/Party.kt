@@ -1,5 +1,6 @@
 package gg.scala.parties.model
 
+import gg.scala.aware.message.AwareMessage
 import gg.scala.lemon.handler.RedisHandler
 import gg.scala.parties.receiver.PartyReceiverHandler
 import gg.scala.parties.service.PartyService
@@ -65,13 +66,10 @@ data class Party(
         return PartyService.service.save(
             this, DataStoreStorageType.REDIS
         ).thenRun {
-            RedisHandler.buildMessage(
-                "party-update",
+            AwareMessage.of(
+                "party-update", PartyReceiverHandler.aware,
                 "uniqueId" to uniqueId.toString()
-            ).dispatch(
-                "party:backbone",
-                PartyReceiverHandler.banana
-            )
+            ).publish()
         }
     }
 
@@ -90,13 +88,10 @@ data class Party(
         return PartyService.service.delete(
             this.uniqueId, DataStoreStorageType.REDIS
         ).thenRun {
-            RedisHandler.buildMessage(
-                "party-forget",
+            AwareMessage.of(
+                "party-forget", PartyReceiverHandler.aware,
                 "uniqueId" to uniqueId.toString()
-            ).dispatch(
-                "party:backbone",
-                PartyReceiverHandler.banana
-            )
+            ).publish()
         }
     }
 }

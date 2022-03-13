@@ -1,5 +1,6 @@
 package gg.scala.cgs.lobby.updater
 
+import gg.scala.cgs.common.information.mode.CgsGameMode
 import gg.scala.cgs.common.instance.CgsServerInstance
 import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.instance.handler.CgsInstanceService
@@ -24,13 +25,13 @@ object CgsGameInfoUpdater : Runnable
     var lobbyTotalCount = 0
     var playingTotalCount = 0
 
-    fun findAvailableServer(gameMode: String, gameType: String): CgsServerInstance?
+    fun findAvailableServer(gameMode: CgsGameMode, gameType: String): CgsServerInstance?
     {
         return gameServers
             .asSequence()
             .filter { it.gameServerInfo != null }
             .filter { it.gameServerInfo!!.gameType == gameType }
-            .filter { it.gameServerInfo!!.gameMode == gameMode }
+            .filter { it.gameServerInfo!!.gameMode == gameMode.getId() }
             .filter { it.gameServerInfo!!.state == CgsGameState.WAITING || it.gameServerInfo!!.state == CgsGameState.STARTING }
             .firstOrNull()
     }

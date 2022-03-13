@@ -17,6 +17,7 @@ import gg.scala.cgs.common.runnable.StateRunnableService
 import gg.scala.cgs.common.runnable.state.EndedStateRunnable
 import gg.scala.cgs.common.snapshot.CgsGameSnapshot
 import gg.scala.cgs.common.snapshot.CgsGameSnapshotEngine
+import gg.scala.cgs.common.snapshot.inventory.CgsInventorySnapshot
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.statistics.CgsStatisticProvider
 import gg.scala.cgs.common.statistics.CgsStatisticService
@@ -112,6 +113,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
             flavor.inject(EditableFieldService)
             flavor.inject(CgsGameSnapshotEngine)
+
+            if (!gameInfo.usesCustomArenaWorld)
+            {
+                CgsGameArenaHandler.configure(gameMode)
+            }
 
             Events.subscribe(AsyncPlayerPreLoginEvent::class.java).handler {
                 if (!EndedStateRunnable.ALLOWED_TO_JOIN)
@@ -226,6 +232,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun getStatistics(cgsGamePlayer: CgsGamePlayer): S
     {
         return cgsGamePlayer.gameSpecificStatistics[statisticType.java.simpleName]!! as S
@@ -294,6 +301,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     class CgsGameParticipantReinstateEvent(
         val participant: Player,
+        val snapshot: CgsInventorySnapshot,
         val connected: Boolean
     ) : CgsGameEvent()
 

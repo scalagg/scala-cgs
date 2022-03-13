@@ -1,13 +1,15 @@
 package gg.scala.parties.receiver
 
-import gg.scala.banana.BananaBuilder
-import gg.scala.banana.annotate.Subscribe
-import gg.scala.banana.message.Message
-import gg.scala.banana.options.BananaOptions
-import gg.scala.banana.subscribe.marker.BananaHandler
+import gg.scala.aware.AwareBuilder
+import gg.scala.aware.annotation.Subscribe
+import gg.scala.aware.codec.codecs.interpretation.AwareMessageCodec
+import gg.scala.aware.message.AwareMessage
+import gg.scala.flavor.inject.Inject
+import gg.scala.flavor.service.Close
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
+import gg.scala.parties.PartySpigotPlugin
 import gg.scala.parties.service.PartyService
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bungee.BungeeUtil
@@ -19,37 +21,43 @@ import java.util.*
  * @since 12/2/2021
  */
 @Service
-object PartyReceiverHandler : BananaHandler
+object PartyReceiverHandler
 {
-    val banana = BananaBuilder()
-        .options(
-            BananaOptions(
-                channel = "party:backbone"
-            )
-        )
-        .credentials(
-            Lemon.instance.credentials
-        )
-        .build()
+    @Inject
+    lateinit var plugin: PartySpigotPlugin
+
+    val aware by lazy {
+        AwareBuilder
+            .of<AwareMessage>("party:backbone")
+            .codec(AwareMessageCodec)
+            .logger(plugin.logger)
+            .build()
+    }
 
     @Configure
     fun configure()
     {
-        banana.registerClass(this)
-        banana.subscribe()
+        aware.listen(this)
+        aware.connect()
+    }
+
+    @Close
+    fun close()
+    {
+        aware.shutdown()
     }
 
     @Subscribe("network-disconnect")
-    fun onNetworkDisconnect(message: Message)
+    fun onNetworkDisconnect(message: AwareMessage)
     {
+        // very temporary
         if (Lemon.instance.settings.id != "na-uml-1")
         {
             return
         }
 
-        val uniqueId = UUID.fromString(
-            message["uniqueId"]
-        )
+        val uniqueId = message
+            .retrieve<UUID>("uniqueId")
 
         val party = PartyService
             .loadPartyOfPlayerIfAbsent(uniqueId)
@@ -67,11 +75,10 @@ object PartyReceiverHandler : BananaHandler
     }
 
     @Subscribe("party-warp")
-    fun onPartyWarp(message: Message)
+    fun onPartyWarp(message: AwareMessage)
     {
-        val uniqueId = UUID.fromString(
-            message["uniqueId"]
-        )
+        val uniqueId = message
+            .retrieve<UUID>("uniqueId")
 
         val party = PartyService
             .loadedParties.values
@@ -80,7 +87,8 @@ object PartyReceiverHandler : BananaHandler
             }
             ?: return
 
-        val server = message["server"]!!
+        val server = message
+            .retrieve<String>("server")
 
         for (uuid in party.members.keys)
         {
@@ -97,21 +105,20 @@ object PartyReceiverHandler : BananaHandler
     }
 
     @Subscribe("party-update")
-    fun onPartyUpdate(message: Message)
+    fun onPartyUpdate(message: AwareMessage)
     {
-        val uniqueId = UUID.fromString(
-            message["uniqueId"]
-        )
+        val uniqueId = message
+            .retrieve<UUID>("uniqueId")
 
-        PartyService.reloadPartyByUniqueId(uniqueId)
+        PartyService
+            .reloadPartyByUniqueId(uniqueId)
     }
 
     @Subscribe("party-forget")
-    fun onPartyForget(message: Message)
+    fun onPartyForget(message: AwareMessage)
     {
-        val uniqueId = UUID.fromString(
-            message["uniqueId"]
-        )
+        val uniqueId = message
+            .retrieve<UUID>("uniqueId")
 
         PartyService.loadedParties
             .remove(uniqueId)

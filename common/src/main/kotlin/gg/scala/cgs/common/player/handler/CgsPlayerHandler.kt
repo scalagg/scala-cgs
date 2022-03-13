@@ -14,7 +14,6 @@ import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.impl.CachedDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.Events
-import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import org.bukkit.event.EventPriority

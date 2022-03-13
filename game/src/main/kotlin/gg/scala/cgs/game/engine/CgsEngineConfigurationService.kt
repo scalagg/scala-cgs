@@ -47,10 +47,7 @@ object CgsEngineConfigurationService
             "address" to "127.0.0.1",
             "port" to Bukkit.getPort()
                 .toString()
-        ).dispatch(
-            "cocoa",
-            Lemon.instance.banana
-        )
+        ).publish()
 
         Tasks.asyncTimer({
             Lemon.instance.localInstance
@@ -70,13 +67,10 @@ object CgsEngineConfigurationService
             "remove-server",
             "id" to Lemon.instance
                 .settings.id
-        ).dispatch(
-            "cocoa",
-            Lemon.instance.banana
-        )
+        ).publish()
 
-        Lemon.instance.banana.useResource {
-            it.hdel("cgs:servers", Lemon.instance.settings.id)
+        Lemon.instance.aware.publishConnection.apply {
+            sync().hdel("cgs:servers", Lemon.instance.settings.id)
         }
     }
 }

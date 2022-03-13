@@ -1,5 +1,6 @@
 package gg.scala.cgs.game.listener
 
+import gg.scala.aware.message.AwareMessage
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.player.handler.CgsDeathHandler
 import gg.scala.cgs.common.player.handler.CgsGameDisqualificationHandler
@@ -8,12 +9,12 @@ import gg.scala.cgs.common.player.handler.CgsSpectatorHandler
 import gg.scala.cgs.common.refresh
 import gg.scala.cgs.common.respawnPlayer
 import gg.scala.cgs.common.runnable.StateRunnableService
+import gg.scala.cgs.common.snapshot.inventory.CgsInventorySnapshotEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.cgs.game.client.CgsLunarClientService
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.disguise.update.event.PreDisguiseEvent
-import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.parties.receiver.PartyReceiverHandler
 import gg.scala.parties.service.PartyService
@@ -60,13 +61,12 @@ object CgsGameEventListener : Listener
 
             if (party != null)
             {
-                RedisHandler.buildMessage(
-                    "party-warp",
+                AwareMessage.of(
+                    "party-warp", PartyReceiverHandler.aware,
                     "uniqueId" to party.uniqueId.toString(),
                     "server" to Lemon.instance.settings.id
-                ).dispatch(
-                    "party:backbone",
-                    PartyReceiverHandler.banana
+                ).publish(
+                    channel = "party:backbone"
                 )
             }
 
@@ -132,12 +132,22 @@ object CgsGameEventListener : Listener
     {
         if (event.connectedWithinTimeframe)
         {
+            val snapshot = CgsInventorySnapshotEngine
+                .snapshots[event.participant.uniqueId]
+
+            // The inventory snapshot of their previous connection should never be null.
+            if (snapshot == null)
+            {
+                event.participant.kickPlayer("${CC.RED}[CGS] Something went terribly wrong while trying to reinstate you into the game.")
+                return
+            }
+
             // The CGS game team should never be null.
             val cgsGameTeam = CgsGameTeamService.getTeamOf(event.participant)!!
             cgsGameTeam.eliminated.remove(event.participant.uniqueId)
 
             val cgsParticipantReinstate = CgsGameEngine
-                .CgsGameParticipantReinstateEvent(event.participant, true)
+                .CgsGameParticipantReinstateEvent(event.participant, snapshot, true)
 
             cgsParticipantReinstate.callNow()
         } else
@@ -297,6 +307,8 @@ object CgsGameEventListener : Listener
         {
             CgsSpectatorHandler.removeSpectator(event.participant)
         }
+
+        event.snapshot.restore(event.participant)
 
         event.participant.sendMessage(
             "${CC.D_GREEN}✓ ${CC.GREEN}You've been added back into the game."

@@ -2,6 +2,7 @@ package gg.scala.cgs.common.snapshot.wrapped
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.snapshot.CgsGameSnapshot
+import gg.scala.cgs.common.snapshot.inventory.CgsInventorySnapshotEngine
 import gg.scala.lemon.Lemon
 import gg.scala.store.storage.storable.IDataStoreObject
 import java.util.*
@@ -41,6 +42,9 @@ class CgsWrappedGameSnapshot(
 
     val icon = CgsGameEngine.INSTANCE
         .gameMode.getMaterial().first.name
+
+    val snapshots =
+        CgsInventorySnapshotEngine.snapshots
 
     val datePlayed = Date()
 }

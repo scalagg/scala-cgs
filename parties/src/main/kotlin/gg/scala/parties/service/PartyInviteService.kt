@@ -13,10 +13,10 @@ object PartyInviteService
     fun hasOutgoingInvite(party: UUID, target: UUID): CompletableFuture<Boolean>
     {
         return CompletableFuture.supplyAsync {
-            var exists = false
+            var exists: Boolean
 
-            Lemon.instance.banana.useResource {
-                exists = it.hget("parties:invites:$target:$party", party.toString()) != null
+            Lemon.instance.aware.publishConnection.apply {
+                exists = this.sync().hget("parties:invites:$target:$party", party.toString()) != null
             }
 
             return@supplyAsync exists

@@ -46,7 +46,7 @@ object RecentGamesCommand : BaseCommand()
             ?: throw ConditionFailedException("${CC.YELLOW}$gameMode${CC.RED} is not a valid gamemode.")
 
         val server = CgsGameInfoUpdater.findAvailableServer(
-            gameMode, CgsGameLobby.INSTANCE.getGameInfo().fancyNameRender
+            gameModeType, CgsGameLobby.INSTANCE.getGameInfo().fancyNameRender
         ) ?: throw ConditionFailedException("We couldn't find a suitable server for you to play on.")
 
         player.sendMessage("${CC.SEC}Connecting you to ${CC.PRI}${server.internalServerId}${CC.SEC}...")

@@ -1,6 +1,7 @@
 package gg.scala.cgs.game.command.commands
 
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.snapshot.inventory.CgsInventorySnapshotEngine
 import gg.scala.lemon.player.LemonPlayer
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -24,9 +25,13 @@ object ReviveCommand : BaseCommand()
                 "${target.getColoredName()}${CC.RED} is not spectating."
             )
 
+        val snapshot = CgsInventorySnapshotEngine
+            .snapshots[target.uniqueId]
+            ?: throw ConditionFailedException("${target.getColoredName()}${CC.RED} is unable to be revived.")
+
         val playerReinstateEvent = CgsGameEngine
             .CgsGameParticipantReinstateEvent(
-                target.bukkitPlayer!!, false
+                target.bukkitPlayer!!, snapshot, false
             )
 
         playerReinstateEvent.callNow()

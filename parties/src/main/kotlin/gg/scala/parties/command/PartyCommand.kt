@@ -119,11 +119,8 @@ object PartyCommand : BaseCommand()
                 throw ConditionFailedException("You do not have an invite from this party!")
             }
 
-            Lemon.instance.banana.useResource { jedis ->
-                jedis.hdel(
-                    "friends:requests:${player.uniqueId}:$uniqueId",
-                    uniqueId.toString()
-                )
+            Lemon.instance.aware.publishConnection.apply {
+                this.sync().hdel("friends:requests:${player.uniqueId}:$uniqueId", uniqueId.toString())
             }
 
             handlePartyJoin(player, uniqueId)
@@ -192,6 +189,13 @@ object PartyCommand : BaseCommand()
             }
     }
 
+    val connection by lazy {
+        val internal = Lemon
+            .instance.aware.internal()
+
+        internal.connect()
+    }
+
     private fun internalHandlePartyInviteDispatch(
         player: Player, target: UUID, party: Party
     ): CompletableFuture<Void>
@@ -212,19 +216,17 @@ object PartyCommand : BaseCommand()
                 "/party accept ${party.uniqueId}"
             )
 
-            Lemon.instance.banana.useResource {
-                val requestKey = "parties:invites:$target:${party.uniqueId}"
+            val requestKey = "parties:invites:$target:${party.uniqueId}"
 
-                it.hset(
-                    requestKey, party.uniqueId.toString(),
-                    System.currentTimeMillis().toString()
-                )
+            connection.sync().hset(
+                requestKey, party.uniqueId.toString(),
+                System.currentTimeMillis().toString()
+            )
 
-                it.expire(
-                    requestKey,
-                    TimeUnit.MINUTES.toSeconds(5L)
-                )
-            }
+            connection.sync().expire(
+                requestKey,
+                TimeUnit.MINUTES.toSeconds(5L)
+            )
 
             QuickAccess.sendGlobalPlayerFancyMessage(
                 fancyMessage = message, uuid = target

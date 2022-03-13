@@ -25,7 +25,7 @@ object CgsOverridingSpectatorChannel : ChannelOverride
         rank: Rank, receiver: Player
     ): String
     {
-        return "${CC.GRAY}[Spectator] $sender: $message"
+        return "${CC.GRAY}[Spec] ${rank.color}$sender: $message"
     }
 
     override fun hasPermission(t: Player) = t.hasMetadata("spectator")

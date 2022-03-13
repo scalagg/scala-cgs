@@ -36,7 +36,7 @@ object PartyCommandService
 
         // proxy command call to PartyCommand
         manager.registerCommand(object : BaseCommand() {
-            @CommandAlias("pc")
+            @CommandAlias("pc|partychat|pchat")
             fun onPartyChat(player: Player, message: String)
             {
                 PartyCommand.onPartyChat(player, message)
