@@ -4,6 +4,7 @@ import gg.scala.cgs.common.snapshot.CgsGameSnapshotEngine
 import gg.scala.cgs.lobby.command.menu.RecentGamesMenu
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 import gg.scala.cgs.lobby.updater.CgsGameInfoUpdater
+import gg.scala.lemon.redirection.impl.VelocityRedirectSystem
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -49,8 +50,8 @@ object RecentGamesCommand : BaseCommand()
             gameModeType, CgsGameLobby.INSTANCE.getGameInfo().fancyNameRender
         ) ?: throw ConditionFailedException("We couldn't find a suitable server for you to play on.")
 
-        player.sendMessage("${CC.SEC}Connecting you to ${CC.PRI}${server.internalServerId}${CC.SEC}...")
-
-        BungeeUtil.sendToServer(player, server.internalServerId)
+        VelocityRedirectSystem.redirect(
+            player, server.internalServerId
+        )
     }
 }

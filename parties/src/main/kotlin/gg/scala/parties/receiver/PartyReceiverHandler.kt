@@ -9,10 +9,10 @@ import gg.scala.flavor.service.Close
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.redirection.impl.VelocityRedirectSystem
 import gg.scala.parties.PartySpigotPlugin
 import gg.scala.parties.service.PartyService
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bungee.BungeeUtil
 import org.bukkit.Bukkit
 import java.util.*
 
@@ -96,9 +96,9 @@ object PartyReceiverHandler
                 .getPlayer(uuid)
                 ?: continue
 
-            bukkitPlayer.sendMessage("${CC.SEC}You're being warped to ${CC.PRI}$server${CC.SEC}...")
+            bukkitPlayer.sendMessage("${CC.SEC}You're being warped to ${CC.PRI}$server${CC.SEC}!")
 
-            BungeeUtil.sendToServer(
+            VelocityRedirectSystem.redirect(
                 bukkitPlayer, server
             )
         }

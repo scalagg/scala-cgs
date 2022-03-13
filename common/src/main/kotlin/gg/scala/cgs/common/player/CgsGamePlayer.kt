@@ -23,15 +23,8 @@ class CgsGamePlayer(
     var lastPlayedGameId: UUID? = null
     var lastPlayedGameDisconnectionTimestamp: Long? = null
 
-    val gameSpecificStatistics = mutableMapOf<String, GameSpecificStatistics>()
-
-    val username: String
-        get()
-        {
-            // This will always be retrieved from the local cache
-            // as the player's latest uniqueId is updated on AsyncPreLoginEvent.
-            return CubedCacheUtil.fetchName(uniqueId)!!
-        }
+    val gameSpecificStatistics =
+        mutableMapOf<String, GameSpecificStatistics>()
 
     override fun save(): CompletableFuture<Void>
     {
