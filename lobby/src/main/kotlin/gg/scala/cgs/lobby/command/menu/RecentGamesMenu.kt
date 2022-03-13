@@ -1,7 +1,7 @@
 package gg.scala.cgs.lobby.command.menu
 
 import gg.scala.cgs.common.snapshot.wrapped.CgsWrappedGameSnapshot
-import gg.scala.lemon.LemonConstants
+import gg.scala.cgs.lobby.command.menu.inventory.PlayerInventoryMenu
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
@@ -33,7 +33,6 @@ class RecentGamesMenu(
     init
     {
         placeholdBorders = true
-        autoUpdate = true
     }
 
     override fun size(buttons: Map<Int, Button>): Int = 36
@@ -97,7 +96,7 @@ class RecentGamesMenu(
                         }
                         .toTypedArray(),
                     "",
-                    "${CC.GREEN}Click to view on web!"
+                    "${CC.GREEN}Click to view snapshots!"
                 )
                 .name("${CC.D_AQUA}${recentGame.gameName}")
                 .build()
@@ -105,9 +104,10 @@ class RecentGamesMenu(
 
         override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView)
         {
-            player.sendMessage("${CC.SEC}View this game on our website: ${CC.GREEN}${
-                "${LemonConstants.WEB_LINK}/game/${recentGame.identifier}"
-            }")
+            PlayerInventoryMenu(
+                this@RecentGamesMenu,
+                recentGame
+            ).openMenu(player)
         }
     }
 }
