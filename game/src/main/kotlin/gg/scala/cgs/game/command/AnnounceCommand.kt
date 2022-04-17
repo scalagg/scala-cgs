@@ -1,7 +1,9 @@
-package gg.scala.cgs.game.command.commands
+package gg.scala.cgs.game.command
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.states.CgsGameState
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.sendGlobalFancyBroadcast
@@ -21,7 +23,8 @@ import java.util.concurrent.TimeUnit
  * @author GrowlyX
  * @since 12/3/2021
  */
-object AnnounceCommand : BaseCommand()
+@AutoRegister
+object AnnounceCommand : ScalaCommand()
 {
     @JvmStatic
     val COOL_DOWN = TimeUnit.SECONDS.toMillis(30L)

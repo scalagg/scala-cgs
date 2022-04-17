@@ -1,7 +1,9 @@
-package gg.scala.cgs.game.command.commands
+package gg.scala.cgs.game.command
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.snapshot.inventory.CgsInventorySnapshotEngine
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.player.LemonPlayer
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -14,7 +16,8 @@ import org.bukkit.command.CommandSender
  * @author GrowlyX
  * @since 12/20/2021
  */
-object ReviveCommand : BaseCommand()
+@AutoRegister
+object ReviveCommand : ScalaCommand()
 {
     @CommandAlias("revive")
     @CommandPermission("cgs.command.revive")

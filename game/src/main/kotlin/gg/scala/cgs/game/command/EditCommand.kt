@@ -1,7 +1,9 @@
-package gg.scala.cgs.game.command.commands
+package gg.scala.cgs.game.command
 
 import gg.scala.cgs.common.enviornment.EditableFieldService
 import gg.scala.cgs.common.enviornment.editor.EnvironmentEditorService
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -15,7 +17,8 @@ import org.bukkit.command.CommandSender
  * @author GrowlyX
  * @since 12/29/2021
  */
-object EditCommand : BaseCommand()
+@AutoRegister
+object EditCommand : ScalaCommand()
 {
     @CommandAlias("edit")
     @CommandCompletion("@fields")

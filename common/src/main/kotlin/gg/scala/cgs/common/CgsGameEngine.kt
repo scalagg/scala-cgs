@@ -81,10 +81,6 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     val audience = BukkitAudiences.create(plugin)
 
-    val flavor = Flavor.create<CgsGameEngine<*>>(
-        FlavorOptions(Logger.getLogger("CgsGameEngine"))
-    )
-
     fun initialLoad()
     {
         INSTANCE = this
@@ -93,51 +89,48 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     fun initialResourceLoad()
     {
-        flavor.bind<CgsGameEngine<S>>() to this
+        Serializers.create {
+            registerTypeAdapter(
+                GameSpecificStatistics::class.java,
+                AbstractTypeSerializer<GameSpecificStatistics>()
+            )
+        }
 
-        plugin.invokeTrackedTask("initial loading CGS resources") {
-            Serializers.useGsonBuilderThenRebuild {
-                it.registerTypeAdapter(
-                    GameSpecificStatistics::class.java,
-                    AbstractTypeSerializer<GameSpecificStatistics>()
+        plugin.flavor {
+            bind<CgsGameEngine<S>>() to this
+            bind<CgsStatisticProvider<S>>() to this
+
+            inject(StateRunnableService)
+            inject(CgsPlayerHandler)
+            inject(CgsGameTeamService)
+            inject(CgsFrontendService)
+            inject(EnvironmentEditorService)
+            inject(EditableFieldService)
+            inject(CgsGameSnapshotEngine)
+
+            injected<CgsStatisticService<S>>().configure()
+        }
+
+        if (!gameInfo.usesCustomArenaWorld)
+        {
+            CgsGameArenaHandler.configure(gameMode)
+        }
+
+        Events.subscribe(AsyncPlayerPreLoginEvent::class.java).handler {
+            if (!EndedStateRunnable.ALLOWED_TO_JOIN)
+            {
+                it.disallow(
+                    AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST,
+                    "${CC.RED}This server is currently whitelisted."
                 )
             }
-
-            flavor.inject(StateRunnableService)
-
-            flavor.inject(CgsPlayerHandler)
-            flavor.inject(CgsGameTeamService)
-
-            flavor.inject(CgsFrontendService)
-            flavor.inject(EnvironmentEditorService)
-
-            flavor.inject(EditableFieldService)
-            flavor.inject(CgsGameSnapshotEngine)
-
-            if (!gameInfo.usesCustomArenaWorld)
-            {
-                CgsGameArenaHandler.configure(gameMode)
-            }
-
-            Events.subscribe(AsyncPlayerPreLoginEvent::class.java).handler {
-                if (!EndedStateRunnable.ALLOWED_TO_JOIN)
-                {
-                    it.disallow(
-                        AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST,
-                        "${CC.RED}This server is currently whitelisted."
-                    )
-                }
-            }
-
-            flavor.bind<CgsStatisticProvider<S>>() to this
-            flavor.injected<CgsStatisticService<S>>().configure()
-
-            Lemon.instance.localInstance
-                .metaData["game-server"] = "true"
-
-            Bukkit.getServer().maxPlayers =
-                gameMode.getMaxTeams() * gameMode.getTeamSize()
         }
+
+        Lemon.instance.localInstance
+            .metaData["game-server"] = "true"
+
+        Bukkit.getServer().maxPlayers =
+            gameMode.getMaxTeams() * gameMode.getTeamSize()
     }
 
     fun sendMessage(message: String)

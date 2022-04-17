@@ -30,14 +30,6 @@ object CgsEngineConfigurationService
     {
         CgsInstanceService.configure(CgsServerType.GAME_SERVER)
 
-        Bukkit.getPluginManager().registerEvents(
-            CgsGameEventListener, plugin
-        )
-
-        Bukkit.getPluginManager().registerEvents(
-            CgsGameGeneralListener, plugin
-        )
-
         CgsGameEngine.INSTANCE.initialResourceLoad()
 
         buildMessage(

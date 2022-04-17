@@ -1,11 +1,11 @@
 package gg.scala.cgs.game
 
 import gg.scala.cgs.common.information.arena.CgsGameArenaHandler
-import gg.scala.cgs.game.command.CgsCommandService
 import gg.scala.cgs.game.engine.CgsEngineConfigurationService
 import gg.scala.cgs.game.locator.CgsInstanceLocator
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.commons.ExtendedScalaPlugin
+import gg.scala.commons.annotations.container.flavor.LazyStartup
 import gg.scala.flavor.Flavor
 import gg.scala.flavor.FlavorOptions
 import me.lucko.helper.plugin.ap.Plugin
@@ -27,6 +27,7 @@ import me.lucko.helper.plugin.ap.PluginDependency
         PluginDependency("LunarClient-API", soft = true),
     ]
 )
+@LazyStartup
 class CgsEnginePlugin : ExtendedScalaPlugin()
 {
     companion object
@@ -34,10 +35,6 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
         @JvmStatic
         var LOADING_STRING = ""
     }
-
-    private val flavor = Flavor.create<CgsEnginePlugin>(
-        FlavorOptions(logger)
-    )
 
     override fun enable()
     {
@@ -49,12 +46,10 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
             }, 0L, 10L
         )
 
-        flavor.bind<CgsEnginePlugin>() to this
-        flavor.inject(CgsInstanceLocator)
+        flavor().inject(CgsInstanceLocator)
 
         CgsInstanceLocator.configure {
-            flavor.inject(CgsCommandService)
-            flavor.inject(CgsEngineConfigurationService)
+            flavor().inject(CgsEngineConfigurationService)
         }
 
         CloudSyncDiscoveryService
@@ -67,8 +62,6 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
 
     override fun disable()
     {
-        flavor.close()
-
         CgsGameArenaHandler.close()
     }
 }

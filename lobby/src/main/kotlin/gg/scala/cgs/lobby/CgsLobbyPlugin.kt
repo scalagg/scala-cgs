@@ -4,6 +4,7 @@ import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 import gg.scala.cgs.lobby.locator.CgsInstanceLocator
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.commons.annotations.container.ContainerEnable
+import gg.scala.commons.annotations.container.flavor.LazyStartup
 import me.lucko.helper.plugin.ap.Plugin
 import me.lucko.helper.plugin.ap.PluginDependency
 import kotlin.properties.Delegates
@@ -23,6 +24,7 @@ import kotlin.properties.Delegates
         PluginDependency("cloudsync")
     ]
 )
+@LazyStartup
 class CgsLobbyPlugin : ExtendedScalaPlugin()
 {
     companion object

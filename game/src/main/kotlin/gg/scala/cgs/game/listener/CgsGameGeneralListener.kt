@@ -3,6 +3,7 @@ package gg.scala.cgs.game.listener
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.menu.CgsGameSpectateMenu
+import gg.scala.commons.annotations.Listeners
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.cooldown.type.PlayerStaticCooldown
 import org.bukkit.Material
@@ -25,6 +26,7 @@ import org.bukkit.event.weather.WeatherChangeEvent
  * @author GrowlyX, puugz
  * @since 12/2/2021
  */
+@Listeners
 object CgsGameGeneralListener : Listener
 {
     private val engine = CgsGameEngine.INSTANCE

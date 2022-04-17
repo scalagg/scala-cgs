@@ -13,6 +13,7 @@ import gg.scala.cgs.common.snapshot.inventory.CgsInventorySnapshotEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.cgs.game.client.CgsLunarClientService
+import gg.scala.commons.annotations.Listeners
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.disguise.update.event.PreDisguiseEvent
 import gg.scala.lemon.util.QuickAccess.coloredName
@@ -38,6 +39,7 @@ import kotlin.math.ceil
  * @author GrowlyX, puugz
  * @since 12/1/2021
  */
+@Listeners
 object CgsGameEventListener : Listener
 {
     private val engine = CgsGameEngine.INSTANCE
@@ -290,11 +292,6 @@ object CgsGameEventListener : Listener
 
         participants.forEach {
             NametagHandler.reloadPlayer(it)
-        }
-
-        if (Bukkit.getPluginManager().getPlugin("LunarClient-API") != null)
-        {
-            CgsLunarClientService.configure()
         }
 
         StateRunnableService

@@ -1,8 +1,10 @@
-package gg.scala.cgs.game.command.commands
+package gg.scala.cgs.game.command
 
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.runnable.state.StartingStateRunnable
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.CommandAlias
@@ -14,7 +16,8 @@ import org.bukkit.command.CommandSender
  * @author GrowlyX
  * @since 12/3/2021
  */
-object ForceStartCommand : BaseCommand()
+@AutoRegister
+object ForceStartCommand : ScalaCommand()
 {
     private val engine = CgsGameEngine.INSTANCE
 

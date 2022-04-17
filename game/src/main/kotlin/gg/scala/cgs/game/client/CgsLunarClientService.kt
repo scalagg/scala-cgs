@@ -3,7 +3,10 @@ package gg.scala.cgs.game.client
 import com.lunarclient.bukkitapi.LunarClientAPI
 import com.lunarclient.bukkitapi.nethandler.client.LCPacketTeammates
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.teams.CgsGameTeamService
+import gg.scala.commons.annotations.plugin.SoftDependency
+import gg.scala.flavor.service.Close
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
@@ -18,6 +21,7 @@ import java.util.concurrent.TimeUnit
  */
 @Service
 @IgnoreAutoScan
+@SoftDependency("LunarClient-API")
 object CgsLunarClientService : Runnable
 {
     private val unreadTeamLeader = UUID.randomUUID()
@@ -26,14 +30,14 @@ object CgsLunarClientService : Runnable
         LunarClientAPI.getInstance()
     }
 
+    private val executor = Executors
+        .newSingleThreadScheduledExecutor()
+
     @Configure
     fun configure()
     {
         if (!CgsGameEngine.INSTANCE.gameMode.isSoloGame())
         {
-            val executor = Executors
-                .newSingleThreadScheduledExecutor()
-
             executor.scheduleAtFixedRate(
                 this, 0L, 50L,
                 TimeUnit.MILLISECONDS
@@ -41,8 +45,19 @@ object CgsLunarClientService : Runnable
         }
     }
 
+    @Close
+    fun close()
+    {
+        executor.shutdownNow()
+    }
+
     override fun run()
     {
+        if (CgsGameEngine.INSTANCE.gameState != CgsGameState.STARTED)
+        {
+            return
+        }
+
         for (team in CgsGameTeamService.teams)
         {
             val locations = mutableMapOf<UUID, Map<String, Double>>()
