@@ -41,9 +41,10 @@ class RecentGamesMenu(
     override fun getAllPagesButtons(player: Player): Map<Int, Button>
     {
         return mutableMapOf<Int, Button>().also {
-            val sortedGames = recentGames.sortedByDescending {
-                    game -> game.datePlayed.time
-            }
+            val sortedGames = recentGames
+                .sortedByDescending { game ->
+                    game.datePlayed.time
+                }
 
             for (recentGame in sortedGames)
                 it[it.size] = RecentGameButton(recentGame)

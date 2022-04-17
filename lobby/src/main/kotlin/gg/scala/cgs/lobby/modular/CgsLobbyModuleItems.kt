@@ -37,7 +37,6 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
             "${CC.GRAY}View your recently played games."
         ).build()
 
-    // We need to wait for CgsGameLobby.INSTANCE to initialize
     private val joinGameItem by lazy {
         ItemBuilder(Material.NETHER_STAR)
             .name("${CC.GOLD}Play ${

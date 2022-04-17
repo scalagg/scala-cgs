@@ -1,5 +1,7 @@
 package gg.scala.parties.command
 
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.QuickAccess
@@ -27,8 +29,9 @@ import java.util.concurrent.TimeUnit
  * @author GrowlyX
  * @since 12/17/2021
  */
+@AutoRegister
 @CommandAlias("party|p|parties")
-object PartyCommand : BaseCommand()
+object PartyCommand : ScalaCommand()
 {
     @Default
     @HelpCommand
@@ -172,12 +175,14 @@ object PartyCommand : BaseCommand()
         player: Player, target: UUID, party: Party
     ): CompletableFuture<Void>
     {
-        return AsyncLemonPlayer.of(target).future
+        return AsyncLemonPlayer.of(target, true).future
             .thenCompose {
-                val lemonPlayer = it ?:
+                if (it.isEmpty())
+                {
                     throw ConditionFailedException("${CC.YELLOW}${target.username()}${CC.RED} has never logged on the server.")
+                }
 
-                val disabled = lemonPlayer
+                val disabled = it[0]
                     .getSetting("party-invites-disabled")
 
                 if (disabled)

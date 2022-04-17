@@ -4,7 +4,6 @@ import com.cryptomorin.xseries.XMaterial
 import gg.scala.aware.message.AwareMessage
 import gg.scala.cookie.settings.builder.MultiOptionPlayerSettingsBuilder
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.handler.RedisHandler
 import gg.scala.lemon.player.metadata.Metadata
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.parties.command.PartyCommand

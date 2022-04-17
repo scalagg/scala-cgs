@@ -1,7 +1,6 @@
 package gg.scala.parties.model
 
 import gg.scala.aware.message.AwareMessage
-import gg.scala.lemon.handler.RedisHandler
 import gg.scala.parties.receiver.PartyReceiverHandler
 import gg.scala.parties.service.PartyService
 import gg.scala.parties.stream.PartyMessageStream

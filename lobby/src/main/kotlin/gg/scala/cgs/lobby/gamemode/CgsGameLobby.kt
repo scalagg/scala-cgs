@@ -5,20 +5,14 @@ import gg.scala.cgs.common.instance.CgsServerInstance
 import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.instance.handler.CgsInstanceService
 import gg.scala.cgs.common.player.CgsGamePlayer
-import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
-import gg.scala.cgs.common.snapshot.CgsGameSnapshotEngine
 import gg.scala.cgs.common.statistics.CgsStatisticProvider
 import gg.scala.cgs.common.statistics.CgsStatisticService
 import gg.scala.cgs.lobby.CgsLobbyPlugin
-import gg.scala.cgs.lobby.command.CgsCommandService
-import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEngine
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.cgs.lobby.modular.CgsLobbyModule
-import gg.scala.cgs.lobby.modular.CgsLobbyModuleItems
-import gg.scala.cgs.lobby.updater.CgsGameInfoUpdater
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
-import gg.scala.flavor.Flavor
+import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.tangerine.TangerineSpigotPlugin
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.scoreboard.ScoreboardAdapter
@@ -50,32 +44,31 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>(
     abstract fun getGameModeButtons(): Map<Int, Button>
     abstract fun getFormattedButton(info: CgsServerInstance, player: Player): Button
 
-    fun initialResourceLoad()
+    fun configureResources(
+        plugin: ExtendedScalaPlugin
+    )
     {
-        Serializers.useGsonBuilderThenRebuild {
-            it.registerTypeAdapter(
+        Serializers.create {
+            registerTypeAdapter(
                 GameSpecificStatistics::class.java,
                 AbstractTypeSerializer<GameSpecificStatistics>()
             )
         }
 
-        CgsInstanceService.configure(CgsServerType.LOBBY)
-        CgsPlayerHandler.configure()
+        CgsInstanceService
+            .configure(CgsServerType.LOBBY)
 
-        TangerineSpigotPlugin.instance.hubModule = CgsLobbyModule
-        CgsGameInfoUpdater.configure()
+        TangerineSpigotPlugin.instance
+            .hubModule = CgsLobbyModule
 
-        val flavor = Flavor.create<CgsGameLobby<S>>()
-        flavor.bind<CgsGameLobby<S>>() to this
-        flavor.bind<CgsLobbyPlugin>() to CgsLobbyPlugin.INSTANCE
-        flavor.bind<CgsStatisticProvider<S>>() to this
+        plugin.flavor {
+            bind<CgsGameLobby<S>>() to this
+            bind<CgsLobbyPlugin>() to CgsLobbyPlugin.INSTANCE
+            bind<CgsStatisticProvider<S>>() to this
 
-        flavor.injected<CgsStatisticService<S>>().configure()
-
-        flavor.inject(CgsLobbyModuleItems)
-        flavor.inject(CgsLobbyRankingEngine)
-        flavor.inject(CgsCommandService)
-        flavor.inject(CgsGameSnapshotEngine)
+            injected<CgsStatisticService<S>>().configure()
+            startup()
+        }
 
         CloudSyncDiscoveryService
             .discoverable.assets

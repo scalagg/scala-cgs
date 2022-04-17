@@ -4,6 +4,8 @@ import gg.scala.cgs.common.snapshot.CgsGameSnapshotEngine
 import gg.scala.cgs.lobby.command.menu.RecentGamesMenu
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 import gg.scala.cgs.lobby.updater.CgsGameInfoUpdater
+import gg.scala.commons.annotations.commands.AutoRegister
+import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.redirection.impl.VelocityRedirectSystem
 import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.ConditionFailedException
@@ -19,7 +21,8 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 2/22/2022
  */
-object RecentGamesCommand : BaseCommand()
+@AutoRegister
+object RecentGamesCommand : ScalaCommand()
 {
     @CommandAlias("recentgames|rg|mygames")
     fun onRecentGames(

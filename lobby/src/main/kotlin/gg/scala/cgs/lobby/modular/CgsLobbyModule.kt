@@ -6,10 +6,11 @@ import gg.scala.tangerine.module.impl.HubModuleItemAdapter
 import net.evilblock.cubed.scoreboard.ScoreboardAdapter
 
 /**
+ * The tangerine [HubModule]
+ * implementation.
+ *
  * @author GrowlyX
  * @since 12/4/2021
- *
- * The tangerine [HubModule] implementation.
  */
 object CgsLobbyModule : HubModule
 {

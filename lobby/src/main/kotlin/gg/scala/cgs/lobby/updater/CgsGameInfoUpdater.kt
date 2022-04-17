@@ -6,15 +6,20 @@ import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.instance.handler.CgsInstanceService
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
+import gg.scala.flavor.service.Close
+import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
 import gg.scala.store.storage.type.DataStoreStorageType
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
 /**
  * @author GrowlyX
  * @since 12/4/2021
  */
+@Service
 object CgsGameInfoUpdater : Runnable
 {
     var lobbies = mutableSetOf<CgsServerInstance>()
@@ -36,15 +41,22 @@ object CgsGameInfoUpdater : Runnable
             .firstOrNull()
     }
 
+    private val executor: ScheduledExecutorService = Executors
+        .newSingleThreadScheduledExecutor()
+
+    @Configure
     fun configure()
     {
-        val executor = Executors
-            .newSingleThreadScheduledExecutor()
-
         executor.scheduleAtFixedRate(
             this, 0L,
             250L, TimeUnit.MILLISECONDS
         )
+    }
+
+    @Close
+    fun close()
+    {
+        executor.shutdownNow()
     }
 
     override fun run()

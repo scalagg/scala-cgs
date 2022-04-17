@@ -6,5 +6,5 @@ package gg.scala.parties.model
  */
 enum class PartySetting
 {
-    ALL_INVITE, CHAT_MUTED,
+    ALL_INVITE, CHAT_MUTED
 }

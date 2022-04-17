@@ -28,8 +28,9 @@ import java.util.concurrent.TimeUnit
  * @author GrowlyX
  * @since 11/30/2021
  */
-@Service
-@IgnoreAutoScan
+@Service(
+    priority = 10
+)
 object CgsPlayerHandler
 {
     @JvmStatic

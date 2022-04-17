@@ -39,6 +39,8 @@ object PartyReceiverHandler
     {
         aware.listen(this)
         aware.connect()
+            .toCompletableFuture()
+            .join()
     }
 
     @Close

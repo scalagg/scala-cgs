@@ -10,7 +10,6 @@ import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
-import gg.scala.parties.service.PartyCommandService
 import net.evilblock.cubed.command.manager.CubedCommandManager
 import org.bukkit.ChatColor
 

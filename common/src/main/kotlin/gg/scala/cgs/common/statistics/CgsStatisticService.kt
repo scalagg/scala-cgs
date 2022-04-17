@@ -4,6 +4,8 @@ import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
+import gg.scala.flavor.service.Service
+import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import me.lucko.helper.Events
 import org.bukkit.event.player.PlayerJoinEvent
 
@@ -11,6 +13,8 @@ import org.bukkit.event.player.PlayerJoinEvent
  * @author GrowlyX
  * @since 1/22/2022
  */
+@Service
+@IgnoreAutoScan
 class CgsStatisticService<S : GameSpecificStatistics>
 {
     @Inject

@@ -25,6 +25,4 @@ class PartyMember(
         QuickAccess
             .sendGlobalPlayerFancyMessage(message, uniqueId)
     }
-
-    fun isOnline() = Bukkit.getPlayer(uniqueId) != null
 }

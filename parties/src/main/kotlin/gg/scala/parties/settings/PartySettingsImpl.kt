@@ -2,6 +2,7 @@ package gg.scala.parties.settings
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.cookie.settings.PlayerSettings
+import gg.scala.cookie.settings.annotation.RegisterPlayerSettings
 import gg.scala.cookie.settings.builder.BooleanPlayerSettingsBuilder
 import net.evilblock.cubed.menu.Button
 import org.bukkit.entity.Player
@@ -10,11 +11,11 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 2/27/2022
  */
+@RegisterPlayerSettings
 object PartySettingsImpl : PlayerSettings()
 {
-    override fun getButtons(player: Player): Map<Int, Button>
-    {
-        return mutableMapOf(
+    override fun getButtons(player: Player) =
+        mutableMapOf(
             0 to BooleanPlayerSettingsBuilder()
                 .titleOf("Party Invites")
                 .descriptionOf(
@@ -25,7 +26,6 @@ object PartySettingsImpl : PlayerSettings()
                 .settingOf("party-invites-disabled")
                 .asButton()
         )
-    }
 
-    override fun hasPermission(player: Player): Boolean = true
+    override fun hasPermission(player: Player) = true
 }

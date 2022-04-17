@@ -1,6 +1,5 @@
 package gg.scala.parties.service
 
-import gg.scala.cookie.Cookie
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.util.QuickAccess
@@ -9,7 +8,6 @@ import gg.scala.parties.model.Party
 import gg.scala.parties.model.PartyMember
 import gg.scala.parties.model.PartyRole
 import gg.scala.parties.prefix
-import gg.scala.parties.settings.PartySettingsImpl
 import gg.scala.parties.stream.PartyMessageStream
 import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
@@ -39,10 +37,6 @@ object PartyService
     fun configure()
     {
         service = DataStoreObjectControllerCache.create()
-
-        Cookie.instance.registerSettings(
-            PartySettingsImpl
-        )
 
         Events.subscribe(AsyncPlayerPreLoginEvent::class.java)
             .handler {
@@ -160,7 +154,7 @@ object PartyService
             }
     }
 
-    fun loadPartyIfAbsent(uniqueId: UUID): CompletableFuture<Party?>
+    private fun loadPartyIfAbsent(uniqueId: UUID): CompletableFuture<Party?>
     {
         val loadedParty = loadedParties[uniqueId]
 

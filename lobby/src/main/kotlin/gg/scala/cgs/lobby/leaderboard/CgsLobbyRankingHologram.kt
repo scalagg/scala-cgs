@@ -22,8 +22,8 @@ class CgsLobbyRankingHologram(
     {
         initializeData()
 
-        EntityHandler.trackEntity(this)
-        EntityHandler.saveData()
+        EntityHandler
+            .trackEntity(this)
     }
 
     override fun getNewLines() = mutableListOf<String>().also {
