@@ -17,6 +17,7 @@ import me.lucko.helper.plugin.ap.PluginDependency
  */
 @Plugin(
     name = "Parties",
+    apiVersion = "1.18",
     depends = [
         PluginDependency("Cubed"),
         PluginDependency("helper"),
