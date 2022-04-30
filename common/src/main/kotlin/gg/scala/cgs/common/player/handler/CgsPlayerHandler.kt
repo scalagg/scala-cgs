@@ -60,15 +60,11 @@ object CgsPlayerHandler
             AsyncPlayerPreLoginEvent::class.java,
             EventPriority.LOWEST
         ).handler { event ->
-            handle.loadAndCache(
+            handle.loadOptimalCopy(
                 event.uniqueId,
-                {
-                    CgsGamePlayer(event.uniqueId)
-                },
-                DataStoreStorageType.MONGO
-            ).whenComplete { _, u ->
-                u.printStackTrace()
-            }
+            ) {
+                CgsGamePlayer(event.uniqueId)
+            }.join()
         }
 
         if (isGameServer())

@@ -17,5 +17,8 @@ enum class PartyStatus(
 
     val capitalized = name
         .lowercase()
-        .capitalize()
+        .replaceFirstChar {
+            if (it.isLowerCase())
+                it.titlecase(Locale.getDefault()) else it.toString()
+        }
 }
