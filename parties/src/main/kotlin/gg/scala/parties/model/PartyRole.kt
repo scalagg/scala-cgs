@@ -13,9 +13,9 @@ enum class PartyRole(
     MEMBER("${CC.D_GRAY}Member"),
     MODERATOR("${CC.D_GREEN}Moderator"),
     LEADER("${CC.GOLD}Leader");
-}
 
-infix fun PartyRole.over(role: PartyRole): Boolean
-{
-    return this.ordinal >= role.ordinal
+    infix fun over(role: PartyRole): Boolean
+    {
+        return this.ordinal >= role.ordinal
+    }
 }

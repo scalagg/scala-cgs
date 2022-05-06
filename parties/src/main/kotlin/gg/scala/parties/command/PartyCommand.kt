@@ -4,6 +4,7 @@ import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
+import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.username
 import gg.scala.parties.menu.PartyManageMenu
@@ -13,10 +14,10 @@ import gg.scala.parties.service.PartyInviteService
 import gg.scala.parties.service.PartyService
 import gg.scala.parties.service.PartyService.handlePartyJoin
 import gg.scala.parties.stream.PartyMessageStream
-import net.evilblock.cubed.acf.BaseCommand
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.*
+import net.evilblock.cubed.acf.annotation.Optional
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.md_5.bungee.api.chat.ClickEvent
@@ -42,9 +43,57 @@ object PartyCommand : ScalaCommand()
 
     @Subcommand("info|view|show")
     @Description("View your party details!")
-    fun onInfo(player: Player)
+    fun onInfo(
+        player: Player,
+        @Optional target: UUID?
+    ): CompletableFuture<Void>
     {
+        return PartyService
+            .loadPartyOfPlayerIfAbsent(
+                target ?: player.uniqueId
+            )
+            .thenApply {
+                val username = CubedCacheUtil
+                    .fetchName(
+                        target ?: player.uniqueId
+                    )
 
+                if (it == null)
+                {
+                    throw ConditionFailedException(
+                        if (target == null)
+                            "You're not in a party." else "${CC.YELLOW}${
+                                CubedCacheUtil.fetchName(target)
+                            }${CC.RED} is not in a party."
+                    )
+                }
+
+                player.sendMessage("")
+                player.sendMessage("  ${CC.B_PRI}$username's Party:")
+                player.sendMessage("  ${CC.I_GRAY}${it.members.size} members.")
+                player.sendMessage("")
+                player.sendMessage("  ${CC.BL_PURPLE}⚫ ${CC.L_PURPLE}Status: ${it.status.formatted}")
+                player.sendMessage("")
+
+                val moderators = it.members
+                    .filter { member ->
+                        member.value.role == PartyRole.MODERATOR
+                    }
+
+                if (moderators.isNotEmpty())
+                {
+                    player.sendMessage("  ${CC.BD_GREEN}⚫ ${CC.D_GREEN}Moderators:")
+
+                    for (member in moderators)
+                    {
+                        player.sendMessage("   - ${member.value.role.formatted}")
+                    }
+
+                    player.sendMessage("")
+                }
+
+                return@thenApply null
+            }
     }
 
     @Subcommand("leave")
@@ -68,7 +117,7 @@ object PartyCommand : ScalaCommand()
     @Description("Join a public and/or password protected party!")
     fun onJoin(
         player: Player, target: UUID,
-        @net.evilblock.cubed.acf.annotation.Optional password: String?
+        @Optional password: String?
     ): CompletableFuture<Void>
     {
         return PartyService.loadPartyOfPlayerIfAbsent(target)
