@@ -14,6 +14,7 @@ import gg.scala.parties.service.PartyInviteService
 import gg.scala.parties.service.PartyService
 import gg.scala.parties.service.PartyService.handlePartyJoin
 import gg.scala.parties.stream.PartyMessageStream
+import io.lettuce.core.api.StatefulRedisConnection
 import net.evilblock.cubed.acf.CommandHelp
 import net.evilblock.cubed.acf.ConditionFailedException
 import net.evilblock.cubed.acf.annotation.*
@@ -34,6 +35,14 @@ import java.util.concurrent.TimeUnit
 @CommandAlias("party|p|parties")
 object PartyCommand : ScalaCommand()
 {
+    private val connection: StatefulRedisConnection<String, String>
+            by lazy {
+                val internal = Lemon
+                    .instance.aware.internal()
+
+                internal.connect()
+            }
+
     @Default
     @HelpCommand
     fun onHelp(help: CommandHelp)
@@ -63,8 +72,8 @@ object PartyCommand : ScalaCommand()
                     throw ConditionFailedException(
                         if (target == null)
                             "You're not in a party." else "${CC.YELLOW}${
-                                CubedCacheUtil.fetchName(target)
-                            }${CC.RED} is not in a party."
+                            CubedCacheUtil.fetchName(target)
+                        }${CC.RED} is not in a party."
                     )
                 }
 
@@ -171,9 +180,12 @@ object PartyCommand : ScalaCommand()
                 throw ConditionFailedException("You do not have an invite from this party!")
             }
 
-            Lemon.instance.aware.publishConnection.apply {
-                this.sync().hdel("friends:requests:${player.uniqueId}:$uniqueId", uniqueId.toString())
-            }
+            val requestKey =
+                "parties:invites:${player.uniqueId}:$uniqueId"
+
+            connection.sync().hdel(
+                requestKey, uniqueId.toString()
+            )
 
             handlePartyJoin(player, uniqueId)
         }
@@ -241,13 +253,6 @@ object PartyCommand : ScalaCommand()
 
                 internalHandlePartyInviteDispatch(player, target, party)
             }
-    }
-
-    val connection by lazy {
-        val internal = Lemon
-            .instance.aware.internal()
-
-        internal.connect()
     }
 
     private fun internalHandlePartyInviteDispatch(
