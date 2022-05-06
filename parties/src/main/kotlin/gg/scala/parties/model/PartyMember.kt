@@ -11,7 +11,7 @@ import java.util.*
  */
 class PartyMember(
     val uniqueId: UUID,
-    val role: PartyRole
+    var role: PartyRole
 )
 {
     fun sendMessage(message: String)

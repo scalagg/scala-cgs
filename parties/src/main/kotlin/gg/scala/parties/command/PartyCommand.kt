@@ -50,6 +50,47 @@ object PartyCommand : ScalaCommand()
         help.showHelp()
     }
 
+    @Subcommand("role")
+    @Description("Set a user's role in your party.")
+    fun onRole(
+        player: Player,
+        target: UUID,
+        role: PartyRole
+    )
+    {
+        val existing = PartyService
+            .findPartyByUniqueId(player)
+            ?: throw ConditionFailedException("You're not in a party.")
+
+        if (player.uniqueId != existing.leader.uniqueId)
+        {
+            throw ConditionFailedException("You must be the leader of your party to promote others.")
+        }
+
+        if (target == player.uniqueId)
+        {
+            throw ConditionFailedException("You're unable to modify your own party role.")
+        }
+
+        if (role == PartyRole.LEADER)
+        {
+            throw ConditionFailedException("You're unable to set another player's role to leader.")
+        }
+
+        val member = existing
+            .findMember(target)
+            ?: throw ConditionFailedException(
+                "The player you specified is not a party member."
+            )
+
+        member.role = role
+
+        val fancy = FancyMessage()
+        fancy.withMessage("$prefix${CC.GREEN}${target.username()}'s ${CC.YELLOW}role has been set to ${role.formatted}${CC.YELLOW}.")
+
+        PartyMessageStream.pushToStream(existing, fancy)
+    }
+
     @Subcommand("info|view|show")
     @Description("View your party details!")
     fun onInfo(

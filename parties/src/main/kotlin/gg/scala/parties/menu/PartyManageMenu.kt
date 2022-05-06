@@ -40,10 +40,11 @@ class PartyManageMenu(
         updateAfterClick = true
     }
 
+    override fun size(buttons: Map<Int, Button>) = 27
     override fun getButtons(player: Player): Map<Int, Button>
     {
         return mutableMapOf<Int, Button>().apply {
-            this[size] = MultiOptionPlayerSettingsBuilder()
+            this[10] = MultiOptionPlayerSettingsBuilder()
                 .titleOf("${CC.GREEN}Visibility")
                 .materialOf(XMaterial.ENDER_EYE)
                 .descriptionOf(
@@ -74,7 +75,7 @@ class PartyManageMenu(
                 }
                 .asButton()
 
-            this[size] = MultiOptionPlayerSettingsBuilder()
+            this[11] = MultiOptionPlayerSettingsBuilder()
                 .titleOf("${CC.GREEN}All Invite")
                 .materialOf(XMaterial.FIRE_CHARGE)
                 .descriptionOf(
@@ -98,17 +99,19 @@ class PartyManageMenu(
                     party.saveAndUpdateParty().thenRun {
                         PartyMessageStream.pushToStream(
                             party, FancyMessage()
-                                .withMessage("$prefix${QuickAccess.coloredName(player)} ${
-                                    if (it == "Enabled") 
-                                        "${CC.GREEN}enabled All-Invite!" else 
+                                .withMessage(
+                                    "$prefix${QuickAccess.coloredName(player)} ${
+                                        if (it == "Enabled")
+                                            "${CC.GREEN}enabled All-Invite!" else
                                             "${CC.RED}disabled All-Invite."
-                                }")
+                                    }"
+                                )
                         )
                     }
                 }
                 .asButton()
 
-            this[size] = MultiOptionPlayerSettingsBuilder()
+            this[12] = MultiOptionPlayerSettingsBuilder()
                 .titleOf("${CC.GREEN}Chat Muted")
                 .materialOf(XMaterial.BLAZE_POWDER)
                 .descriptionOf(
@@ -131,17 +134,19 @@ class PartyManageMenu(
                     party.saveAndUpdateParty().thenRun {
                         PartyMessageStream.pushToStream(
                             party, FancyMessage()
-                                .withMessage("$prefix${QuickAccess.coloredName(player)} ${
-                                    if (it == "Enabled")
-                                        "${CC.RED}disabled party chat!" else
-                                        "${CC.GREEN}enabled party chat."
-                                }")
+                                .withMessage(
+                                    "$prefix${QuickAccess.coloredName(player)} ${
+                                        if (it == "Enabled")
+                                            "${CC.RED}disabled party chat!" else
+                                            "${CC.GREEN}enabled party chat."
+                                    }"
+                                )
                         )
                     }
                 }
                 .asButton()
 
-            this[size] = ItemBuilder(Material.SIGN)
+            this[1] = ItemBuilder(Material.SIGN)
                 .name("${CC.GREEN}Party Password")
                 .addToLore(
                     "${CC.GRAY}Update your party password",
@@ -211,7 +216,7 @@ class PartyManageMenu(
                     }
                 }
 
-            this[size] = ItemBuilder(Material.REDSTONE_COMPARATOR)
+            this[2] = ItemBuilder(Material.REDSTONE_COMPARATOR)
                 .name("${CC.RED}Reset Password")
                 .addToLore(
                     "${CC.GRAY}Set your party password",
@@ -232,13 +237,54 @@ class PartyManageMenu(
                     }
                 }
 
-            this[size] = PaginatedMenu.PLACEHOLDER
+            this[18] = ItemBuilder
+                .copyOf(
+                    PaginatedMenu.PLACEHOLDER
+                        .getButtonItem(player)
+                )
+                .data(1)
+                .name("${CC.GOLD}Private Games")
+                .toButton()
+
+            this[19] = ItemBuilder
+                .of(Material.BOOK_AND_QUILL)
+                .name("${CC.GREEN}Create a Server")
+                .addToLore(
+                    "${CC.GRAY}Click to go through the",
+                    "${CC.GRAY}private game creation",
+                    "${CC.GRAY}process.",
+                    "",
+                    "${CC.RED}Private games are disabled."
+                )
+                .toButton()
+
+            this[9] = ItemBuilder
+                .copyOf(
+                    PaginatedMenu.PLACEHOLDER
+                        .getButtonItem(player)
+                )
+                .data(5)
+                .name("${CC.GREEN}Settings")
+                .toButton()
+
+            this[0] = ItemBuilder
+                .copyOf(
+                    PaginatedMenu.PLACEHOLDER
+                        .getButtonItem(player)
+                )
+                .data(3)
+                .name("${CC.D_AQUA}Password")
+                .toButton()
 
             if (role == PartyRole.LEADER)
             {
                 val redDye = ColorUtil.toDyeData(ChatColor.RED)
 
-                this[6] = ItemBuilder(Material.FISHING_ROD)
+                listOf(7, 16, 25).forEach {
+                    this[it] = PaginatedMenu.PLACEHOLDER
+                }
+
+                this[8] = ItemBuilder(Material.FISHING_ROD)
                     .name("${CC.GREEN}Manage Players")
                     .addToLore(
                         "${CC.GRAY}Manage your party members!",
@@ -249,7 +295,7 @@ class PartyManageMenu(
                         PartyMemberMenu(party, role).openMenu(player)
                     }
 
-                this[7] = ItemBuilder(Material.BEACON)
+                this[8 + 9] = ItemBuilder(Material.BEACON)
                     .name("${CC.GREEN}Warp your party")
                     .addToLore(
                         "${CC.GRAY}Send all your party members",
@@ -268,7 +314,7 @@ class PartyManageMenu(
                         player.sendMessage("$prefix${CC.GREEN}You've warped party members to your server!")
                     }
 
-                this[8] = ItemBuilder(Material.INK_SACK)
+                this[8 + 18] = ItemBuilder(Material.INK_SACK)
                     .data(redDye.toShort())
                     .name("${CC.GREEN}Disband Party")
                     .addToLore(
