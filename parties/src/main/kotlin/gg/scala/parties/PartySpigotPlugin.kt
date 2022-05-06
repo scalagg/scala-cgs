@@ -20,8 +20,7 @@ import org.bukkit.entity.Player
     name = "Parties",
     apiVersion = "1.18",
     depends = [
-        PluginDependency("Cubed"),
-        PluginDependency("helper"),
+        PluginDependency("scala-commons"),
         PluginDependency("Lemon"),
         PluginDependency("store-spigot"),
         PluginDependency("cloudsync"),

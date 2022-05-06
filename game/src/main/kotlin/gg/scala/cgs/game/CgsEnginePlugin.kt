@@ -5,6 +5,8 @@ import gg.scala.cgs.game.engine.CgsEngineConfigurationService
 import gg.scala.cgs.game.locator.CgsInstanceLocator
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
 import gg.scala.commons.ExtendedScalaPlugin
+import gg.scala.commons.annotations.container.ContainerDisable
+import gg.scala.commons.annotations.container.ContainerEnable
 import gg.scala.commons.annotations.container.flavor.LazyStartup
 import gg.scala.flavor.Flavor
 import gg.scala.flavor.FlavorOptions
@@ -19,8 +21,7 @@ import me.lucko.helper.plugin.ap.PluginDependency
     name = "CGS-Engine",
     apiVersion = "1.18",
     depends = [
-        PluginDependency("Cubed"),
-        PluginDependency("helper"),
+        PluginDependency("scala-commons"),
         PluginDependency("Lemon"),
         PluginDependency("Parties"),
         PluginDependency("cloudsync"),
@@ -36,7 +37,8 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
         var LOADING_STRING = ""
     }
 
-    override fun enable()
+    @ContainerEnable
+    fun containerEnable()
     {
         logger.info("*** Attempting to find CGS Game implementation! ***")
 
@@ -60,7 +62,8 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
             }
     }
 
-    override fun disable()
+    @ContainerDisable
+    fun containerDisable()
     {
         CgsGameArenaHandler.close()
     }

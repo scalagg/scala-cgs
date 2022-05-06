@@ -17,8 +17,7 @@ import kotlin.properties.Delegates
     name = "CGS-Lobby",
     apiVersion = "1.18",
     depends = [
-        PluginDependency("Cubed"),
-        PluginDependency("helper"),
+        PluginDependency("scala-commons"),
         PluginDependency("Lemon"),
         PluginDependency("Tangerine"),
         PluginDependency("cloudsync")
