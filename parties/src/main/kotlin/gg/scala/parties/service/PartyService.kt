@@ -4,6 +4,7 @@ import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.username
+import gg.scala.parties.event.PartyLeaveEvent
 import gg.scala.parties.model.Party
 import gg.scala.parties.model.PartyMember
 import gg.scala.parties.model.PartyRole
@@ -80,6 +81,9 @@ object PartyService
                     throw ConditionFailedException("The party you tried to leave no longer exists!")
                 }
 
+                val member = it
+                    .findMember(uniqueId)!!
+
                 it.members.remove(uniqueId)
 
                 it.saveAndUpdateParty()
@@ -87,6 +91,9 @@ object PartyService
                         val message = FancyMessage().apply {
                             withMessage("$prefix${CC.RED}${uniqueId.username()}${CC.SEC} left the party!")
                         }
+
+                        PartyLeaveEvent(it, member)
+                            .callEvent()
 
                         QuickAccess.sendGlobalPlayerMessage(
                             message = "${CC.RED}You've left your party!",
