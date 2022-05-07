@@ -1,6 +1,7 @@
 package gg.scala.parties.model
 
 import gg.scala.aware.message.AwareMessage
+import gg.scala.parties.event.PartyDisbandEvent
 import gg.scala.parties.receiver.PartyReceiverHandler
 import gg.scala.parties.service.PartyService
 import gg.scala.parties.stream.PartyMessageStream
@@ -75,7 +76,11 @@ data class Party(
                 .withMessage("${CC.D_AQUA}[Party] ${CC.RED}Your party was disbanded!")
         )
 
-        return forget()
+        return this.forget()
+            .thenRun {
+                PartyDisbandEvent(this)
+                    .callEvent()
+            }
     }
 
     private fun forget(): CompletableFuture<Void>

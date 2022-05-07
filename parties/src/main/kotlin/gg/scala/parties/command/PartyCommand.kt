@@ -7,6 +7,7 @@ import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.username
+import gg.scala.parties.event.PartySetupEvent
 import gg.scala.parties.menu.PartyManageMenu
 import gg.scala.parties.model.*
 import gg.scala.parties.prefix
@@ -387,13 +388,13 @@ object PartyCommand : ScalaCommand()
 
     @Subcommand("disband")
     @Description("Disband your party!")
-    fun onDisband(player: Player)
+    fun onDisband(player: Player): CompletableFuture<Void>
     {
         val existing = PartyService
             .findPartyByUniqueId(player)
             ?: throw ConditionFailedException("You're not in a party.")
 
-        existing.gracefullyForget()
+        return existing.gracefullyForget()
     }
 
     @Subcommand("create")
@@ -418,6 +419,9 @@ object PartyCommand : ScalaCommand()
         player.sendMessage("$prefix${CC.GOLD}Setting up your new party...")
 
         party.saveAndUpdateParty().thenRun {
+            PartySetupEvent(party)
+                .callEvent()
+
             player.sendMessage("$prefix${CC.GREEN}Your new party has been setup!")
             player.sendMessage("$prefix${CC.YELLOW}Use ${CC.AQUA}/party help${CC.YELLOW} to view all party-related commands!")
 
