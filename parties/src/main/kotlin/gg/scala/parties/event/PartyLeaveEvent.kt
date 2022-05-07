@@ -13,7 +13,8 @@ import org.bukkit.plugin.java.JavaPlugin
  */
 class PartyLeaveEvent(
     val party: Party,
-    val member: PartyMember
+    val member: PartyMember,
+    val kicked: Boolean = false
 ) : PluginEvent(
     JavaPlugin.getPlugin(
         PartySpigotPlugin::class.java

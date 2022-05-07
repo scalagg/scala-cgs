@@ -20,6 +20,7 @@ import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.acf.annotation.Optional
+import gg.scala.parties.event.PartyLeaveEvent
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.md_5.bungee.api.chat.ClickEvent
@@ -272,6 +273,57 @@ object PartyCommand : ScalaCommand()
 
             handlePostOutgoingInvite(player, target, existing)
         }
+    }
+
+    @Subcommand("kick|remove")
+    @CommandCompletion("@players")
+    @Description("Kick a player from your party!")
+    fun onKick(player: Player, target: UUID): CompletableFuture<Void>
+    {
+        val existing = PartyService
+            .findPartyByUniqueId(player)
+            ?: throw ConditionFailedException("You're not in a party.")
+
+        val selfMember = existing
+            .findMember(player.uniqueId)!!
+
+        if (!(selfMember.role over PartyRole.MODERATOR))
+        {
+            throw ConditionFailedException("You do not have permission to kick members! Your role is: ${selfMember.role.formatted}")
+        }
+
+        val targetMember = existing
+            .findMember(target)
+            ?: throw ConditionFailedException(
+                "${CC.YELLOW}${target.username()}${CC.RED} is not in your party."
+            )
+
+        if (target == existing.leader.uniqueId)
+        {
+            throw ConditionFailedException("You do not have permission to kick the party leader!")
+        }
+
+        if (target == player.uniqueId)
+        {
+            throw ConditionFailedException("You cannot kick yourself from your party!")
+        }
+
+        existing.members.remove(
+            targetMember.uniqueId
+        )
+
+        return existing.saveAndUpdateParty()
+            .thenRun {
+                PartyLeaveEvent(
+                    existing, targetMember, true
+                ).callEvent()
+
+                existing.sendMessage(
+                    FancyMessage().apply {
+                        withMessage("$prefix${CC.GREEN}${target.username()}${CC.YELLOW} was kicked from the party.")
+                    }
+                )
+            }
     }
 
     private fun handlePostOutgoingInvite(
