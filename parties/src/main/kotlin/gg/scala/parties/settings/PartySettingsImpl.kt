@@ -4,7 +4,6 @@ import com.cryptomorin.xseries.XMaterial
 import gg.scala.cookie.settings.PlayerSettings
 import gg.scala.cookie.settings.annotation.RegisterPlayerSettings
 import gg.scala.cookie.settings.builder.BooleanPlayerSettingsBuilder
-import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
