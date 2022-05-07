@@ -4,7 +4,7 @@ import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEngine
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
 import gg.scala.commons.acf.ConditionFailedException
-import net.evilblock.cubed.command.manager.CubedCommandManager
+import gg.scala.commons.command.ScalaCommandManager
 
 /**
  * @author GrowlyX
@@ -14,7 +14,7 @@ object CgsCommandCustomizer
 {
     @CommandManagerCustomizer
     fun customize(
-        manager: CubedCommandManager
+        manager: ScalaCommandManager
     )
     {
         manager.commandContexts.registerContext(
