@@ -5,6 +5,7 @@ import gg.scala.cookie.settings.PlayerSettings
 import gg.scala.cookie.settings.annotation.RegisterPlayerSettings
 import gg.scala.cookie.settings.builder.BooleanPlayerSettingsBuilder
 import net.evilblock.cubed.menu.Button
+import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 
 /**
@@ -26,6 +27,11 @@ object PartySettingsImpl : PlayerSettings()
                 .settingOf("party-invites-disabled")
                 .asButton()
         )
+
+    override fun identifier() = "Parties"
+    override fun description() = listOf(
+        "${CC.GRAY}Party privacy, spam, and other options."
+    )
 
     override fun hasPermission(player: Player) = true
 }
