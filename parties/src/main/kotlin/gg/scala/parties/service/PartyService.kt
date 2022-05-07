@@ -119,6 +119,13 @@ object PartyService
                     player.uniqueId, PartyRole.MEMBER
                 )
 
+                val event =
+                    PartyJoinEvent(it, member)
+                event.callEvent()
+
+                if (event.isCancelled)
+                    return@thenCompose null
+
                 it.members[player.uniqueId] = member
 
                 it.saveAndUpdateParty()
@@ -129,9 +136,6 @@ object PartyService
                                     "$prefix${CC.GREEN}${player.name}${CC.SEC} joined the party!"
                                 )
                             }
-
-                        PartyJoinEvent(it, member)
-                            .callEvent()
 
                         PartyMessageStream
                             .pushToStream(it, message)
