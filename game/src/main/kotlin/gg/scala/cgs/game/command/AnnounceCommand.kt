@@ -7,10 +7,10 @@ import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.sendGlobalFancyBroadcast
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.CommandPermission
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandPermission
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.FancyMessage

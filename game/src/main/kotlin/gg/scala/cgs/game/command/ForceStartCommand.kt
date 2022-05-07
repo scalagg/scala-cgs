@@ -5,10 +5,10 @@ import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.runnable.state.StartingStateRunnable
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.CommandPermission
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandPermission
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 

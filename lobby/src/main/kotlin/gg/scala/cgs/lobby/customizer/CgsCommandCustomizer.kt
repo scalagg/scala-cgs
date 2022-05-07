@@ -3,7 +3,7 @@ package gg.scala.cgs.lobby.customizer
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEngine
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
-import net.evilblock.cubed.acf.ConditionFailedException
+import gg.scala.commons.acf.ConditionFailedException
 import net.evilblock.cubed.command.manager.CubedCommandManager
 
 /**

@@ -15,7 +15,7 @@ import gg.scala.parties.model.PartyStatus
 import gg.scala.parties.prefix
 import gg.scala.parties.receiver.PartyReceiverHandler
 import gg.scala.parties.stream.PartyMessageStream
-import net.evilblock.cubed.acf.ConditionFailedException
+import gg.scala.commons.acf.ConditionFailedException
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.menu.pagination.PaginatedMenu

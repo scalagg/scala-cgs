@@ -15,7 +15,7 @@ import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.Events
-import net.evilblock.cubed.acf.ConditionFailedException
+import gg.scala.commons.acf.ConditionFailedException
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import org.bukkit.entity.Player

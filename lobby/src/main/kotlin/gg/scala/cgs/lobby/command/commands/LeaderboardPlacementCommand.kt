@@ -4,10 +4,10 @@ import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingHologram
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.CommandCompletion
-import net.evilblock.cubed.acf.annotation.CommandPermission
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandCompletion
+import gg.scala.commons.acf.annotation.CommandPermission
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 

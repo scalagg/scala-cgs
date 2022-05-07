@@ -2,7 +2,7 @@ package gg.scala.cgs.game.customizer
 
 import gg.scala.cgs.common.enviornment.editor.EnvironmentEditorService
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
-import net.evilblock.cubed.command.manager.CubedCommandManager
+import gg.scala.commons.command.ScalaCommandManager
 
 /**
  * @author GrowlyX
@@ -12,7 +12,7 @@ object CgsCommandCustomizer
 {
     @CommandManagerCustomizer
     fun customize(
-        manager: CubedCommandManager
+        manager: ScalaCommandManager
     )
     {
         manager.commandCompletions

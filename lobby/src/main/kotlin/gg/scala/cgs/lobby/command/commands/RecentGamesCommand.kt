@@ -7,10 +7,10 @@ import gg.scala.cgs.lobby.updater.CgsGameInfoUpdater
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.redirection.impl.VelocityRedirectSystem
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.Optional
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.Optional
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bungee.BungeeUtil
 import org.bukkit.entity.Player

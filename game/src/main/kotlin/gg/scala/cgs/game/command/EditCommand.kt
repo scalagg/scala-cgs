@@ -4,12 +4,12 @@ import gg.scala.cgs.common.enviornment.EditableFieldService
 import gg.scala.cgs.common.enviornment.editor.EnvironmentEditorService
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
-import net.evilblock.cubed.acf.BaseCommand
-import net.evilblock.cubed.acf.ConditionFailedException
-import net.evilblock.cubed.acf.annotation.CommandAlias
-import net.evilblock.cubed.acf.annotation.CommandCompletion
-import net.evilblock.cubed.acf.annotation.CommandPermission
-import net.evilblock.cubed.acf.annotation.Single
+import gg.scala.commons.acf.BaseCommand
+import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.commons.acf.annotation.CommandAlias
+import gg.scala.commons.acf.annotation.CommandCompletion
+import gg.scala.commons.acf.annotation.CommandPermission
+import gg.scala.commons.acf.annotation.Single
 import net.evilblock.cubed.util.CC
 import org.bukkit.command.CommandSender
 
