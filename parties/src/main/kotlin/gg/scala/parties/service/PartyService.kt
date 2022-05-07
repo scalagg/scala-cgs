@@ -4,6 +4,7 @@ import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.lemon.util.QuickAccess.username
+import gg.scala.parties.event.PartyJoinEvent
 import gg.scala.parties.event.PartyLeaveEvent
 import gg.scala.parties.model.Party
 import gg.scala.parties.model.PartyMember
@@ -114,16 +115,26 @@ object PartyService
                     throw ConditionFailedException("The party you tried to join no longer exists!")
                 }
 
-                it.members[player.uniqueId] =
-                    PartyMember(player.uniqueId, PartyRole.MEMBER)
+                val member = PartyMember(
+                    player.uniqueId, PartyRole.MEMBER
+                )
+
+                it.members[player.uniqueId] = member
 
                 it.saveAndUpdateParty()
                     .thenAccept { _ ->
-                        val message = FancyMessage().apply {
-                            withMessage("$prefix${CC.GREEN}${player.name}${CC.SEC} joined the party!")
-                        }
+                        val message = FancyMessage()
+                            .apply {
+                                withMessage(
+                                    "$prefix${CC.GREEN}${player.name}${CC.SEC} joined the party!"
+                                )
+                            }
 
-                        PartyMessageStream.pushToStream(it, message)
+                        PartyJoinEvent(it, member)
+                            .callEvent()
+
+                        PartyMessageStream
+                            .pushToStream(it, message)
                     }
             }
     }
