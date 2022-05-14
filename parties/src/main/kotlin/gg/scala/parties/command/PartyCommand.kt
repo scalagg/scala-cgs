@@ -138,7 +138,7 @@ object PartyCommand : ScalaCommand()
 
                     for (member in moderators)
                     {
-                        player.sendMessage("   - ${member.value.role.formatted}")
+                        player.sendMessage("   - ${member.value.uniqueId.username()}")
                     }
 
                     player.sendMessage("")
