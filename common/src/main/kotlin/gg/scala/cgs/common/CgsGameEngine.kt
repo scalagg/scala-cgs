@@ -272,6 +272,9 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     abstract fun getNametagAdapter(): CgsGameNametagAdapter
 
     abstract fun getGameSnapshot(): CgsGameSnapshot
+    fun createTeam(id: Int): CgsGameTeam {
+        return CgsGameTeam(id)
+    }
 
     class CgsGameEndEvent : CgsGameEvent()
 

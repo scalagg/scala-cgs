@@ -6,7 +6,7 @@ import java.util.*
  * @author GrowlyX
  * @since 12/1/2021
  */
-class CgsGameTeam(
+open class CgsGameTeam(
     val id: Int
 )
 {

@@ -29,7 +29,10 @@ object CgsGameTeamService
     {
         for (id in 1..engine.gameMode.getMaxTeams())
         {
-            teams[id] = CgsGameTeam(id)
+            // new foraged code
+            teams[id] = engine.createTeam(id)
+            // old growly code
+            //teams[id] = CgsGameTeam(id)
         }
     }
 
