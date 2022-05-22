@@ -97,8 +97,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         }
 
         plugin.flavor {
-            bind<CgsGameEngine<S>>() to this
-            bind<CgsStatisticProvider<S>>() to this
+            bind<CgsGameEngine<S>>() to this@CgsGameEngine
+            bind<CgsStatisticProvider<S>>() to this@CgsGameEngine
 
             inject(StateRunnableService)
             inject(CgsPlayerHandler)
