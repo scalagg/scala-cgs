@@ -1,10 +1,9 @@
 package gg.scala.cgs.game.command
 
-import gg.scala.cgs.common.enviornment.EditableFieldService
-import gg.scala.cgs.common.enviornment.editor.EnvironmentEditorService
+import gg.scala.cgs.common.environment.EditableFieldService
+import gg.scala.cgs.common.environment.editor.EnvironmentEditorService
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
-import gg.scala.commons.acf.BaseCommand
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.CommandAlias
 import gg.scala.commons.acf.annotation.CommandCompletion

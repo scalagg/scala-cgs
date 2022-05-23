@@ -1,4 +1,4 @@
-package gg.scala.cgs.common.enviornment
+package gg.scala.cgs.common.environment
 
 import java.lang.reflect.Field
 

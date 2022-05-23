@@ -1,4 +1,4 @@
-package gg.scala.cgs.common.enviornment
+package gg.scala.cgs.common.environment
 
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service

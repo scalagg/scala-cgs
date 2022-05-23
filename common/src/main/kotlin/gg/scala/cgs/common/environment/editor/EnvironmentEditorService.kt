@@ -1,6 +1,6 @@
-package gg.scala.cgs.common.enviornment.editor
+package gg.scala.cgs.common.environment.editor
 
-import gg.scala.cgs.common.enviornment.EditableFieldEntry
+import gg.scala.cgs.common.environment.EditableFieldEntry
 import gg.scala.cgs.common.runnable.state.EndedStateRunnable
 import gg.scala.cgs.common.runnable.state.StartingStateRunnable
 import gg.scala.flavor.service.Configure

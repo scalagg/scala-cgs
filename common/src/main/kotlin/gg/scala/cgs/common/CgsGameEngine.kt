@@ -1,7 +1,7 @@
 package gg.scala.cgs.common
 
-import gg.scala.cgs.common.enviornment.EditableFieldService
-import gg.scala.cgs.common.enviornment.editor.EnvironmentEditorService
+import gg.scala.cgs.common.environment.EditableFieldService
+import gg.scala.cgs.common.environment.editor.EnvironmentEditorService
 import gg.scala.cgs.common.frontend.CgsFrontendService
 import gg.scala.cgs.common.information.CgsGameGeneralInfo
 import gg.scala.cgs.common.information.arena.CgsGameArena
@@ -24,8 +24,6 @@ import gg.scala.cgs.common.statistics.CgsStatisticService
 import gg.scala.cgs.common.teams.CgsGameTeam
 import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.commons.ExtendedScalaPlugin
-import gg.scala.flavor.Flavor
-import gg.scala.flavor.FlavorOptions
 import gg.scala.lemon.Lemon
 import me.lucko.helper.Events
 import net.evilblock.cubed.serializers.Serializers
@@ -46,7 +44,6 @@ import org.bukkit.event.HandlerList
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.logging.Logger
 import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
@@ -272,7 +269,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     abstract fun getNametagAdapter(): CgsGameNametagAdapter
 
     abstract fun getGameSnapshot(): CgsGameSnapshot
-    fun createTeam(id: Int): CgsGameTeam {
+    open fun createTeam(id: Int): CgsGameTeam {
         return CgsGameTeam(id)
     }
 

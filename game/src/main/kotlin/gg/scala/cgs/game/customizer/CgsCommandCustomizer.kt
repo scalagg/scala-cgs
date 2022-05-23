@@ -1,6 +1,6 @@
 package gg.scala.cgs.game.customizer
 
-import gg.scala.cgs.common.enviornment.editor.EnvironmentEditorService
+import gg.scala.cgs.common.environment.editor.EnvironmentEditorService
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
 import gg.scala.commons.command.ScalaCommandManager
 
