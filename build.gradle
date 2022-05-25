@@ -22,7 +22,7 @@ String environmental(String key)
 
 allprojects {
     group "gg.scala.cgs"
-    version "1.0.6"
+    version "1.0.7"
 
     repositories {
         mavenCentral()
