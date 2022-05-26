@@ -7,10 +7,15 @@ import org.bukkit.Bukkit
 
 abstract class CgsSlimeGameArena : CgsGameArena
 {
+    override fun getBukkitWorldName(): String
+    {
+        return getId() + "-clone"
+    }
+
     init {
         val slime = (Bukkit.getPluginManager().getPlugin("SlimeWorldManager") as SlimePlugin)
         val loader = slime.getLoader("file")
-        val world = slime.loadWorld(loader, getBukkitWorldName(), SlimeWorld.SlimeProperties.builder().allowAnimals(true).build())
+        val world = slime.loadWorld(loader, getId(), SlimeWorld.SlimeProperties.builder().allowAnimals(true).build()).clone(getBukkitWorldName())
         slime.generateWorld(world)
     }
 }
