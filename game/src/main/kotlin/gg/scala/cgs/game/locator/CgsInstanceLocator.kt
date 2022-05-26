@@ -64,10 +64,8 @@ object CgsInstanceLocator : Runnable
 
             found = true
             lambda.invoke()
-        } catch (e: Exception)
+        } catch (ignored: Exception)
         {
-            e.printStackTrace()
-
             if (attempts >= 5)
             {
                 plugin.logger.severe(

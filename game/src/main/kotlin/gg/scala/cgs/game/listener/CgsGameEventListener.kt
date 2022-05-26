@@ -14,6 +14,7 @@ import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.cgs.game.client.CgsLunarClientService
 import gg.scala.commons.annotations.Listeners
+import gg.scala.flavor.inject.Inject
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.disguise.update.event.PreDisguiseEvent
 import gg.scala.lemon.util.QuickAccess.coloredName
@@ -42,7 +43,8 @@ import kotlin.math.ceil
 @Listeners
 object CgsGameEventListener : Listener
 {
-    private val engine = CgsGameEngine.INSTANCE
+    @Inject
+    lateinit var engine: CgsGameEngine<*>
 
     @EventHandler(
         priority = EventPriority.HIGH

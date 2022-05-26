@@ -11,6 +11,7 @@ import gg.scala.commons.acf.BaseCommand
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.CommandAlias
 import gg.scala.commons.acf.annotation.CommandPermission
+import gg.scala.flavor.inject.Inject
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants
 import net.evilblock.cubed.util.bukkit.FancyMessage
@@ -29,7 +30,8 @@ object AnnounceCommand : ScalaCommand()
     @JvmStatic
     val COOL_DOWN = TimeUnit.SECONDS.toMillis(30L)
 
-    private val engine = CgsGameEngine.INSTANCE
+    @Inject
+    lateinit var engine: CgsGameEngine<*>
 
     private var lastAnnouncement = -1L
     private var lastAnnouncementCreator = ""

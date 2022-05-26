@@ -9,6 +9,7 @@ import gg.scala.commons.acf.BaseCommand
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.CommandAlias
 import gg.scala.commons.acf.annotation.CommandPermission
+import gg.scala.flavor.inject.Inject
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 
@@ -19,7 +20,8 @@ import org.bukkit.command.CommandSender
 @AutoRegister
 object ForceStartCommand : ScalaCommand()
 {
-    private val engine = CgsGameEngine.INSTANCE
+    @Inject
+    lateinit var engine: CgsGameEngine<*>
 
     @CommandAlias("force-start")
     @CommandPermission("op")
