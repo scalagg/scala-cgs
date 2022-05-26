@@ -30,8 +30,9 @@ import org.bukkit.event.weather.WeatherChangeEvent
 @Listeners
 object CgsGameGeneralListener : Listener
 {
-    @Inject
-    lateinit var engine: CgsGameEngine<*>
+    val engine by lazy {
+        CgsGameEngine.INSTANCE
+    }
 
     init {
         CooldownHandler.register(InteractionCooldown)

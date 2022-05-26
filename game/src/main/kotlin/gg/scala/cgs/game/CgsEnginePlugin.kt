@@ -52,10 +52,6 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
         flavor().inject(CgsInstanceLocator)
 
         CgsInstanceLocator.configure {
-            flavor {
-                bind<CgsGameEngine<*>>() to CgsGameEngine.INSTANCE
-            }
-
             flavor().inject(CgsEngineConfigurationService)
         }
 

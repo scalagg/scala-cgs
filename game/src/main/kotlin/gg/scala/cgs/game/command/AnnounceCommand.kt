@@ -30,8 +30,9 @@ object AnnounceCommand : ScalaCommand()
     @JvmStatic
     val COOL_DOWN = TimeUnit.SECONDS.toMillis(30L)
 
-    @Inject
-    lateinit var engine: CgsGameEngine<*>
+    val engine by lazy {
+        CgsGameEngine.INSTANCE
+    }
 
     private var lastAnnouncement = -1L
     private var lastAnnouncementCreator = ""
