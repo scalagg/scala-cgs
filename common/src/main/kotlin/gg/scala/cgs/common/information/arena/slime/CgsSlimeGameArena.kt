@@ -10,7 +10,7 @@ abstract class CgsSlimeGameArena : CgsGameArena
     init {
         val slime = (Bukkit.getPluginManager().getPlugin("SlimeWorldManager") as SlimePlugin)
         val loader = slime.getLoader("file")
-        val world = slime.loadWorld(loader, getBukkitWorldName(), SlimeWorld.SlimeProperties.builder().allowAnimals(true).build())
+        val world = slime.loadWorld(loader, getBukkitWorldName(), SlimeWorld.SlimeProperties.builder().allowAnimals(true).build()).clone(getBukkitWorldName())
         slime.generateWorld(world)
     }
 }
