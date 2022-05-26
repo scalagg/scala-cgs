@@ -43,8 +43,9 @@ import kotlin.math.ceil
 @Listeners
 object CgsGameEventListener : Listener
 {
-    @Inject
-    lateinit var engine: CgsGameEngine<*>
+    val engine by lazy {
+        CgsGameEngine.INSTANCE
+    }
 
     @EventHandler(
         priority = EventPriority.HIGH

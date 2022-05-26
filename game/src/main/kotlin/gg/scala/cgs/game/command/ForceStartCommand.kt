@@ -20,8 +20,9 @@ import org.bukkit.command.CommandSender
 @AutoRegister
 object ForceStartCommand : ScalaCommand()
 {
-    @Inject
-    lateinit var engine: CgsGameEngine<*>
+    val engine by lazy {
+        CgsGameEngine.INSTANCE
+    }
 
     @CommandAlias("force-start")
     @CommandPermission("op")
