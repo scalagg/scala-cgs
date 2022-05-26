@@ -1,5 +1,6 @@
 package gg.scala.cgs.game
 
+import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.information.arena.CgsGameArenaHandler
 import gg.scala.cgs.game.engine.CgsEngineConfigurationService
 import gg.scala.cgs.game.locator.CgsInstanceLocator
@@ -28,6 +29,7 @@ import me.lucko.helper.plugin.ap.PluginDependency
         PluginDependency("LunarClient-API", soft = true),
     ]
 )
+@LazyStartup
 class CgsEnginePlugin : ExtendedScalaPlugin()
 {
     companion object
@@ -50,6 +52,10 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
         flavor().inject(CgsInstanceLocator)
 
         CgsInstanceLocator.configure {
+            flavor {
+                bind<CgsGameEngine<*>>() to CgsGameEngine.INSTANCE
+            }
+
             flavor().inject(CgsEngineConfigurationService)
         }
 
