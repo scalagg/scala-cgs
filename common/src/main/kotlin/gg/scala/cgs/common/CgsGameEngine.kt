@@ -63,7 +63,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     companion object
     {
         @JvmStatic
-        var INSTANCE by Delegates.notNull<CgsGameEngine<*>>()
+        lateinit var INSTANCE: CgsGameEngine<*>
     }
 
     lateinit var gameArena: CgsGameArena
