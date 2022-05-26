@@ -28,7 +28,6 @@ import me.lucko.helper.plugin.ap.PluginDependency
         PluginDependency("LunarClient-API", soft = true),
     ]
 )
-@LazyStartup
 class CgsEnginePlugin : ExtendedScalaPlugin()
 {
     companion object
