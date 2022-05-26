@@ -9,6 +9,7 @@ import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.parties.service.PartyService
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -33,6 +34,13 @@ object CgsGameTeamService
             teams[id] = engine.createTeam(id)
             // old growly code
             //teams[id] = CgsGameTeam(id)
+        }
+    }
+
+    fun getTeamOf(player: UUID): CgsGameTeam?
+    {
+        return teams.values.firstOrNull {
+            it.participants.contains(player)
         }
     }
 

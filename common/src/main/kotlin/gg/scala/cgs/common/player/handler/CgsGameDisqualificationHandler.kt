@@ -5,6 +5,7 @@ import gg.scala.cgs.common.giveCoins
 import gg.scala.cgs.common.teams.CgsGameTeamService
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
+import java.util.UUID
 
 /**
  * @author GrowlyX
@@ -12,6 +13,14 @@ import org.bukkit.entity.Player
  */
 object CgsGameDisqualificationHandler
 {
+    fun disqualifyPlayer(
+        player: UUID
+    )
+    {
+        val cgsGameTeam = CgsGameTeamService.getTeamOf(player) ?: return
+        cgsGameTeam.eliminated.add(player)
+    }
+
     fun disqualifyPlayer(
         player: Player,
         broadcastNotification: Boolean = false,
