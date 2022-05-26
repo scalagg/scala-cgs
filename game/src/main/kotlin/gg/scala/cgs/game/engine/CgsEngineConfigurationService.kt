@@ -4,8 +4,6 @@ import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.instance.handler.CgsInstanceService
 import gg.scala.cgs.game.CgsEnginePlugin
-import gg.scala.cgs.game.listener.CgsGameEventListener
-import gg.scala.cgs.game.listener.CgsGameGeneralListener
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Close
 import gg.scala.flavor.service.Configure
@@ -22,9 +20,6 @@ import org.bukkit.Bukkit
 @Service
 object CgsEngineConfigurationService
 {
-    @Inject
-    lateinit var plugin: CgsEnginePlugin
-
     @Configure
     fun configure()
     {
