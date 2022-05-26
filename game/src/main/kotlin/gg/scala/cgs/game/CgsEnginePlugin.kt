@@ -27,6 +27,7 @@ import me.lucko.helper.plugin.ap.PluginDependency
         PluginDependency("Parties"),
         PluginDependency("cloudsync"),
         PluginDependency("LunarClient-API", soft = true),
+        PluginDependency("SlimeWorldManager", soft = true),
     ]
 )
 @LazyStartup
