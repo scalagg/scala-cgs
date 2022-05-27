@@ -8,14 +8,16 @@ class CgsGameStatistic
 {
     var value = 0
 
-    fun increment()
+    operator fun inc() : CgsGameStatistic
     {
         value++
+        return this
     }
 
-    fun decrement()
+    operator fun dec() : CgsGameStatistic
     {
         value--
+        return this
     }
 
     fun update(new: Int)
