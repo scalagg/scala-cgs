@@ -83,7 +83,7 @@ object EndedStateRunnable : StateRunnable(
                 val cgsGamePlayer = CgsPlayerHandler.find(bukkitPlayer)!!
 
                 val statistics = engine.getStatistics(cgsGamePlayer)
-                statistics.wins.increment()
+                statistics.wins++
 
                 bukkitPlayer giveCoins (engine.gameInfo.awards.winningCoinRange.random() to "Winning a ${engine.gameInfo.fancyNameRender} game")
                 bukkitPlayer adventure { audi ->

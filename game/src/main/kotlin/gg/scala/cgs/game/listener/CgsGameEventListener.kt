@@ -246,7 +246,7 @@ object CgsGameEventListener : Listener
         val cgsGamePlayer = CgsPlayerHandler.find(player)!!
 
         val statistics = engine.getStatistics(cgsGamePlayer)
-        statistics.deaths.increment()
+        statistics.deaths++
 
         respawnPlayer(event)
 
@@ -255,8 +255,8 @@ object CgsGameEventListener : Listener
             val cgsGameKiller = CgsPlayerHandler.find(killer)!!
             val killerStatistics = engine.getStatistics(cgsGameKiller)
 
-            killerStatistics.kills.increment()
-            killerStatistics.gameKills.increment()
+            killerStatistics.kills++
+            killerStatistics.gameKills++
         }
 
         event.deathMessage = CgsDeathHandler
