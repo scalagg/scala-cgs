@@ -33,7 +33,7 @@ object CgsGameDisqualificationHandler
         val cgsGamePlayer = CgsPlayerHandler.find(player)!!
 
         val statistics = CgsGameEngine.INSTANCE.getStatistics(cgsGamePlayer)
-        statistics.losses.increment()
+        statistics.losses++
 
         if (CgsGameEngine.INSTANCE.gameInfo.spectateOnDeath && setSpectator)
         {
