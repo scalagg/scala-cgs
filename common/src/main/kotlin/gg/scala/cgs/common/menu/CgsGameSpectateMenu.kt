@@ -24,7 +24,12 @@ class CgsGameSpectateMenu : PaginatedMenu()
             CgsGameTeamService.teams.values.forEach { team ->
                 team.alive.mapNotNull {
                     Bukkit.getPlayer(it)
-                }.forEach {
+                }.forEach second@{
+                    if (it.hasMetadata("spectator"))
+                    {
+                        return@second
+                    }
+
                     buttons[buttons.size] = SpectateButton(it)
                 }
             }
