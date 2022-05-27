@@ -94,7 +94,8 @@ object CgsPlayerHandler
                         .lastPlayedGameDisconnectionTimestamp!!
 
                     // Checking if it has been less than two minutes since the logout
-                    val withinTimeframe = System.currentTimeMillis() < logoutTimestamp + RE_LOG_DELTA
+                    val withinTimeframe =
+                        System.currentTimeMillis() < logoutTimestamp + RE_LOG_DELTA
 
                     val cgsParticipantReconnect = CgsGameEngine
                         .CgsGameParticipantReconnectEvent(it.player, withinTimeframe)
@@ -109,13 +110,16 @@ object CgsPlayerHandler
 
                 cgsParticipantConnect.callNow()
             }
+        }
 
-            // Making sure this event handler is invoked BEFORE the
-            // profile save handle which is seen below at a priority of LOWEST.
-            Events.subscribe(
-                PlayerQuitEvent::class.java,
-                EventPriority.HIGHEST
-            ).handler {
+        // Making sure this event handler is invoked BEFORE the
+        // profile save handle which is seen below at a priority of LOWEST.
+        Events.subscribe(
+            PlayerQuitEvent::class.java,
+            EventPriority.HIGHEST
+        ).handler {
+            if (isGameServer())
+            {
                 val cgsParticipantDisconnect = CgsGameEngine
                     .CgsGameParticipantDisconnectEvent(it.player)
 
@@ -123,12 +127,7 @@ object CgsPlayerHandler
 
                 it.player.removeMetadata("spectator", engine.plugin)
             }
-        }
 
-        Events.subscribe(
-            PlayerQuitEvent::class.java,
-            EventPriority.LOWEST
-        ).handler {
             players.remove(it.player.uniqueId)?.save()
                 ?.whenComplete { _, u ->
                     u.printStackTrace()

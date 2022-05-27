@@ -16,7 +16,8 @@ class CgsGameScoreboardProvider(
     private val engine: CgsGameEngine<*>
 ) : ScoreboardAdapter()
 {
-    override fun getTitle(player: Player) = engine.getScoreboardRenderer().getTitle()
+    override fun getTitle(player: Player) = engine
+        .getScoreboardRenderer().getTitle()
 
     override fun getLines(board: LinkedList<String>, player: Player)
     {
@@ -24,23 +25,19 @@ class CgsGameScoreboardProvider(
         renderer.render(board, player, engine.gameState)
     }
 
-    override fun onScoreboardCreate(player: Player, scoreboard: Scoreboard) {
-        if (engine.gameInfo.spectateOnDeath) {
+    override fun onScoreboardCreate(player: Player, scoreboard: Scoreboard)
+    {
+        if (engine.gameInfo.spectateOnDeath)
+        {
             scoreboard.registerNewTeam("ghost").also {
                 it.setCanSeeFriendlyInvisibles(true)
             }
         }
 
-        if (engine.gameInfo.showTabHearts) {
+        if (engine.gameInfo.showTabHearts)
+        {
             scoreboard.registerNewObjective("tabHealth", "health").also {
                 it.displaySlot = DisplaySlot.PLAYER_LIST
-            }
-        }
-
-        if (engine.gameInfo.showNameHearts) {
-            scoreboard.registerNewObjective("nameHealth", "health").also {
-                it.displaySlot = DisplaySlot.BELOW_NAME
-                it.displayName = "${CC.D_RED}\u2764"
             }
         }
     }

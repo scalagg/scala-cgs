@@ -13,7 +13,7 @@ import org.bukkit.entity.Player
  * @since 12/2/2021
  */
 object CgsGameNametag : NametagProvider(
-    "cgs", 10
+    "cgs", 1000
 )
 {
     @JvmStatic

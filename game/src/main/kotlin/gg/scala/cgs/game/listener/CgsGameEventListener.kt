@@ -34,6 +34,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.scoreboard.DisplaySlot
 import kotlin.math.ceil
 
 /**
@@ -295,6 +296,25 @@ object CgsGameEventListener : Listener
 
         participants.forEach {
             NametagHandler.reloadPlayer(it)
+        }
+
+        if (this.engine.gameInfo.showNameHearts)
+        {
+            for (participant in participants)
+            {
+                val scoreboard = participant
+                    .scoreboard
+                    ?: return
+
+                scoreboard
+                    .registerNewObjective(
+                        "showhealth", "health"
+                    )
+                    .also {
+                        it.displaySlot = DisplaySlot.BELOW_NAME
+                        it.displayName = "${CC.D_RED}\u2764"
+                    }
+            }
         }
 
         StateRunnableService
