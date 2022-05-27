@@ -107,7 +107,9 @@ object CgsPlayerHandler
                     // Calling the participant connection event which
                     // will handle everything which is not seen here.
                     val cgsParticipantConnect = CgsGameEngine
-                        .CgsGameParticipantConnectEvent(it.player, calledReconnectEvent)
+                        .CgsGameParticipantConnectEvent(
+                            it.player, cgsGamePlayer, calledReconnectEvent
+                        )
 
                     cgsParticipantConnect.callNow()
                 }

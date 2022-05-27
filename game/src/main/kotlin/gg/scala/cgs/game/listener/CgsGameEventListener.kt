@@ -55,9 +55,7 @@ object CgsGameEventListener : Listener
         event: CgsGameEngine.CgsGameParticipantConnectEvent
     )
     {
-        val cgsGamePlayer = CgsPlayerHandler
-            .find(event.participant)
-            ?: return
+        val cgsGamePlayer = event.participantPlayer
 
         if (engine.gameState == CgsGameState.WAITING || engine.gameState == CgsGameState.STARTING)
         {
