@@ -304,6 +304,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     class CgsGameParticipantDeathEvent(
         val participant: Player,
+        val killer: Player?,
         val deathLocation: Location
     ) : CgsGameEvent()
 

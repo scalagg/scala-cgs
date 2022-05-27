@@ -263,7 +263,7 @@ object CgsGameEventListener : Listener
             .formDeathMessage(player, killer)
 
         val cgsDeathEvent = CgsGameEngine
-            .CgsGameParticipantDeathEvent(player, location)
+            .CgsGameParticipantDeathEvent(player, killer, location)
 
         if (engine.gameInfo.spectateOnDeath)
         {
