@@ -68,48 +68,51 @@ object CgsPlayerHandler
 
         if (isGameServer())
         {
-            Events.subscribe(PlayerJoinEvent::class.java).handler {
-                val cgsGamePlayer = find(it.player)
+            Events.subscribe(PlayerJoinEvent::class.java)
+                .handler {
+                    val cgsGamePlayer = find(it.player)
 
-                // Extremely important as in CGS, game profiles are almost always
-                // marked as not-null and will throw an exception if it is null.
-                if (cgsGamePlayer == null)
-                {
-                    it.player.kickPlayer("${CC.RED}Sorry, we were unable to load your CGS data.")
-                    return@handler
-                }
-
-                var calledReconnectEvent = false
-
-                // Checking if the last played game is this current game instance.
-                // If this is true, we will call the reconnect event for bukkit to handle.
-                if (cgsGamePlayer.lastPlayedGameId == engine.uniqueId)
-                {
-                    // Only allowing players to go through the reconnection
-                    // logic if the game is still in progress.
-                    if (engine.gameState != CgsGameState.STARTED)
+                    // Extremely important as in CGS, game profiles are almost always
+                    // marked as not-null and will throw an exception if it is null.
+                    if (cgsGamePlayer == null)
+                    {
+                        it.player.kickPlayer("${CC.RED}Sorry, we were unable to load your CGS data.")
                         return@handler
+                    }
 
-                    val logoutTimestamp = cgsGamePlayer
-                        .lastPlayedGameDisconnectionTimestamp!!
+                    var calledReconnectEvent = false
 
-                    // Checking if it has been less than two minutes since the logout
-                    val withinTimeframe =
-                        System.currentTimeMillis() < logoutTimestamp + RE_LOG_DELTA
+                    // Checking if the last played game is this current game instance.
+                    // If this is true, we will call the reconnect event for bukkit to handle.
+                    if (cgsGamePlayer.lastPlayedGameId == engine.uniqueId)
+                    {
+                        // Only allowing players to go through the reconnection
+                        // logic if the game is still in progress.
+                        if (engine.gameState != CgsGameState.STARTED)
+                            return@handler
 
-                    val cgsParticipantReconnect = CgsGameEngine
-                        .CgsGameParticipantReconnectEvent(it.player, withinTimeframe)
+                        val logoutTimestamp = cgsGamePlayer
+                            .lastPlayedGameDisconnectionTimestamp!!
 
-                    cgsParticipantReconnect.callNow(); calledReconnectEvent = true
+                        // Checking if it has been less than two minutes since the logout
+                        val withinTimeframe =
+                            System.currentTimeMillis() < logoutTimestamp + RE_LOG_DELTA
+
+                        val cgsParticipantReconnect = CgsGameEngine
+                            .CgsGameParticipantReconnectEvent(it.player, withinTimeframe)
+
+                        cgsParticipantReconnect.callNow(); calledReconnectEvent = true
+                    }
+
+                    // Calling the participant connection event which
+                    // will handle everything which is not seen here.
+                    val cgsParticipantConnect = CgsGameEngine
+                        .CgsGameParticipantConnectEvent(
+                            it.player, cgsGamePlayer, calledReconnectEvent
+                        )
+
+                    cgsParticipantConnect.callNow()
                 }
-
-                // Calling the participant connection event which
-                // will handle everything which is not seen here.
-                val cgsParticipantConnect = CgsGameEngine
-                    .CgsGameParticipantConnectEvent(it.player, calledReconnectEvent)
-
-                cgsParticipantConnect.callNow()
-            }
         }
 
         // Making sure this event handler is invoked BEFORE the

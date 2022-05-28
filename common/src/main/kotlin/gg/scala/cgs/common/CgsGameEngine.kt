@@ -285,7 +285,9 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     class CgsGamePreStartCancelEvent : CgsGameEvent()
 
     class CgsGameParticipantConnectEvent(
-        val participant: Player, val reconnectCalled: Boolean
+        val participant: Player,
+        val participantPlayer: CgsGamePlayer,
+        val reconnectCalled: Boolean
     ) : CgsGameEvent()
 
     class CgsGameParticipantReconnectEvent(

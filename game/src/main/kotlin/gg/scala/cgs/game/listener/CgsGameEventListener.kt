@@ -44,7 +44,7 @@ import kotlin.math.ceil
 @Listeners
 object CgsGameEventListener : Listener
 {
-    val engine by lazy {
+    private val engine by lazy {
         CgsGameEngine.INSTANCE
     }
 
@@ -55,8 +55,7 @@ object CgsGameEventListener : Listener
         event: CgsGameEngine.CgsGameParticipantConnectEvent
     )
     {
-        val cgsGamePlayer = CgsPlayerHandler
-            .find(event.participant)!!
+        val cgsGamePlayer = event.participantPlayer
 
         if (engine.gameState == CgsGameState.WAITING || engine.gameState == CgsGameState.STARTING)
         {
@@ -246,7 +245,7 @@ object CgsGameEventListener : Listener
         val cgsGamePlayer = CgsPlayerHandler.find(player)!!
 
         val statistics = engine.getStatistics(cgsGamePlayer)
-        statistics.deaths++
+        statistics.deaths.inc()
 
         respawnPlayer(event)
 
@@ -255,8 +254,8 @@ object CgsGameEventListener : Listener
             val cgsGameKiller = CgsPlayerHandler.find(killer)!!
             val killerStatistics = engine.getStatistics(cgsGameKiller)
 
-            killerStatistics.kills++
-            killerStatistics.gameKills++
+            killerStatistics.kills.inc()
+            killerStatistics.gameKills.inc()
         }
 
         event.deathMessage = CgsDeathHandler
