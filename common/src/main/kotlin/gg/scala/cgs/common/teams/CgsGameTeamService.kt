@@ -63,9 +63,11 @@ object CgsGameTeamService
         player: CgsGamePlayer, forceRandom: Boolean = false
     ): Boolean
     {
-        val availableTeams = teams.values.filter {
-            it.participants.size < engine.gameMode.getTeamSize()
-        }.toList()
+        val availableTeams = teams.values
+            .filter {
+                it.participants.size < engine.gameMode.getTeamSize()
+            }
+            .toList()
 
         if (availableTeams.isNotEmpty())
         {
@@ -84,15 +86,30 @@ object CgsGameTeamService
                     if (teamOfLeader != null && availableTeams.contains(teamOfLeader))
                     {
                         teamOfLeader.participants.add(player.uniqueId)
+                        return true
                     }
                 }
             } else
             {
-                val randomTeam = teams[
-                        availableTeams.random().id
-                ]!!
+                val empty = availableTeams
+                    .filter {
+                        it.participants.isEmpty()
+                    }
 
-                randomTeam.participants.add(player.uniqueId)
+                if (empty.isNotEmpty())
+                {
+                    val team = empty.first()
+
+                    team.participants
+                        .add(player.uniqueId)
+                } else
+                {
+                    val randomTeam = teams[
+                            availableTeams.random().id
+                    ]!!
+
+                    randomTeam.participants.add(player.uniqueId)
+                }
                 return true
             }
         }

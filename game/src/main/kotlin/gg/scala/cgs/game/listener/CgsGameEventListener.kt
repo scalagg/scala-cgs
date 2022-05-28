@@ -213,6 +213,11 @@ object CgsGameEventListener : Listener
                     return
                 }
 
+                CgsInventorySnapshotEngine
+                    .takeSnapshot(
+                        event.participant, true
+                    )
+
                 // We're only adding reconnection data if the
                 // player will not be disqualified on logout
                 cgsGamePlayer.lastPlayedGameId = engine.uniqueId
