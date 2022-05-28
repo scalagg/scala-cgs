@@ -66,7 +66,8 @@ object CgsGameTeamService
         val availableTeams = teams.values
             .filter {
                 it.participants.size < engine.gameMode.getTeamSize()
-            }.toList()
+            }
+            .toList()
 
         if (availableTeams.isNotEmpty())
         {
@@ -90,11 +91,25 @@ object CgsGameTeamService
                 }
             } else
             {
-                val randomTeam = teams[
-                        availableTeams.random().id
-                ]!!
+                val empty = availableTeams
+                    .filter {
+                        it.participants.isEmpty()
+                    }
 
-                randomTeam.participants.add(player.uniqueId)
+                if (empty.isNotEmpty())
+                {
+                    val team = empty.first()
+
+                    team.participants
+                        .add(player.uniqueId)
+                } else
+                {
+                    val randomTeam = teams[
+                            availableTeams.random().id
+                    ]!!
+
+                    randomTeam.participants.add(player.uniqueId)
+                }
                 return true
             }
         }
