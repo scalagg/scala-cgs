@@ -35,7 +35,8 @@ object CgsGameDisqualificationHandler
         val statistics = CgsGameEngine.INSTANCE.getStatistics(cgsGamePlayer)
         statistics.losses++
 
-        if (CgsGameEngine.INSTANCE.gameInfo.spectateOnDeath && setSpectator)
+        //if (CgsGameEngine.INSTANCE.gameInfo.spectateOnDeath && setSpectator) YOU HAVE DOWN SYNDROME GROWLY
+        if (setSpectator)
         {
             CgsSpectatorHandler.setSpectator(player, true)
 
