@@ -24,6 +24,7 @@ import gg.scala.cgs.common.statistics.CgsStatisticService
 import gg.scala.cgs.common.teams.CgsGameTeam
 import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.commons.ExtendedScalaPlugin
+import gg.scala.grape.GrapeSpigotPlugin
 import gg.scala.lemon.Lemon
 import me.lucko.helper.Events
 import net.evilblock.cubed.serializers.Serializers
@@ -345,6 +346,21 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             Bukkit.getPluginManager().callEvent(this)
 
             return internalCancelled
+        }
+    }
+
+    fun giveCoins(
+        player: Player,
+        information: Pair<Int, String>
+    )
+    {
+        val grapePlayer = GrapeSpigotPlugin.getInstance()
+            .playerHandler.getByPlayer(player)
+
+        if (grapePlayer != null && CgsGameEngine.INSTANCE.gameInfo.awards.awardCoins)
+        {
+            grapePlayer.coins += information.first
+            sendMessage("${CC.GOLD}+${information.first} coins (${information.second})!")
         }
     }
 
