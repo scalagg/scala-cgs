@@ -83,7 +83,7 @@ object CgsSpectatorHandler
 
         Tasks.delayed(1L)
         {
-            player refresh (true to GameMode.WATCHER)
+            player refresh (true to GameMode.CREATIVE)
             player.addPotionEffect(invisibility, true)
 
             player.sendMessage("${CC.D_RED}✘ ${CC.RED}You've been made a spectator.")
