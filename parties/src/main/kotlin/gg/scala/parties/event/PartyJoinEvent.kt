@@ -15,11 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin
 class PartyJoinEvent(
     val party: Party,
     val member: PartyMember
-) : PluginEvent(
-    JavaPlugin.getPlugin(
-        PartySpigotPlugin::class.java
-    )
-), Cancellable
+) : net.evilblock.cubed.event.PluginEvent(), Cancellable
 {
     companion object
     {

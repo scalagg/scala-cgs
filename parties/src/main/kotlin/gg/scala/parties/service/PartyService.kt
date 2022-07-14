@@ -94,7 +94,7 @@ object PartyService
                         }
 
                         PartyLeaveEvent(it, member)
-                            .callEvent()
+                            .call()
 
                         QuickAccess.sendGlobalPlayerMessage(
                             message = "${CC.RED}You've left your party!",
@@ -121,7 +121,7 @@ object PartyService
 
                 val event =
                     PartyJoinEvent(it, member)
-                event.callEvent()
+                event.call()
 
                 if (event.isCancelled)
                     return@thenCompose null

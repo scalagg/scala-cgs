@@ -12,11 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin
  */
 class PartySetupEvent(
     val party: Party
-) : PluginEvent(
-    JavaPlugin.getPlugin(
-        PartySpigotPlugin::class.java
-    )
-)
+) : net.evilblock.cubed.event.PluginEvent()
 {
     companion object
     {

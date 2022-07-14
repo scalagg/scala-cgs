@@ -8,7 +8,6 @@ import gg.scala.parties.model.PartyMember
 import gg.scala.parties.model.PartyRole
 import gg.scala.parties.service.PartyService
 import net.evilblock.cubed.menu.Button
-import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants

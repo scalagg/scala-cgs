@@ -86,7 +86,7 @@ data class Party(
         return this.forget()
             .thenRun {
                 PartyDisbandEvent(this)
-                    .callEvent()
+                    .call()
             }
     }
 

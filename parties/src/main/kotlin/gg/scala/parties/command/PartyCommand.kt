@@ -316,7 +316,7 @@ object PartyCommand : ScalaCommand()
             .thenRun {
                 PartyLeaveEvent(
                     existing, targetMember, true
-                ).callEvent()
+                ).call()
 
                 existing.sendMessage(
                     FancyMessage().apply {
@@ -472,7 +472,7 @@ object PartyCommand : ScalaCommand()
 
         party.saveAndUpdateParty().thenRun {
             PartySetupEvent(party)
-                .callEvent()
+                .call()
 
             player.sendMessage("$prefix${CC.GREEN}Your new party has been setup!")
             player.sendMessage("$prefix${CC.YELLOW}Use ${CC.AQUA}/party help${CC.YELLOW} to view all party-related commands!")
