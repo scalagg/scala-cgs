@@ -26,6 +26,8 @@ import gg.scala.cgs.common.statistics.CgsStatisticProvider
 import gg.scala.cgs.common.statistics.CgsStatisticService
 import gg.scala.cgs.common.teams.CgsGameTeam
 import gg.scala.cgs.common.teams.CgsGameTeamService
+import gg.scala.cgs.common.voting.CgsVotingMapService
+import gg.scala.cgs.common.voting.VotingMapConfiguration
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.commons.annotations.custom.CustomAnnotationProcessors
 import gg.scala.grape.GrapeSpigotPlugin
@@ -117,6 +119,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             inject(EnvironmentEditorService)
             inject(EditableFieldService)
             inject(CgsGameSnapshotEngine)
+
+            if (gameInfo.preStartVoting)
+            {
+                inject(CgsVotingMapService)
+            }
 
             injected<CgsStatisticService<S>>().configure()
         }
@@ -284,6 +291,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     abstract fun getGameSnapshot(): CgsGameSnapshot
     open fun createTeam(id: Int): CgsGameTeam {
         return CgsGameTeam(id)
+    }
+
+    open fun getVotingConfig(): VotingMapConfiguration?
+    {
+        return null
     }
 
     class CgsGameEndEvent : CgsGameEvent()
