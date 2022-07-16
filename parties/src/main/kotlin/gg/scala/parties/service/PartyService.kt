@@ -188,6 +188,10 @@ object PartyService
 
         return service
             .load(uniqueId, DataStoreStorageType.REDIS)
+            .exceptionally {
+                it.printStackTrace()
+                return@exceptionally null
+            }
             .thenApply {
                 if (it != null)
                 {
