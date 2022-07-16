@@ -2,6 +2,7 @@ package gg.scala.parties.service
 
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
+import gg.scala.parties.command.PartyCommand
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -17,7 +18,7 @@ object PartyInviteService
         return CompletableFuture.supplyAsync {
             var exists: Boolean
 
-            Lemon.instance.aware.publishConnection.apply {
+            PartyCommand.connection.apply {
                 exists = this.sync().hget("parties:invites:$target:$party", party.toString()) != null
             }
 

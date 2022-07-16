@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit
 @CommandAlias("party|p|parties")
 object PartyCommand : ScalaCommand()
 {
-    private val connection: StatefulRedisConnection<String, String>
+    val connection: StatefulRedisConnection<String, String>
             by lazy {
                 val internal = Lemon
                     .instance.aware.internal()
@@ -229,6 +229,8 @@ object PartyCommand : ScalaCommand()
             connection.sync().hdel(
                 requestKey, uniqueId.toString()
             )
+
+            println("deleted")
 
             handlePartyJoin(player, uniqueId)
         }
