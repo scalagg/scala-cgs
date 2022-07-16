@@ -1,10 +1,15 @@
 package gg.scala.cgs.common.voting
 
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
+import me.lucko.helper.Events
+import net.evilblock.cubed.util.CC
+import org.bukkit.Bukkit
+import org.bukkit.event.player.PlayerJoinEvent
 import java.util.UUID
 
 /**
@@ -20,6 +25,7 @@ object CgsVotingMapService : Runnable
 
     lateinit var configuration: VotingMapConfiguration
 
+    var votingEnabled = false
     val selections = mutableMapOf<String, Map<UUID, Int>>()
 
     @Configure
@@ -36,10 +42,39 @@ object CgsVotingMapService : Runnable
         {
             this.selections[entry.id] = mutableMapOf()
         }
+
+        Events.subscribe(PlayerJoinEvent::class.java)
+            .filter {
+                engine.gameState == CgsGameState.WAITING
+            }
+            .handler {
+                if (Bukkit.getOnlinePlayers().size < configuration.minimumPlayersForVotingStart)
+                {
+                    val required = configuration.minimumPlayersForVotingStart - Bukkit.getOnlinePlayers().size
+
+                    it.player.sendMessage("${CC.PRI}$required${CC.SEC} more player${
+                        if (required == 1) "" else "s"
+                    } required for map voting to open!")
+                } else if (
+                    Bukkit.getOnlinePlayers().size >= configuration.minimumPlayersForVotingStart &&
+                    !votingEnabled
+                )
+                {
+                    this.votingEnabled = true
+                    // TODO: map voting start logic
+                } else if (
+                    Bukkit.getOnlinePlayers().size < configuration.minimumPlayersForVotingStart &&
+                    votingEnabled
+                )
+                {
+                    this.votingEnabled = false
+                    // TODO: map voting termination logic
+                }
+            }
     }
 
     override fun run()
     {
-        TODO("Not yet implemented")
+
     }
 }
