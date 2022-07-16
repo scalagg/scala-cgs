@@ -26,20 +26,27 @@ object StartedStateRunnable : StateRunnable(
 
         if (machine.stateMachines.isNotEmpty())
         {
-            var current = machine.current()
+            val current = machine.current()
 
-            if (System.currentTimeMillis() >= current.startTimestamp() + current.getTimeout())
+            if (!current.started)
             {
-                machine.stateMachines
-                    .removeFirst()?.onEnd()
+                current.start()
+            } else
+            {
+                if (System.currentTimeMillis() >= current.startTimestamp + current.getTimeout())
+                {
+                    machine.stateMachines.poll()
+                        ?.terminable
+                        ?.closeAndReportException()
 
-                current = machine.current()
-                current.onStart()
-
-                println("[CGS] Moving onto ${current.id()} due to timeout.")
+                    CgsGameEngine.INSTANCE.plugin.logger.info(
+                        "[CGS] Moving onto ${current.id()} due to timeout."
+                    )
+                } else
+                {
+                    current.onUpdate()
+                }
             }
-
-            current.onUpdate()
         }
 
         if (teamsWithAlivePlayers.size == 1)

@@ -19,11 +19,15 @@ import gg.scala.cgs.common.snapshot.CgsGameSnapshot
 import gg.scala.cgs.common.snapshot.CgsGameSnapshotEngine
 import gg.scala.cgs.common.snapshot.inventory.CgsInventorySnapshot
 import gg.scala.cgs.common.states.CgsGameState
+import gg.scala.cgs.common.states.CgsGameStateService
+import gg.scala.cgs.common.states.machine.CgsGameStateMachine
+import gg.scala.cgs.common.states.machine.StateMachineAutoRegister
 import gg.scala.cgs.common.statistics.CgsStatisticProvider
 import gg.scala.cgs.common.statistics.CgsStatisticService
 import gg.scala.cgs.common.teams.CgsGameTeam
 import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.commons.ExtendedScalaPlugin
+import gg.scala.commons.annotations.custom.CustomAnnotationProcessors
 import gg.scala.grape.GrapeSpigotPlugin
 import gg.scala.lemon.Lemon
 import me.lucko.helper.Events
@@ -87,6 +91,14 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     fun initialResourceLoad()
     {
+        CustomAnnotationProcessors
+            .process<StateMachineAutoRegister> {
+                if (it is CgsGameStateMachine)
+                {
+                    CgsGameStateService.register(it)
+                }
+            }
+
         Serializers.create {
             registerTypeAdapter(
                 GameSpecificStatistics::class.java,

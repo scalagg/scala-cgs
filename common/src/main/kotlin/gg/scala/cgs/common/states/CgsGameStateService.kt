@@ -15,6 +15,7 @@ object CgsGameStateService
     fun register(stateMachine: CgsGameStateMachine)
     {
         stateMachines.add(stateMachine)
+        stateMachines.sortBy { it.order() }
     }
 
     fun current(): CgsGameStateMachine =
