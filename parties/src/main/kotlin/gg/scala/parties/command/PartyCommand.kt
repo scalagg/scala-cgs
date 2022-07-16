@@ -230,8 +230,6 @@ object PartyCommand : ScalaCommand()
                 requestKey, uniqueId.toString()
             )
 
-            println("deleted")
-
             handlePartyJoin(player, uniqueId)
         }
     }
