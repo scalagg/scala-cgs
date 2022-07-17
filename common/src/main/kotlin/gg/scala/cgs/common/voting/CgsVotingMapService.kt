@@ -12,12 +12,12 @@ import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.util.task.DiminutionRunnable
 import me.lucko.helper.Events
-import me.lucko.helper.scheduler.Task
 import me.lucko.helper.terminable.composite.CompositeTerminable
 import me.lucko.helper.utils.Players
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.ItemUtils
+import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -32,7 +32,7 @@ import java.util.*
  */
 @Service
 @IgnoreAutoScan
-object CgsVotingMapService : DiminutionRunnable(-1)
+object CgsVotingMapService : DiminutionRunnable(61)
 {
     @JvmStatic
     val VOTING_ITEM = ItemBuilder
@@ -50,8 +50,6 @@ object CgsVotingMapService : DiminutionRunnable(-1)
 
     val terminable = CompositeTerminable.create()
 
-    lateinit var task: Task
-
     @Configure
     fun configure()
     {
@@ -66,6 +64,13 @@ object CgsVotingMapService : DiminutionRunnable(-1)
         {
             this.selections[entry.id] = mutableMapOf()
         }
+
+        Events.subscribe(PlayerQuitEvent::class.java)
+            .handler { event ->
+                this.selections.onEach {
+                    it.value.remove(event.player.uniqueId)
+                }
+            }
 
         Events.subscribe(PlayerQuitEvent::class.java)
             .filter {
@@ -90,6 +95,20 @@ object CgsVotingMapService : DiminutionRunnable(-1)
             }
             .bindWith(terminable)
 
+        Events.subscribe(VoteCompletionEvent::class.java)
+            .handler {
+                if (it.tie)
+                {
+                    engine.sendMessage("${CC.GOLD}This vote has resulted in a tie. A random map has been chosen.")
+                }
+
+                engine.sendMessage(
+                    "${CC.B_YELLOW}${it.selected.displayName}${CC.GREEN} has been chosen with ${CC.YELLOW}${
+                        this.selections[it.selected.id]!!.size
+                    } votes${CC.GREEN}."
+                )
+            }
+
         Events.subscribe(PlayerInteractEvent::class.java)
             .filter {
                 engine.gameState == CgsGameState.WAITING
@@ -100,7 +119,8 @@ object CgsVotingMapService : DiminutionRunnable(-1)
             .handler {
                 when (this.configuration.selectionType)
                 {
-                    VoteSelectionType.PLAYER_INVENTORY -> {
+                    VoteSelectionType.PLAYER_INVENTORY ->
+                    {
                         if (ItemUtils.itemTagHasKey(it.item, "voting"))
                         {
                             val key = ItemUtils
@@ -119,7 +139,9 @@ object CgsVotingMapService : DiminutionRunnable(-1)
                             }
                         }
                     }
-                    VoteSelectionType.GUI -> {
+
+                    VoteSelectionType.GUI ->
+                    {
                         VoteMenu().openMenu(it.player)
                     }
                 }
@@ -133,13 +155,16 @@ object CgsVotingMapService : DiminutionRunnable(-1)
             .handler {
                 it.player.inventory.clear()
 
-                if (this.configuration.selectionType == VoteSelectionType.GUI)
+                if (votingEnabled)
                 {
-                    it.player.inventory.addItem(VOTING_ITEM)
-                    it.player.updateInventory()
-                } else
-                {
-                    this.configureInventory(it.player)
+                    if (this.configuration.selectionType == VoteSelectionType.GUI)
+                    {
+                        it.player.inventory.addItem(VOTING_ITEM)
+                        it.player.updateInventory()
+                    } else
+                    {
+                        this.configureInventory(it.player)
+                    }
                 }
 
                 if (Bukkit.getOnlinePlayers().size < configuration.minimumPlayersForVotingStart)
@@ -186,20 +211,26 @@ object CgsVotingMapService : DiminutionRunnable(-1)
         val entry = this
             .selections[entryId]!!
 
-        entry[player.uniqueId] = 1
-
-        player.sendMessage("${CC.SEC}You voted for ${CC.PRI}${
-            this.configuration.entries()
-                .find { it.id == entryId }!!.displayName
-        }${CC.SEC}.")
-
-        if (
-            configuration.selectionType ==
-            VoteSelectionType.PLAYER_INVENTORY
-        )
+        if (entry[player.uniqueId] == null)
         {
-            Players.forEach {
-                this.configureInventory(it)
+            entry[player.uniqueId] = 1
+
+            player.sendMessage(
+                "${CC.SEC}You voted for the ${CC.PRI}${
+                    this.configuration.entries()
+                        .find { it.id == entryId }!!
+                        .displayName
+                }${CC.SEC} map."
+            )
+
+            if (
+                configuration.selectionType ==
+                VoteSelectionType.PLAYER_INVENTORY
+            )
+            {
+                Players.forEach {
+                    this.configureInventory(it)
+                }
             }
         }
     }
@@ -236,7 +267,7 @@ object CgsVotingMapService : DiminutionRunnable(-1)
             player.inventory.setItem(
                 index, ItemBuilder
                     .of(entry.item)
-                    .name("${CC.YELLOW}: ${CC.AQUA}$votes")
+                    .name("${CC.YELLOW}${entry.displayName}: ${CC.AQUA}$votes")
                     .build()
             )
         }
@@ -265,7 +296,21 @@ object CgsVotingMapService : DiminutionRunnable(-1)
             .votingAutoCloseDuration
             .seconds.toInt() + 1
 
-        this.runTaskTimerAsynchronously(
+        Players.forEach {
+            when (this.configuration.selectionType)
+            {
+                VoteSelectionType.PLAYER_INVENTORY ->
+                    configureInventory(it)
+                VoteSelectionType.GUI -> {
+                    it.player.inventory.addItem(VOTING_ITEM)
+                    it.player.updateInventory()
+                }
+            }
+        }
+
+        engine.sendMessage("${CC.GREEN}Map voting has started.")
+
+        this.runTaskTimer(
             engine.plugin, 0L, 20L
         )
     }
@@ -277,9 +322,9 @@ object CgsVotingMapService : DiminutionRunnable(-1)
         this.votingEnabled = false
 
         Players.forEach {
-                it.inventory.clear()
-                it.updateInventory()
-            }
+            it.inventory.clear()
+            it.updateInventory()
+        }
 
         engine.sendMessage(
             "${CC.GREEN}Map voting has ended!"
@@ -327,12 +372,14 @@ object CgsVotingMapService : DiminutionRunnable(-1)
                     )
 
                 val event = VoteCompletionEvent(
-                    matching, tie = true
+                    matching, tie = false
                 )
 
                 event.callEvent()
             }
         }
+
+        this.selections.onEach { it.value.clear() }
     }
 
     override fun getSeconds() =
@@ -350,11 +397,14 @@ object CgsVotingMapService : DiminutionRunnable(-1)
     override fun onRun()
     {
         if (
-            engine.gameState != CgsGameState.WAITING || Players.all().size - 1 < this
+            engine.gameState != CgsGameState.WAITING || Players.all().size < this
                 .configuration.minimumPlayersForVotingStart && this.votingEnabled
         )
         {
             this.cancel()
+            return
         }
+
+        broadcast("${CC.SEC}Map voting will end in ${CC.PRI}${TimeUtil.formatIntoDetailedString(seconds)}${CC.SEC}.")
     }
 }
