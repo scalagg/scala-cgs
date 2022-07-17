@@ -1,16 +1,29 @@
 package gg.scala.cgs.common.voting
 
+import com.cryptomorin.xseries.XMaterial
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.states.CgsGameState
+import gg.scala.cgs.common.voting.event.VoteCompletionEvent
+import gg.scala.cgs.common.voting.selection.VoteSelectionType
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
+import gg.scala.lemon.util.task.DiminutionRunnable
 import me.lucko.helper.Events
+import me.lucko.helper.scheduler.Task
+import me.lucko.helper.terminable.composite.CompositeTerminable
+import me.lucko.helper.utils.Players
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.ItemUtils
 import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
-import java.util.UUID
+import org.bukkit.event.player.PlayerQuitEvent
+import java.util.*
 
 /**
  * @author GrowlyX
@@ -18,15 +31,25 @@ import java.util.UUID
  */
 @Service
 @IgnoreAutoScan
-object CgsVotingMapService : Runnable
+object CgsVotingMapService : DiminutionRunnable(-1)
 {
+    @JvmStatic
+    val VOTING_ITEM = ItemBuilder
+        .of(XMaterial.NETHER_STAR)
+        .name("${CC.YELLOW}Map Voting")
+        .build()
+
     @Inject
     lateinit var engine: CgsGameEngine<*>
 
     lateinit var configuration: VotingMapConfiguration
 
     var votingEnabled = false
-    val selections = mutableMapOf<String, Map<UUID, Int>>()
+    val selections = mutableMapOf<String, MutableMap<UUID, Int>>()
+
+    val terminable = CompositeTerminable.create()
+
+    lateinit var task: Task
 
     @Configure
     fun configure()
@@ -43,38 +66,281 @@ object CgsVotingMapService : Runnable
             this.selections[entry.id] = mutableMapOf()
         }
 
+        Events.subscribe(PlayerQuitEvent::class.java)
+            .filter {
+                engine.gameState == CgsGameState.WAITING
+            }
+            .filter {
+                Players.all().size - 1 < this
+                    .configuration.minimumPlayersForVotingStart &&
+                        this.votingEnabled
+            }
+            .handler {
+                this.closeVoting(choose = false)
+
+                val required = configuration
+                    .minimumPlayersForVotingStart - (Players.all().size - 1)
+
+                engine.sendMessage(
+                    "${CC.PRI}$required${CC.SEC} more player${
+                        if (required == 1) "" else "s"
+                    } required for map voting to open!"
+                )
+            }
+            .bindWith(terminable)
+
+        Events.subscribe(PlayerInteractEvent::class.java)
+            .filter {
+                engine.gameState == CgsGameState.WAITING
+            }
+            .filter {
+                it.hasItem() && it.action.name.contains("RIGHT")
+            }
+            .filter {
+                ItemUtils.itemTagHasKey(it.item, "voting")
+            }
+            .handler {
+                val key = ItemUtils
+                    .readItemTagKey(
+                        it.item, "voting"
+                    )
+
+                if (key == "random")
+                {
+                    invalidatePlayerVote(it.player)
+                    registerVote(it.player, null)
+                } else
+                {
+                    invalidatePlayerVote(it.player)
+                    registerVote(it.player, key.toString())
+                }
+            }
+            .bindWith(terminable)
+
         Events.subscribe(PlayerJoinEvent::class.java)
             .filter {
                 engine.gameState == CgsGameState.WAITING
             }
             .handler {
+                it.player.inventory.clear()
+
+                if (this.configuration.selectionType == VoteSelectionType.GUI)
+                {
+                    it.player.inventory.addItem(VOTING_ITEM)
+                    it.player.updateInventory()
+                } else
+                {
+                    this.configureInventory(it.player)
+                }
+
                 if (Bukkit.getOnlinePlayers().size < configuration.minimumPlayersForVotingStart)
                 {
                     val required = configuration.minimumPlayersForVotingStart - Bukkit.getOnlinePlayers().size
 
-                    it.player.sendMessage("${CC.PRI}$required${CC.SEC} more player${
-                        if (required == 1) "" else "s"
-                    } required for map voting to open!")
-                } else if (
+                    it.player.sendMessage(
+                        "${CC.PRI}$required${CC.SEC} more player${
+                            if (required == 1) "" else "s"
+                        } required for map voting to open!"
+                    )
+                    return@handler
+                }
+
+                if (
                     Bukkit.getOnlinePlayers().size >= configuration.minimumPlayersForVotingStart &&
                     !votingEnabled
                 )
                 {
-                    this.votingEnabled = true
-                    // TODO: map voting start logic
-                } else if (
+                    start()
+                    return@handler
+                }
+
+                if (
                     Bukkit.getOnlinePlayers().size < configuration.minimumPlayersForVotingStart &&
                     votingEnabled
                 )
                 {
-                    this.votingEnabled = false
-                    // TODO: map voting termination logic
+                    closeVoting()
+                    return@handler
                 }
             }
+            .bindWith(terminable)
     }
 
-    override fun run()
+    fun registerVote(
+        player: Player,
+        id: String? = null
+    )
     {
+        val entryId = id ?: this.configuration
+            .entries().random().id
 
+        val entry = this
+            .selections[entryId]!!
+
+        entry[player.uniqueId] = 1
+
+        player.sendMessage("${CC.SEC}You voted for ${CC.PRI}${
+            this.configuration.entries()
+                .find { it.id == entryId }!!.displayName
+        }${CC.SEC}.")
+
+        if (
+            configuration.selectionType ==
+            VoteSelectionType.PLAYER_INVENTORY
+        )
+        {
+            Players.forEach {
+                this.configureInventory(it)
+            }
+        }
+    }
+
+    fun invalidatePlayerVote(
+        player: Player
+    )
+    {
+        this.selections.onEach { entry ->
+            entry.value.remove(player.uniqueId)
+        }
+    }
+
+    fun configureInventory(
+        player: Player
+    )
+    {
+        val indexed = this.configuration.entries().withIndex()
+
+        for ((index, entry) in indexed)
+        {
+            val votes = this
+                .selections[entry.id]!!.size
+
+            val stack = ItemBuilder
+                .of(entry.item)
+                .name("${CC.YELLOW}: ${CC.AQUA}$votes")
+                .build()
+
+            ItemUtils.addToItemTag(
+                stack, "voting", entry.id, false
+            )
+
+            player.inventory.setItem(
+                index, ItemBuilder
+                    .of(entry.item)
+                    .name("${CC.YELLOW}: ${CC.AQUA}$votes")
+                    .build()
+            )
+        }
+
+        player.inventory.setItem(
+            8, ItemBuilder
+                .of(Material.SNOW_BALL)
+                .name("${CC.YELLOW}Random Map")
+                .build().apply {
+                    ItemUtils.addToItemTag(
+                        this,
+                        "voting", "random",
+                        false
+                    )
+                }
+        )
+
+        player.updateInventory()
+    }
+
+    private fun start()
+    {
+        this.votingEnabled = true
+        this.runTaskTimerAsynchronously(
+            engine.plugin, 0L, 20L
+        )
+    }
+
+    private fun closeVoting(
+        choose: Boolean = true
+    )
+    {
+        this.votingEnabled = false
+
+        Players.forEach {
+                it.inventory.clear()
+                it.updateInventory()
+            }
+
+        engine.sendMessage(
+            "${CC.GREEN}Map voting has ended!"
+        )
+
+        if (choose)
+        {
+            val mapped = this.selections
+                .mapValues {
+                    it.value.size
+                }
+
+            val highest = mapped
+                .entries
+                .maxByOrNull { it.value }!!
+
+            val tie = mapped
+                .toMutableMap().entries
+                .apply {
+                    removeIf { it.key == highest.key }
+                }
+                .any {
+                    it.value == highest.value
+                }
+
+            if (tie)
+            {
+                val random = this.configuration
+                    .entries().random()
+
+                val event = VoteCompletionEvent(
+                    random, tie = true
+                )
+
+                event.callEvent()
+            } else
+            {
+                val matching = this.configuration
+                    .entries()
+                    .find {
+                        it.id == highest.key
+                    }
+                    ?: throw IllegalArgumentException(
+                        "Entry gone?!"
+                    )
+
+                val event = VoteCompletionEvent(
+                    matching, tie = true
+                )
+
+                event.callEvent()
+            }
+        }
+    }
+
+    override fun getSeconds() =
+        listOf(
+            18000, 14400, 10800, 7200, 3600, 2700, 1800,
+            900, 600, 300, 240, 180, 120, 60, 50, 40, 30,
+            15, 10, 5, 4, 3, 2, 1
+        )
+
+    override fun onEnd()
+    {
+        closeVoting()
+    }
+
+    override fun onRun()
+    {
+        if (
+            engine.gameState != CgsGameState.WAITING || Players.all().size - 1 < this
+                .configuration.minimumPlayersForVotingStart && this.votingEnabled
+        )
+        {
+            this.cancel()
+        }
     }
 }
