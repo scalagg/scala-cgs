@@ -9,6 +9,7 @@ import gg.scala.store.storage.storable.IDataStoreObject
 import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
+import org.bukkit.Bukkit
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -33,6 +34,16 @@ data class Party(
 
     fun includedMembers(): List<UUID> =
         this.members.keys
+            .toMutableList()
+            .apply {
+                add(leader.uniqueId)
+            }
+
+    fun includedMembersOnline(): List<UUID> =
+        this.members.keys
+            .filter {
+                Bukkit.getPlayer(it) != null
+            }
             .toMutableList()
             .apply {
                 add(leader.uniqueId)
