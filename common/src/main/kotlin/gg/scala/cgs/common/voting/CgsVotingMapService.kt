@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XMaterial
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.voting.event.VoteCompletionEvent
+import gg.scala.cgs.common.voting.menu.VoteMenu
 import gg.scala.cgs.common.voting.selection.VoteSelectionType
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
@@ -96,23 +97,31 @@ object CgsVotingMapService : DiminutionRunnable(-1)
             .filter {
                 it.hasItem() && it.action.name.contains("RIGHT")
             }
-            .filter {
-                ItemUtils.itemTagHasKey(it.item, "voting")
-            }
             .handler {
-                val key = ItemUtils
-                    .readItemTagKey(
-                        it.item, "voting"
-                    )
+                when (this.configuration.selectionType)
+                {
+                    VoteSelectionType.PLAYER_INVENTORY -> {
+                        if (ItemUtils.itemTagHasKey(it.item, "voting"))
+                        {
+                            val key = ItemUtils
+                                .readItemTagKey(
+                                    it.item, "voting"
+                                )
 
-                if (key == "random")
-                {
-                    invalidatePlayerVote(it.player)
-                    registerVote(it.player, null)
-                } else
-                {
-                    invalidatePlayerVote(it.player)
-                    registerVote(it.player, key.toString())
+                            if (key == "random")
+                            {
+                                invalidatePlayerVote(it.player)
+                                registerVote(it.player, null)
+                            } else
+                            {
+                                invalidatePlayerVote(it.player)
+                                registerVote(it.player, key.toString())
+                            }
+                        }
+                    }
+                    VoteSelectionType.GUI -> {
+                        VoteMenu().openMenu(it.player)
+                    }
                 }
             }
             .bindWith(terminable)
@@ -251,6 +260,11 @@ object CgsVotingMapService : DiminutionRunnable(-1)
     private fun start()
     {
         this.votingEnabled = true
+
+        this.seconds = this.configuration
+            .votingAutoCloseDuration
+            .seconds.toInt() + 1
+
         this.runTaskTimerAsynchronously(
             engine.plugin, 0L, 20L
         )

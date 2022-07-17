@@ -3,6 +3,7 @@ package gg.scala.cgs.common.voting.menu
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.voting.CgsVotingMapService
 import net.evilblock.cubed.menu.Button
+import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.menu.distribution.MenuRowDistribution
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
@@ -14,23 +15,22 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 7/16/2022
  */
-class VoteMenu : PaginatedMenu()
+class VoteMenu : Menu()
 {
     init
     {
-        applyHeader = false
-        distribution = MenuRowDistribution.EVENLY
+        autoUpdate = true
     }
 
-    override fun size(buttons: Map<Int, Button>) = 36
+    override fun size(buttons: Map<Int, Button>) = 27
 
-    override fun getAllPagesButtons(player: Player): Map<Int, Button>
+    override fun getButtons(player: Player): Map<Int, Button>
     {
         return mutableMapOf<Int, Button>()
             .apply {
                 for (entry in CgsVotingMapService.configuration.entries())
                 {
-                    this[buttons.size] = ItemBuilder
+                    this[10 + buttons.size] = ItemBuilder
                         .of(entry.item)
                         .setLore(
                             TextSplitter.split(
@@ -49,11 +49,12 @@ class VoteMenu : PaginatedMenu()
                         )
                         .name("${CC.YELLOW}${entry.displayName}")
                         .toButton { _, _ ->
-
+                            CgsVotingMapService.invalidatePlayerVote(player)
+                            CgsVotingMapService.registerVote(player, entry.id)
                         }
                 }
             }
     }
 
-    override fun getPrePaginatedTitle(player: Player) = "Vote for a map..."
+    override fun getTitle(player: Player) = "Vote for a map..."
 }
