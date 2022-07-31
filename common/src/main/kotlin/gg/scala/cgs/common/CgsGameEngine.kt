@@ -119,6 +119,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             inject(EnvironmentEditorService)
             inject(EditableFieldService)
             inject(CgsGameSnapshotEngine)
+            inject(CgsGameArenaHandler)
 
             if (gameInfo.preStartVoting)
             {

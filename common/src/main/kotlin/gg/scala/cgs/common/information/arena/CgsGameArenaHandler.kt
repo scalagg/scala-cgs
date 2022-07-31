@@ -1,6 +1,8 @@
 package gg.scala.cgs.common.information.arena
 
+import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.information.mode.CgsGameMode
+import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Close
 import gg.scala.flavor.service.Service
 import org.apache.commons.io.FileUtils
@@ -9,7 +11,6 @@ import org.bukkit.World
 import org.bukkit.WorldCreator
 import org.bukkit.WorldType
 import java.io.File
-import java.nio.file.Files
 
 /**
  * @author GrowlyX
@@ -18,12 +19,27 @@ import java.nio.file.Files
 @Service
 object CgsGameArenaHandler
 {
+    @Inject
+    lateinit var engine: CgsGameEngine<*>
+
     lateinit var world: World
     lateinit var arena: CgsGameArena
 
-    fun configure(gameMode: CgsGameMode)
+    fun configure(
+        gameMode: CgsGameMode,
+        arenaOverride: CgsGameArena? = null
+    )
     {
-        arena = gameMode.getArenas().random()
+        if (
+            arenaOverride == null &&
+            engine.getVotingConfig() == null
+        )
+        {
+            return
+        }
+
+        arena = arenaOverride
+            ?: gameMode.getArenas().random()
 
         val directory = arena.getDirectory()
             ?: return
@@ -46,34 +62,18 @@ object CgsGameArenaHandler
     @Close
     fun close()
     {
-        try
-        {
-            // checking if the non-null property
-            // world has been initialized
-            world
-        } catch (ignored: Exception)
-        {
-            return
-        }
-
-        kotlin.runCatching {
-            world.worldFolder.completeDelete()
-        }
-    }
-}
-
-fun File.completeDelete(): Boolean
-{
-    if (isDirectory)
-    {
-        for (subFile in listFiles())
-        {
-            if (!subFile.completeDelete())
-            {
-                return false
+        kotlin
+            .runCatching {
+                world
             }
-        }
+            .onSuccess {
+                kotlin
+                    .runCatching {
+                        world.worldFolder.deleteRecursively()
+                    }
+                    .onFailure {
+                        it.printStackTrace()
+                    }
+            }
     }
-
-    return delete()
 }

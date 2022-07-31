@@ -46,6 +46,8 @@ object CgsVotingMapService : DiminutionRunnable(61)
     lateinit var configuration: VotingMapConfiguration
 
     var votingEnabled = false
+    var votingFinished = false
+
     val selections = mutableMapOf<String, MutableMap<UUID, Int>>()
 
     val terminable = CompositeTerminable.create()
@@ -154,6 +156,11 @@ object CgsVotingMapService : DiminutionRunnable(61)
             }
             .handler {
                 it.player.inventory.clear()
+
+                if (votingFinished)
+                {
+                    return@handler
+                }
 
                 if (votingEnabled)
                 {
@@ -320,6 +327,7 @@ object CgsVotingMapService : DiminutionRunnable(61)
     )
     {
         this.votingEnabled = false
+        this.votingFinished = true
 
         Players.forEach {
             it.inventory.clear()
