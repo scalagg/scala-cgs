@@ -141,7 +141,6 @@ object CgsVotingMapService : DiminutionRunnable(61)
                             }
                         }
                     }
-
                     VoteSelectionType.GUI ->
                     {
                         VoteMenu().openMenu(it.player)

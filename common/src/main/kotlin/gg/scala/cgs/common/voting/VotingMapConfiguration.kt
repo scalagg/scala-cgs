@@ -1,6 +1,7 @@
 package gg.scala.cgs.common.voting
 
 import gg.scala.cgs.common.voting.selection.VoteSelectionType
+import org.bukkit.Location
 import java.time.Duration
 
 /**
@@ -14,5 +15,6 @@ interface VotingMapConfiguration
     val minimumPlayersForVotingStart: Int
     val votingAutoCloseDuration: Duration
 
+    fun preStartLobby(): Location
     fun entries(): List<VotingMapEntry>
 }
