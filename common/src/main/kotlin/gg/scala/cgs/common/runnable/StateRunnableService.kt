@@ -7,6 +7,7 @@ import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
+import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.bukkit.Tasks
 
 /**
@@ -45,7 +46,10 @@ object StateRunnableService
     fun startRunningAsync(state: CgsGameState)
     {
         registered[state]?.let {
-            Tasks.asyncTimer(it, 0L, 20L)
+            it.task = Schedulers.async()
+                .runRepeating(
+                    it, 0L, 20L
+                )
         }
     }
 }

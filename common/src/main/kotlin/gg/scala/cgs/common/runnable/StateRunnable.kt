@@ -3,6 +3,7 @@ package gg.scala.cgs.common.runnable
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.printStackTraceV2
 import gg.scala.cgs.common.states.CgsGameState
+import me.lucko.helper.scheduler.Task
 import org.bukkit.scheduler.BukkitRunnable
 
 /**
@@ -11,9 +12,10 @@ import org.bukkit.scheduler.BukkitRunnable
  */
 abstract class StateRunnable(
     private val gameState: CgsGameState
-) : BukkitRunnable()
+) : Runnable
 {
     var currentTick = -1
+    var task: Task? = null
 
     override fun run()
     {
@@ -22,7 +24,7 @@ abstract class StateRunnable(
                 .gameState != gameState
         )
         {
-            cancel()
+            this.task?.closeAndReportException()
             return
         }
 
