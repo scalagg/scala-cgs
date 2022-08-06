@@ -6,6 +6,7 @@ import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.text.TextSplitter
+import org.bukkit.Material
 import org.bukkit.entity.Player
 
 /**
@@ -29,7 +30,7 @@ class VoteMenu : Menu()
         for (entry in CgsVotingMapService.configuration.entries())
         {
             buttons[10 + buttons.size] = ItemBuilder
-                .of(entry.item)
+                .of(Material.PAPER)
                 .setLore(
                     TextSplitter.split(
                         entry.description,
@@ -47,6 +48,17 @@ class VoteMenu : Menu()
                 )
                 .name("${CC.B_YELLOW}${entry.displayName}")
                 .toButton { _, _ ->
+                    val votedThisMap = CgsVotingMapService.selections
+                        .any { other ->
+                            other.value.containsKey(player.uniqueId) && entry.id == other.key
+                        }
+
+                    if (votedThisMap)
+                    {
+                        player.sendMessage("${CC.RED}You've already submitted your vote for this map!")
+                        return@toButton
+                    }
+
                     CgsVotingMapService.invalidatePlayerVote(player)
                     CgsVotingMapService.registerVote(player, entry.id)
                 }

@@ -2,6 +2,7 @@ package gg.scala.cgs.common.voting
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.information.arena.CgsGameArenaHandler
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.voting.event.VoteCompletionEvent
 import gg.scala.cgs.common.voting.menu.VoteMenu
@@ -25,6 +26,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author GrowlyX
@@ -109,6 +111,34 @@ object CgsVotingMapService : DiminutionRunnable(61)
                         this.selections[it.selected.id]!!.size
                     } votes${CC.GREEN}."
                 )
+
+                engine.sendMessage("${CC.D_GREEN}Preparing the map to be played on...")
+
+                CompletableFuture
+                    .runAsync {
+                        CgsGameArenaHandler.configure(
+                            engine.gameMode,
+                            engine.gameMode.getArenas()
+                                .find { arena ->
+                                    arena.getId() == it.selected.id
+                                }
+                        )
+                    }
+                    .exceptionally { throwable ->
+                        throwable.printStackTrace()
+                        return@exceptionally null
+                    }
+                    .thenCompose {
+                        engine.onAsyncPreStartResourceInitialization()
+                    }
+                    .exceptionally { throwable ->
+                        throwable.printStackTrace()
+                        return@exceptionally null
+                    }
+                    .thenAccept {
+                        engine.sendMessage("${CC.GREEN}Prepared map! The game will start shortly...")
+                        engine.gameState = CgsGameState.STARTING
+                    }
             }
 
         Events.subscribe(PlayerInteractEvent::class.java)

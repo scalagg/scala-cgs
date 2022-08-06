@@ -37,7 +37,7 @@ object CgsInstanceService
         {
             current.gameServerInfo = CgsGameServerInfo(
                 CgsGameEngine.INSTANCE.uniqueId,
-                CgsGameEngine.INSTANCE.gameArena.getId(),
+                CgsGameEngine.INSTANCE.gameArena?.getId() ?: "voting-in-progress",
                 CgsGameEngine.INSTANCE.gameMode.getId(),
                 CgsGameEngine.INSTANCE.gameInfo.fancyNameRender,
             )

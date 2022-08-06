@@ -26,7 +26,7 @@ class CgsWrappedGameSnapshot(
         System.currentTimeMillis() - CgsGameEngine.INSTANCE.gameStart
 
     val mapName = CgsGameEngine
-        .INSTANCE.gameArena.getName()
+        .INSTANCE.gameArena!!.getName()
 
     val gameName = CgsGameEngine.INSTANCE
         .gameInfo.fancyNameRender

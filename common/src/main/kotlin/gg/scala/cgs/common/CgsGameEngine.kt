@@ -73,7 +73,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         lateinit var INSTANCE: CgsGameEngine<*>
     }
 
-    lateinit var gameArena: CgsGameArena
+    var gameArena: CgsGameArena? = null
 
     val uniqueId: UUID = UUID.randomUUID()
     var gameState by SmartCgsState()
@@ -88,7 +88,6 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     fun initialLoad()
     {
         INSTANCE = this
-        gameArena = CgsGameArenaHandler.arena
     }
 
     fun initialResourceLoad()
@@ -129,7 +128,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             injected<CgsStatisticService<S>>().configure()
         }
 
-        if (!gameInfo.usesCustomArenaWorld)
+        if (
+            !gameInfo.usesCustomArenaWorld &&
+            getVotingConfig() == null
+        )
         {
             CgsGameArenaHandler.configure(gameMode)
         }

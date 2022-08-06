@@ -52,7 +52,7 @@ object CgsInstanceLocator : Runnable
                     *** IMPLEMENTATION WAS FOUND! INFORMATION BELOW ***
                     *** Mini-game: ${engine.gameInfo.fancyNameRender} v${engine.gameInfo.gameVersion} ***
                     *** Game Mode: ${engine.gameMode.getName()} ***
-                    *** Map: ${engine.gameArena.getId()} ***
+                    *** Map: ${engine.gameArena?.getId() ?: "Lazily loaded, voting soon."} ***
                 """.trimIndent()
             )
 

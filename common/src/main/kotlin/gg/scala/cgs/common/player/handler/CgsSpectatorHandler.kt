@@ -98,7 +98,7 @@ object CgsSpectatorHandler
             Tasks.delayed(1L)
             {
                 player.teleport(
-                    engine.gameArena.getSpectatorLocation()
+                    engine.gameArena!!.getSpectatorLocation()
                 )
             }
 

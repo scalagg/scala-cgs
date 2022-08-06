@@ -7,13 +7,10 @@ import gg.scala.flavor.service.Close
 import gg.scala.flavor.service.Service
 import org.apache.commons.io.FileUtils
 import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.Material
 import org.bukkit.World
 import org.bukkit.WorldCreator
 import org.bukkit.WorldType
 import java.io.File
-import java.nio.file.Path
 
 /**
  * @author GrowlyX
@@ -33,35 +30,6 @@ object CgsGameArenaHandler
         arenaOverride: CgsGameArena? = null
     )
     {
-        if (
-            arenaOverride == null &&
-            engine.getVotingConfig() != null
-        )
-        {
-            arena = object : CgsGameArena
-            {
-                override fun getId() = "dummy"
-                override fun getName() = "Dummy"
-
-                override fun getMaterial() =
-                    Material.FISHING_ROD to 0
-
-                override fun getDescription() = ""
-                override fun getDirectory() = null
-
-                override fun getBukkitWorldName() = ""
-
-                override fun getPreLobbyLocation() = engine
-                    .getVotingConfig()!!.preStartLobby()
-
-                override fun getSpectatorLocation(): Location
-                {
-                    TODO("Not yet implemented")
-                }
-            }
-            return
-        }
-
         arena = arenaOverride
             ?: gameMode.getArenas().random()
 

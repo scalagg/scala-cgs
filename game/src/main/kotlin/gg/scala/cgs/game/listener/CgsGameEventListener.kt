@@ -101,19 +101,32 @@ object CgsGameEventListener : Listener
 
             if (engine.gameState == CgsGameState.WAITING)
             {
-                event.participant.teleport(
-                    engine.gameArena.getPreLobbyLocation()
-                )
+                if (engine.getVotingConfig() != null)
+                {
+                    event.participant.teleport(
+                        engine.getVotingConfig()!!.preStartLobby()
+                    )
+                } else
+                {
+                    // We're going to assume the pre-lobby
+                    // location already exists now
+                    event.participant.teleport(
+                        engine.gameArena!!.getPreLobbyLocation()
+                    )
+                }
             }
 
-            if (participantSize >= engine.gameInfo.minimumPlayers)
+            if (engine.getVotingConfig() == null)
             {
-                engine.onAsyncPreStartResourceInitialization()
-                    .thenAccept {
-                        engine.gameState = CgsGameState.STARTING
-                    }
-            } else {
-                engine.sendMessage("${CC.SEC}The game requires ${CC.PRI + (engine.gameInfo.minimumPlayers - participantSize) + CC.SEC} more players to start.")
+                if (participantSize >= engine.gameInfo.minimumPlayers)
+                {
+                    engine.onAsyncPreStartResourceInitialization()
+                        .thenAccept {
+                            engine.gameState = CgsGameState.STARTING
+                        }
+                } else {
+                    engine.sendMessage("${CC.SEC}The game requires ${CC.PRI + (engine.gameInfo.minimumPlayers - participantSize) + CC.SEC} more players to start.")
+                }
             }
         } else if (!event.reconnectCalled)
         {
