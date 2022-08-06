@@ -43,6 +43,8 @@ object CgsGameArenaHandler
 
         FileUtils.copyDirectory(directory.toFile(), childDirectory, true)
 
+        engine.gameArena = arena
+
         world = Bukkit.createWorld(
             WorldCreator(directory.toFile().name)
                 .environment(World.Environment.NORMAL)
