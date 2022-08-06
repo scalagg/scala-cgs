@@ -119,14 +119,15 @@ object CgsVotingMapService : Runnable
 
                 engine.sendMessage("${CC.D_GREEN}Preparing the map...")
 
-                val future = CompletableFuture<Void>()
-                    .exceptionally { throwable ->
-                        throwable.printStackTrace()
-                        return@exceptionally null
-                    }
-                    .thenCompose {
-                        engine.onAsyncPreStartResourceInitialization()
-                    }
+                CgsGameArenaHandler.configure(
+                    engine.gameMode,
+                    engine.gameMode.getArenas()
+                        .find { arena ->
+                            arena.getId() == it.selected.id
+                        }
+                )
+
+                engine.onAsyncPreStartResourceInitialization()
                     .exceptionally { throwable ->
                         throwable.printStackTrace()
                         return@exceptionally null
@@ -135,18 +136,6 @@ object CgsVotingMapService : Runnable
                         engine.sendMessage("${CC.GREEN}Prepared map! The game will start shortly...")
                         engine.gameState = CgsGameState.STARTING
                     }
-
-                Tasks.sync {
-                    CgsGameArenaHandler.configure(
-                        engine.gameMode,
-                        engine.gameMode.getArenas()
-                            .find { arena ->
-                                arena.getId() == it.selected.id
-                            }
-                    )
-
-                    future.complete(null)
-                }
             }
 
         Events.subscribe(PlayerInteractEvent::class.java)
@@ -443,7 +432,7 @@ object CgsVotingMapService : Runnable
                 .configuration.minimumPlayersForVotingStart && this.votingEnabled
         )
         {
-            this.task.closeAndReportException()
+            this.task.stop()
             return
         }
 
@@ -456,9 +445,8 @@ object CgsVotingMapService : Runnable
 
         if (this.countdown == 0)
         {
+            this.task.stop()
             this.closeVoting(choose = true)
-            this.task.closeAndReportException()
-            return
         }
 
         this.countdown--
