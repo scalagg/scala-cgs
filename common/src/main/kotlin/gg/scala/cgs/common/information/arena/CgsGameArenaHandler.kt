@@ -5,6 +5,8 @@ import gg.scala.cgs.common.information.mode.CgsGameMode
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Close
 import gg.scala.flavor.service.Service
+import me.lucko.helper.scheduler.threadlock.ServerThreadLock
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.apache.commons.io.FileUtils
 import org.bukkit.Bukkit
 import org.bukkit.World
@@ -42,13 +44,6 @@ object CgsGameArenaHandler
         )
 
         FileUtils.copyDirectory(directory.toFile(), childDirectory, true)
-
-        world = Bukkit.createWorld(
-            WorldCreator(directory.toFile().name)
-                .environment(World.Environment.NORMAL)
-                .type(WorldType.NORMAL)
-        )
-        world.setGameRuleValue("doMobSpawning", "false")
     }
 
     @Close

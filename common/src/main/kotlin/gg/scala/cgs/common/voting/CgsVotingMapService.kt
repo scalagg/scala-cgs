@@ -13,11 +13,14 @@ import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import gg.scala.lemon.util.task.DiminutionRunnable
 import me.lucko.helper.Events
+import me.lucko.helper.Schedulers
+import me.lucko.helper.scheduler.Task
 import me.lucko.helper.terminable.composite.CompositeTerminable
 import me.lucko.helper.utils.Players
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.ItemUtils
+import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -34,7 +37,7 @@ import java.util.concurrent.CompletableFuture
  */
 @Service
 @IgnoreAutoScan
-object CgsVotingMapService : DiminutionRunnable(61)
+object CgsVotingMapService : Runnable
 {
     @JvmStatic
     val VOTING_ITEM = ItemBuilder
@@ -49,6 +52,8 @@ object CgsVotingMapService : DiminutionRunnable(61)
 
     var votingEnabled = false
     var votingFinished = false
+
+    lateinit var task: Task
 
     val selections = mutableMapOf<String, MutableMap<UUID, Int>>()
 
@@ -112,18 +117,9 @@ object CgsVotingMapService : DiminutionRunnable(61)
                     } votes${CC.GREEN}."
                 )
 
-                engine.sendMessage("${CC.D_GREEN}Preparing the map to be played on...")
+                engine.sendMessage("${CC.D_GREEN}Preparing the map...")
 
-                CompletableFuture
-                    .runAsync {
-                        CgsGameArenaHandler.configure(
-                            engine.gameMode,
-                            engine.gameMode.getArenas()
-                                .find { arena ->
-                                    arena.getId() == it.selected.id
-                                }
-                        )
-                    }
+                val future = CompletableFuture<Void>()
                     .exceptionally { throwable ->
                         throwable.printStackTrace()
                         return@exceptionally null
@@ -139,6 +135,18 @@ object CgsVotingMapService : DiminutionRunnable(61)
                         engine.sendMessage("${CC.GREEN}Prepared map! The game will start shortly...")
                         engine.gameState = CgsGameState.STARTING
                     }
+
+                Tasks.sync {
+                    CgsGameArenaHandler.configure(
+                        engine.gameMode,
+                        engine.gameMode.getArenas()
+                            .find { arena ->
+                                arena.getId() == it.selected.id
+                            }
+                    )
+
+                    future.complete(null)
+                }
             }
 
         Events.subscribe(PlayerInteractEvent::class.java)
@@ -328,7 +336,7 @@ object CgsVotingMapService : DiminutionRunnable(61)
     {
         this.votingEnabled = true
 
-        this.seconds = this.configuration
+        this.countdown = this.configuration
             .votingAutoCloseDuration
             .seconds.toInt() + 1
 
@@ -346,9 +354,10 @@ object CgsVotingMapService : DiminutionRunnable(61)
 
         engine.sendMessage("${CC.GREEN}Map voting has started.")
 
-        this.runTaskTimer(
-            engine.plugin, 0L, 20L
-        )
+        this.task = Schedulers.async()
+            .runRepeating(
+                this, 0L, 20L
+            )
     }
 
     private fun closeVoting(
@@ -356,7 +365,7 @@ object CgsVotingMapService : DiminutionRunnable(61)
     )
     {
         this.votingEnabled = false
-        this.votingFinished = true
+        this.votingFinished = choose
 
         Players.forEach {
             it.inventory.clear()
@@ -364,7 +373,7 @@ object CgsVotingMapService : DiminutionRunnable(61)
         }
 
         engine.sendMessage(
-            "${CC.GREEN}Map voting has ended!"
+            "${CC.GREEN}Map voting has been closed."
         )
 
         if (choose)
@@ -419,29 +428,39 @@ object CgsVotingMapService : DiminutionRunnable(61)
         this.selections.onEach { it.value.clear() }
     }
 
-    override fun getSeconds() =
+    private var countdown = 0
+    private val seconds =
         listOf(
             18000, 14400, 10800, 7200, 3600, 2700, 1800,
             900, 600, 300, 240, 180, 120, 60, 50, 40, 30,
             15, 10, 5, 4, 3, 2, 1
         )
 
-    override fun onEnd()
-    {
-        closeVoting()
-    }
-
-    override fun onRun()
+    override fun run()
     {
         if (
             engine.gameState != CgsGameState.WAITING || Players.all().size < this
                 .configuration.minimumPlayersForVotingStart && this.votingEnabled
         )
         {
-            this.cancel()
+            this.task.closeAndReportException()
             return
         }
 
-        broadcast("${CC.SEC}Map voting will end in ${CC.PRI}${TimeUtil.formatIntoDetailedString(seconds)}${CC.SEC}.")
+        if (this.seconds.contains(this.countdown))
+        {
+            Players.all().forEach {
+                it.sendMessage("${CC.SEC}Map voting will end in ${CC.PRI}${TimeUtil.formatIntoDetailedString(countdown)}${CC.SEC}.")
+            }
+        }
+
+        if (this.countdown == 0)
+        {
+            this.closeVoting(choose = true)
+            this.task.closeAndReportException()
+            return
+        }
+
+        this.countdown--
     }
 }
