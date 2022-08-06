@@ -343,7 +343,7 @@ object CgsVotingMapService : Runnable
 
         engine.sendMessage("${CC.GREEN}Map voting has started.")
 
-        this.task = Schedulers.async()
+        this.task = Schedulers.sync()
             .runRepeating(
                 this, 0L, 20L
             )
