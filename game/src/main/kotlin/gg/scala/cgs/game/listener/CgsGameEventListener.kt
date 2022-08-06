@@ -406,7 +406,8 @@ object CgsGameEventListener : Listener
         if (entity is Player && damagedBy is Player)
         {
             val cgsGameTeam = CgsGameTeamService
-                .getTeamOf(damagedBy)!!
+                .getTeamOf(damagedBy)
+                ?: return
 
             if (cgsGameTeam.participants.contains(entity.uniqueId))
             {
