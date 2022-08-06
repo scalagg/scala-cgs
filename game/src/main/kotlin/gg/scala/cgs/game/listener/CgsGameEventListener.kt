@@ -34,6 +34,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.inventory.InventoryMoveItemEvent
 import org.bukkit.scoreboard.DisplaySlot
 import kotlin.math.ceil
 
@@ -416,6 +417,18 @@ object CgsGameEventListener : Listener
                     "${CC.RED}You're unable to hurt ${CC.ITALIC}${entity.name}${CC.RED}."
                 )
             }
+        }
+    }
+
+    @EventHandler
+    fun onInventoryMove(event: InventoryMoveItemEvent)
+    {
+        if (
+            event.initiator.viewers.firstOrNull()
+                ?.hasMetadata("spectator") == true
+        )
+        {
+            event.isCancelled = true
         }
     }
 
