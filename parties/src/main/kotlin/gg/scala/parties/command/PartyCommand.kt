@@ -179,6 +179,11 @@ object PartyCommand : ScalaCommand()
                     throw ConditionFailedException("${CC.YELLOW}${target.username()}${CC.RED} does not have a party!")
                 }
 
+                if (it.includedMembers().size >= it.limit)
+                {
+                    throw ConditionFailedException("You cannot join that party as its full!")
+                }
+
                 if (it.status != PartyStatus.PUBLIC)
                 {
                     if (it.status == PartyStatus.PROTECTED)
@@ -246,6 +251,11 @@ object PartyCommand : ScalaCommand()
         if (target == player.uniqueId)
         {
             throw ConditionFailedException("You cannot invite yourself to your party!")
+        }
+
+        if (existing.includedMembers().size >= existing.limit)
+        {
+            throw ConditionFailedException("You cannot invite anymore people to your party as its full.")
         }
 
         val member = existing
