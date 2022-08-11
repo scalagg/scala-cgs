@@ -92,7 +92,7 @@ object DeathmatchService
     private fun configureDeathmatch(config: DeathmatchConfiguration)
     {
         val runnable = object : DiminutionRunnable(
-            config.getTeleportationTime().seconds.toInt() + 1
+            config.getStartTime().seconds.toInt() + 1
         )
         {
             override fun getSeconds() = this@DeathmatchService.seconds
