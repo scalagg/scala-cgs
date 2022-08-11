@@ -62,7 +62,7 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>(
             .hubModule = CgsLobbyModule
 
         plugin.flavor {
-            bind<CgsGameLobby<S>>() to this@CgsGameLobby
+            bind<CgsGameLobby<*>>() to this@CgsGameLobby
             bind<CgsLobbyPlugin>() to CgsLobbyPlugin.INSTANCE
             bind<CgsStatisticProvider<S>>() to this@CgsGameLobby
 

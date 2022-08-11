@@ -3,6 +3,7 @@ package gg.scala.cgs.lobby.leaderboard
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 import gg.scala.commons.annotations.runnables.Repeating
+import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.util.CubedCacheUtil
@@ -22,7 +23,8 @@ object CgsLobbyRankingEngine : Runnable
     @JvmStatic
     val ID_TO_FORMAT = mutableMapOf<String, List<String>>()
 
-    var entries by Delegates.notNull<List<CgsLobbyRankingEntry>>()
+    var entries = mutableListOf<CgsLobbyRankingEntry>()
+    var entriesConfigured = false
 
     fun findEntry(id: String): CgsLobbyRankingEntry?
     {
@@ -31,19 +33,23 @@ object CgsLobbyRankingEngine : Runnable
         }
     }
 
-    @Configure
-    fun configure()
-    {
-        entries = CgsGameLobby.INSTANCE
-            .getRankingEntries().toList()
-    }
-
     override fun run()
     {
+        if (!this.entriesConfigured)
+        {
+            kotlin.runCatching {
+                this.entries.addAll(
+                    CgsGameLobby.INSTANCE.getRankingEntries()
+                )
+
+                this.entriesConfigured = true
+            }
+        }
+
         CgsPlayerHandler.handle
             .loadAll(DataStoreStorageType.MONGO)
             .thenAccept {
-                for (entry in entries)
+                for (entry in CgsGameLobby.INSTANCE.getRankingEntries())
                 {
                     var topTen = it.entries
                         .sortedByDescending { mapping -> entry.getValue(mapping.value) }
