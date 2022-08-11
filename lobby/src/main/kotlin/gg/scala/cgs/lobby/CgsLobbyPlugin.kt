@@ -20,6 +20,7 @@ import kotlin.properties.Delegates
         PluginDependency("scala-commons"),
         PluginDependency("Lemon"),
         PluginDependency("Tangerine"),
+        PluginDependency("Parties"),
         PluginDependency("cloudsync")
     ]
 )

@@ -74,7 +74,6 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>(
             .discoverable.assets
             .apply {
                 add("gg.scala.cgs:lobby:cgs-lobby")
-                add("gg.scala.cgs:parties:cgs-parties")
             }
     }
 

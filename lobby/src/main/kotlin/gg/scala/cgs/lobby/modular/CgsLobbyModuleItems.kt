@@ -6,7 +6,8 @@ import gg.scala.cgs.lobby.modular.menu.CgsGameJoinMenu
 import gg.scala.cgs.lobby.modular.menu.CgsGameSpectateMenu
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
-import gg.scala.tangerine.items.ConfigurableItemHandler
+import gg.scala.tangerine.items2.Items2Config
+import gg.scala.tangerine.items2.TangerineItems2Service
 import gg.scala.tangerine.module.impl.HubModuleItemAdapter
 import me.lucko.helper.Events
 import net.evilblock.cubed.util.CC
@@ -53,9 +54,12 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
     fun configure()
     {
         Events.subscribe(PlayerJoinEvent::class.java).handler {
-            ConfigurableItemHandler.items.forEach { (index, itemStack) ->
-                it.player.inventory.setItem(index, itemStack)
-            }
+            TangerineItems2Service.plugin
+                .config<Items2Config>()
+                .items
+                .forEach { model ->
+                    it.player.inventory.setItem(model.position, model.item)
+                }
 
             it.player.inventory.setItem(4, joinGameItem)
             it.player.inventory.setItem(6, spectateItem)
@@ -83,6 +87,6 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
             }
     }
 
-    // this is unused so just ignore it
+    // this is unused, so just ignore it
     override val additionalItemsAndClickEvents = mutableMapOf<ItemStack, Map.Entry<Int, (Player) -> Unit>>()
 }
