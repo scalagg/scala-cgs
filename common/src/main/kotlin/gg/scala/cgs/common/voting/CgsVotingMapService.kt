@@ -28,6 +28,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.event.world.WorldInitEvent
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -62,6 +63,11 @@ object CgsVotingMapService : Runnable
     @Configure
     fun configure()
     {
+        Events.subscribe(WorldInitEvent::class.java)
+            .handler {
+                it.world.keepSpawnInMemory = false
+            }
+
         val config = engine.getVotingConfig()
             ?: throw IllegalArgumentException(
                 "Voting is enabled yet no voting config was supplied in game implementation."

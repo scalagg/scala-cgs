@@ -1,7 +1,10 @@
 package gg.scala.cgs.common.menu
 
+import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.teams.CgsGameTeamService
+import gg.scala.grape.GrapeSpigotPlugin
 import net.evilblock.cubed.menu.Button
+import net.evilblock.cubed.menu.menus.ConfirmMenu
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
@@ -50,7 +53,14 @@ class CgsGameSpectateMenu : PaginatedMenu()
                 .addToLore(
                     "${CC.YELLOW}Click to teleport."
                 )
-                .data(3).build()
+                .apply {
+                    if (CgsGameEngine.INSTANCE.getSponsorConfig() != null)
+                    {
+                        addToLore("${CC.GREEN}Shift-click to sponsor.")
+                    }
+                }
+                .data(3)
+                .build()
         }
 
         override fun clicked(
@@ -58,6 +68,35 @@ class CgsGameSpectateMenu : PaginatedMenu()
             clickType: ClickType, view: InventoryView
         )
         {
+            val sponsorConfig = CgsGameEngine.INSTANCE.getSponsorConfig()
+
+            if (clickType.isShiftClick && sponsorConfig != null)
+            {
+                val coins = GrapeSpigotPlugin.getInstance()
+                    .playerHandler.getByPlayer(player)
+                    .coins
+
+                if (sponsorConfig.getSponsorAmount() > coins)
+                {
+                    player.sendMessage("${CC.RED}You do not have enough coins to sponsor this player!")
+                    return
+                }
+
+                ConfirmMenu(
+                    title = "Sponsor ${player.name}",
+                    confirm = true
+                ) {
+                    if (it)
+                    {
+                        sponsorConfig.handleSponsorPrize(player, this.player)
+                        player.sendMessage("${CC.GREEN}You sponsored ${this.player.displayName}${CC.GREEN}!")
+
+                        Bukkit.broadcastMessage("${this.player.displayName}${CC.SEC} was sponsored by ${CC.GREEN}${player.name}${CC.SEC}!")
+                    }
+                }.openMenu(player)
+                return
+            }
+
             player.teleport(this.player)
             player.sendMessage("${CC.GREEN}You've been teleported to ${CC.ID_GREEN}${this.player.displayName}${CC.GREEN}.")
         }

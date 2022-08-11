@@ -18,6 +18,7 @@ import gg.scala.cgs.common.runnable.state.EndedStateRunnable
 import gg.scala.cgs.common.snapshot.CgsGameSnapshot
 import gg.scala.cgs.common.snapshot.CgsGameSnapshotEngine
 import gg.scala.cgs.common.snapshot.inventory.CgsInventorySnapshot
+import gg.scala.cgs.common.sponsor.SponsorConfiguration
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.states.CgsGameStateService
 import gg.scala.cgs.common.states.machine.CgsGameStateMachine
@@ -297,6 +298,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     }
 
     open fun getVotingConfig(): VotingMapConfiguration?
+    {
+        return null
+    }
+
+    open fun getSponsorConfig(): SponsorConfiguration?
     {
         return null
     }
