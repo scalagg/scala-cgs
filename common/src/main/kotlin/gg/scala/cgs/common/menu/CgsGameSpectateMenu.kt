@@ -74,9 +74,8 @@ class CgsGameSpectateMenu : PaginatedMenu()
             {
                 val coins = GrapeSpigotPlugin.getInstance()
                     .playerHandler.getByPlayer(player)
-                    .coins
 
-                if (sponsorConfig.getSponsorAmount() > coins)
+                if (sponsorConfig.getSponsorAmount() > coins.coins)
                 {
                     player.sendMessage("${CC.RED}You do not have enough coins to sponsor this player!")
                     return
@@ -88,6 +87,9 @@ class CgsGameSpectateMenu : PaginatedMenu()
                 ) {
                     if (it)
                     {
+                        coins.coins = coins.coins - sponsorConfig.getSponsorAmount()
+                        coins.save()
+
                         sponsorConfig.handleSponsorPrize(player, this.player)
                         player.sendMessage("${CC.GREEN}You sponsored ${this.player.displayName}${CC.GREEN}!")
 

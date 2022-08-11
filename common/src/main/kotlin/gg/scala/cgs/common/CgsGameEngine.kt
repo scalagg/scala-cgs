@@ -1,5 +1,7 @@
 package gg.scala.cgs.common
 
+import gg.scala.cgs.common.deathmatch.DeathmatchConfiguration
+import gg.scala.cgs.common.deathmatch.DeathmatchService
 import gg.scala.cgs.common.environment.EditableFieldService
 import gg.scala.cgs.common.environment.editor.EnvironmentEditorService
 import gg.scala.cgs.common.frontend.CgsFrontendService
@@ -120,6 +122,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             inject(EditableFieldService)
             inject(CgsGameSnapshotEngine)
             inject(CgsGameArenaHandler)
+            inject(DeathmatchService)
 
             if (gameInfo.preStartVoting)
             {
@@ -293,6 +296,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     abstract fun getNametagAdapter(): CgsGameNametagAdapter
 
     abstract fun getGameSnapshot(): CgsGameSnapshot
+
     open fun createTeam(id: Int): CgsGameTeam {
         return CgsGameTeam(id)
     }
@@ -303,6 +307,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     }
 
     open fun getSponsorConfig(): SponsorConfiguration?
+    {
+        return null
+    }
+
+    open fun getDeathmatchConfig(): DeathmatchConfiguration?
     {
         return null
     }
