@@ -26,6 +26,7 @@ data class Party(
         get() = uniqueId
 
     var password = ""
+    var limit = 30
     var status = PartyStatus.PRIVATE
 
     val members = mutableMapOf<UUID, PartyMember>()

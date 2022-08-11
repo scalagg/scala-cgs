@@ -16,6 +16,8 @@ import gg.scala.parties.prefix
 import gg.scala.parties.receiver.PartyReceiverHandler
 import gg.scala.parties.stream.PartyMessageStream
 import gg.scala.commons.acf.ConditionFailedException
+import gg.scala.parties.service.PartyService
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
@@ -25,6 +27,7 @@ import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 
 /**
  * @author GrowlyX
@@ -145,6 +148,37 @@ class PartyManageMenu(
                     }
                 }
                 .asButton()
+
+            this[13] = ItemBuilder(Material.IRON_DOOR)
+                .name("${CC.GREEN}Party Limit")
+                .addToLore(
+                    "${CC.GRAY}limit the amount of players",
+                    "${CC.GRAY}that are able to join your party",
+                    "",
+                    "${CC.YELLOW}Right-Click to decrease the limit by 1",
+                    "${CC.YELLOW}Left-Click to increase the limit by 1",
+                )
+                .toButton { _, type ->
+                    if (!player.hasPermission("party.update.limit"))
+                    {
+                        player.sendMessage("${CC.RED}You do not have permission to update your party's player limit.")
+                        return@toButton
+                    }
+
+                    if (party.limit in 2..100)
+                    {
+                        player.sendMessage("${CC.RED}You have gone out of the party member limit bounds!")
+                        return@toButton
+                    }
+
+                    when (type) {
+                        ClickType.RIGHT -> party.limit--
+                        ClickType.LEFT -> party.limit++
+                        else -> {}
+                    }
+                    party.saveAndUpdateParty()
+                }
+
 
             this[1] = ItemBuilder(Material.SIGN)
                 .name("${CC.GREEN}Party Password")
