@@ -3,14 +3,11 @@ package gg.scala.cgs.lobby.leaderboard
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 import gg.scala.commons.annotations.runnables.Repeating
-import gg.scala.flavor.inject.Inject
-import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.promise.ThreadContext
 import net.evilblock.cubed.util.CC
-import kotlin.properties.Delegates
 
 /**
  * @author GrowlyX

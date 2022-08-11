@@ -60,7 +60,6 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
             .discoverable.assets
             .apply {
                 add("gg.scala.cgs:game:cgs-game")
-                add("gg.scala.cgs:parties:cgs-parties")
             }
     }
 
