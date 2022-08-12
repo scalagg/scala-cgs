@@ -1,6 +1,9 @@
 package gg.scala.cgs.common.menu
 
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.sponsor.SponsorMenu
+import gg.scala.cgs.common.sponsor.event.PreSponsorPlayerEvent
+import gg.scala.cgs.common.sponsor.event.SponsorPlayerEvent
 import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.grape.GrapeSpigotPlugin
 import net.evilblock.cubed.menu.Button
@@ -72,30 +75,45 @@ class CgsGameSpectateMenu : PaginatedMenu()
 
             if (clickType.isShiftClick && sponsorConfig != null)
             {
-                val coins = GrapeSpigotPlugin.getInstance()
-                    .playerHandler.getByPlayer(player)
-
-                if (sponsorConfig.getSponsorAmount() > coins.coins)
+                if (PreSponsorPlayerEvent(player, this.player).call())
                 {
-                    player.sendMessage("${CC.RED}You do not have enough coins to sponsor this player!")
                     return
                 }
 
-                ConfirmMenu(
-                    title = "Sponsor ${player.name}",
-                    confirm = true
-                ) {
-                    if (it)
+                SponsorMenu(this.player) { prize ->
+                    val grape = GrapeSpigotPlugin.getInstance()
+                        .playerHandler.getByPlayer(player)
+
+                    if (prize.cost > grape.coins)
                     {
-                        coins.coins = coins.coins - sponsorConfig.getSponsorAmount()
-                        coins.save()
-
-                        sponsorConfig.handleSponsorPrize(player, this.player)
-                        player.sendMessage("${CC.GREEN}You sponsored ${this.player.displayName}${CC.GREEN}!")
-
-                        Bukkit.broadcastMessage("${this.player.displayName}${CC.SEC} was sponsored by ${CC.GREEN}${player.name}${CC.SEC}!")
+                        player.sendMessage("${CC.RED}You do not have enough coins to sponsor this player!")
+                        return@SponsorMenu
                     }
-                }.openMenu(player)
+
+                    if (!prize.canApply(this.player))
+                    {
+                        player.sendMessage("${CC.RED}We cannot apply the prize to ${CC.YELLOW}${this.player.name}${CC.RED}, your coins have been refunded.")
+                        return@SponsorMenu
+                    }
+
+                    ConfirmMenu(
+                        title = "Sponsor ${player.name}",
+                        confirm = true
+                    ) {
+                        if (it)
+                        {
+                            grape.coins = grape.coins - prize.cost
+                            grape.save()
+
+                            prize.apply(this.player)
+
+                            Bukkit.getPluginManager().callEvent(SponsorPlayerEvent(player, this.player, prize))
+                            player.sendMessage("${CC.GREEN}You sponsored ${this.player.displayName}${CC.GREEN}!")
+
+                            Bukkit.broadcastMessage("${this.player.displayName}${CC.SEC} was sponsored by ${CC.GREEN}${player.name}${CC.SEC}!")
+                        }
+                    }.openMenu(player)
+                }
                 return
             }
 
