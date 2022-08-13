@@ -75,7 +75,11 @@ class CgsGameSpectateMenu : PaginatedMenu()
 
             if (clickType.isShiftClick && sponsorConfig != null)
             {
-                if (PreSponsorPlayerEvent(player, this.player).call())
+
+                val event = PreSponsorPlayerEvent(player, this.player);
+                event.callEvent()
+
+                if (event.isCancelled)
                 {
                     return
                 }
