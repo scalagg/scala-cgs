@@ -1,6 +1,7 @@
 package gg.scala.cgs.common.sponsor
 
 import org.bukkit.entity.Player
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author GrowlyX
@@ -8,6 +9,5 @@ import org.bukkit.entity.Player
  */
 interface SponsorConfiguration
 {
-    fun getSponsorAmount(): Int
-    fun handleSponsorPrize(player: Player, target: Player)
+    fun getPrizes(): List<SponsorPrize>
 }
