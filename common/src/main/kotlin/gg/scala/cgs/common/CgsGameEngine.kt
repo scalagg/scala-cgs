@@ -91,6 +91,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     fun initialLoad()
     {
         INSTANCE = this
+
+        kotlin.runCatching {
+            gameArena = CgsGameArenaHandler.arena
+        }
     }
 
     fun initialResourceLoad()
