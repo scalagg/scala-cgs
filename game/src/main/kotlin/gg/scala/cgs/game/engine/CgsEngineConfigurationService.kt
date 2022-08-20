@@ -38,8 +38,7 @@ object CgsEngineConfigurationService
 
         Tasks.asyncTimer({
             Lemon.instance.localInstance
-                .metaData["game-state"] = CgsGameEngine.INSTANCE
-                .gameState.name.replace("STARTED", "IN_GAME")
+                .metaData["game-state"] = CgsGameEngine.INSTANCE.gameState.name
 
             Lemon.instance.localInstance
                 .metaData["remaining"] = Bukkit.getOnlinePlayers()

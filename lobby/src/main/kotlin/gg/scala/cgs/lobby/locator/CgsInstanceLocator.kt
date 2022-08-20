@@ -59,8 +59,6 @@ object CgsInstanceLocator : Runnable
             lambda.invoke()
         } catch (e: Exception)
         {
-            e.printStackTrace()
-
             if (attempts >= 5)
             {
                 CgsLobbyPlugin.INSTANCE.logger.severe(
