@@ -3,8 +3,7 @@ package gg.scala.cgs.game.engine
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.instance.handler.CgsInstanceService
-import gg.scala.cgs.game.CgsEnginePlugin
-import gg.scala.flavor.inject.Inject
+import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.flavor.service.Close
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
@@ -37,12 +36,18 @@ object CgsEngineConfigurationService
         ).publish()
 
         Tasks.asyncTimer({
-            Lemon.instance.localInstance
-                .metaData["game-state"] = CgsGameEngine.INSTANCE.gameState.name
+            ServerSync.getLocalGameServer()
+                .setMetadata(
+                    "game", "game-state",
+                    CgsGameEngine.INSTANCE.gameState.name
+                )
 
-            Lemon.instance.localInstance
-                .metaData["remaining"] = Bukkit.getOnlinePlayers()
-                .count { !it.hasMetadata("spectator") }.toString()
+            ServerSync.getLocalGameServer()
+                .setMetadata(
+                    "game", "remaining",
+                    Bukkit.getOnlinePlayers()
+                        .count { !it.hasMetadata("spectator") }
+                )
         }, 0L, 20L)
     }
 

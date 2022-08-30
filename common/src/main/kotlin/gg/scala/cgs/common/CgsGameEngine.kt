@@ -32,6 +32,7 @@ import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.cgs.common.voting.CgsVotingMapService
 import gg.scala.cgs.common.voting.VotingMapConfiguration
 import gg.scala.commons.ExtendedScalaPlugin
+import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.annotations.custom.CustomAnnotationProcessors
 import gg.scala.grape.GrapeSpigotPlugin
 import gg.scala.lemon.Lemon
@@ -154,8 +155,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             }
         }
 
-        Lemon.instance.localInstance
-            .metaData["game-server"] = "true"
+        ServerSync.getLocalGameServer()
+            .setMetadata(
+                "game", "game-server", true
+            )
 
         Bukkit.getServer().maxPlayers =
             gameMode.getMaxTeams() * gameMode.getTeamSize()
