@@ -21,10 +21,12 @@ import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.acf.annotation.Optional
 import gg.scala.commons.agnostic.sync.ServerSync
+import gg.scala.commons.issuer.ScalaPlayer
 import gg.scala.parties.event.PartyLeaveEvent
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.md_5.bungee.api.chat.ClickEvent
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -464,6 +466,40 @@ object PartyCommand : ScalaCommand()
         return existing.gracefullyForget()
     }
 
+    @Subcommand("list")
+    @Description("View a list of your party members.")
+    fun onList(player: ScalaPlayer)
+    {
+        val existing = PartyService
+            .findPartyByUniqueId(player.bukkit())
+            ?: throw ConditionFailedException("You're not in a party.")
+
+        player.sendMessage(
+            "${CC.B_SEC}${ChatColor.UNDERLINE}Party Information:",
+            "${CC.PRI}Leader: ${CC.WHITE}${existing.leader.uniqueId.username()}",
+            ""
+        )
+
+        for (value in PartyRole.values())
+        {
+            val members = existing.members
+                .values.filter { it.role == value }
+
+            if (members.isNotEmpty())
+            {
+                player.sendMessage(
+                    "${CC.GREEN}${
+                        value.name.lowercase().capitalize()
+                    }s: ${CC.WHITE}${
+                        members.joinToString(", ") {
+                            it.uniqueId.username()
+                        }
+                    }"
+                )
+            }
+        }
+    }
+
     @Subcommand("create")
     @Description("Create a new party!")
     fun onCreate(player: Player)
@@ -486,8 +522,7 @@ object PartyCommand : ScalaCommand()
         player.sendMessage("$prefix${CC.GOLD}Setting up your new party...")
 
         party.saveAndUpdateParty().thenRun {
-            PartySetupEvent(party)
-                .call()
+            PartySetupEvent(party).call()
 
             player.sendMessage("$prefix${CC.GREEN}Your new party has been setup!")
             player.sendMessage("$prefix${CC.YELLOW}Use ${CC.AQUA}/party help${CC.YELLOW} to view all party-related commands!")
