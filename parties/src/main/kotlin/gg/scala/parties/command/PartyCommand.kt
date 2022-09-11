@@ -20,6 +20,7 @@ import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.acf.annotation.Optional
+import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.parties.event.PartyLeaveEvent
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
@@ -423,7 +424,11 @@ object PartyCommand : ScalaCommand()
         }
 
         val fancy = FancyMessage()
-        fancy.withMessage("$prefix${QuickAccess.coloredName(player)}${CC.WHITE}: $message")
+        fancy.withMessage(
+            "$prefix ${CC.PRI}[${
+                ServerSync.getLocalGameServer().id
+            }] ${QuickAccess.coloredName(player, ignoreMinequest = true)}${CC.GRAY}: ${CC.WHITE}$message"
+        )
 
         PartyMessageStream.pushToStream(existing, fancy)
     }
