@@ -249,11 +249,19 @@ object PartyCommand : ScalaCommand()
     {
         val existing = PartyService
             .findPartyByUniqueId(player)
-            ?: throw ConditionFailedException("You're not in a party.")
 
         if (target == player.uniqueId)
         {
             throw ConditionFailedException("You cannot invite yourself to your party!")
+        }
+
+        if (existing == null)
+        {
+            // we'll automatically create a party for them and then invite
+            return onCreate(player)
+                .thenCompose {
+                    onInvite(player, target)
+                }
         }
 
         if (existing.includedMembers().size >= existing.limit)
@@ -502,7 +510,7 @@ object PartyCommand : ScalaCommand()
 
     @Subcommand("create")
     @Description("Create a new party!")
-    fun onCreate(player: Player)
+    fun onCreate(player: Player): CompletableFuture<Void>
     {
         val existing = PartyService
             .findPartyByUniqueId(player)
@@ -521,7 +529,7 @@ object PartyCommand : ScalaCommand()
 
         player.sendMessage("$prefix${CC.GOLD}Setting up your new party...")
 
-        party.saveAndUpdateParty().thenRun {
+        return party.saveAndUpdateParty().thenRun {
             PartySetupEvent(party).call()
 
             player.sendMessage("$prefix${CC.GREEN}Your new party has been setup!")
