@@ -152,8 +152,9 @@ class PartyManageMenu(
             this[13] = ItemBuilder(Material.IRON_DOOR)
                 .name("${CC.GREEN}Party Limit")
                 .addToLore(
-                    "${CC.GRAY}limit the amount of players",
-                    "${CC.GRAY}that are able to join your party",
+                    "${CC.GRAY}Set the party player limit.",
+                    "",
+                    "${CC.WHITE}Current: ${CC.GOLD}${party.limit}",
                     "",
                     "${CC.YELLOW}Right-Click to decrease the limit by 1",
                     "${CC.YELLOW}Left-Click to increase the limit by 1",
@@ -165,7 +166,7 @@ class PartyManageMenu(
                         return@toButton
                     }
 
-                    if (party.limit in 2..100)
+                    if (party.limit !in 2..100)
                     {
                         player.sendMessage("${CC.RED}You have gone out of the party member limit bounds!")
                         return@toButton
@@ -176,6 +177,7 @@ class PartyManageMenu(
                         ClickType.LEFT -> party.limit++
                         else -> {}
                     }
+
                     party.saveAndUpdateParty()
                 }
 
