@@ -53,7 +53,7 @@ object PartyReceiverHandler
     fun onNetworkDisconnect(message: AwareMessage)
     {
         // very temporary
-        if (Lemon.instance.settings.id != "na-uml-1")
+        if (Lemon.instance.settings.id != "hub1")
         {
             return
         }

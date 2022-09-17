@@ -166,15 +166,27 @@ class PartyManageMenu(
                         return@toButton
                     }
 
-                    if (party.limit !in 2..100)
-                    {
-                        player.sendMessage("${CC.RED}You have gone out of the party member limit bounds!")
-                        return@toButton
-                    }
-
                     when (type) {
-                        ClickType.RIGHT -> party.limit--
-                        ClickType.LEFT -> party.limit++
+                        ClickType.RIGHT ->
+                        {
+                            if (party.limit - 1 < 2)
+                            {
+                                player.sendMessage("${CC.RED}You cannot go out of the party member limit bounds!")
+                                return@toButton
+                            }
+
+                            party.limit--
+                        }
+                        ClickType.LEFT ->
+                        {
+                            if (party.limit + 1 > 100)
+                            {
+                                player.sendMessage("${CC.RED}You cannot go out of the party member limit bounds!")
+                                return@toButton
+                            }
+
+                            party.limit++
+                        }
                         else -> {}
                     }
 
