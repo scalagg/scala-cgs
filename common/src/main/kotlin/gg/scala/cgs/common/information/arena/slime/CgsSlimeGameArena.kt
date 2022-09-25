@@ -4,7 +4,6 @@ import com.grinderwolf.swm.api.SlimePlugin
 import com.grinderwolf.swm.api.world.SlimeWorld
 import gg.scala.cgs.common.information.arena.CgsGameArena
 import org.bukkit.Bukkit
-import org.bukkit.Difficulty
 
 abstract class CgsSlimeGameArena : CgsGameArena
 {

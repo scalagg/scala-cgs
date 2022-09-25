@@ -53,6 +53,7 @@ object CgsVotingMapService : Runnable
 
     var votingEnabled = false
     var votingFinished = false
+    var votingForceStarted = false
 
     lateinit var task: Task
 
@@ -208,7 +209,7 @@ object CgsVotingMapService : Runnable
 
                 if (Bukkit.getOnlinePlayers().size < configuration.minimumPlayersForVotingStart)
                 {
-                    val required = configuration.minimumPlayersForVotingStart - Bukkit.getOnlinePlayers().size
+                    val required = configuration.minimumPlayersForVotingStart - Bukkit.getOnlinePlayers().size + 1
 
                     it.player.sendMessage(
                         "${CC.PRI}$required${CC.SEC} more player${
@@ -327,7 +328,7 @@ object CgsVotingMapService : Runnable
         player.updateInventory()
     }
 
-    private fun start()
+    fun start()
     {
         this.votingEnabled = true
 

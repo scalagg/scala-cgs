@@ -3,6 +3,7 @@ package gg.scala.cgs.game.command
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.runnable.state.StartingStateRunnable
+import gg.scala.cgs.common.voting.CgsVotingMapService
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.acf.BaseCommand
@@ -51,5 +52,33 @@ object ForceStartCommand : ScalaCommand()
 
                 StartingStateRunnable.PRE_START_TIME = 11
             }
+    }
+
+    @CommandAlias("force-start-voting")
+    @CommandPermission("op")
+    fun onForceStartVoting(sender: CommandSender)
+    {
+        if (engine.getVotingConfig() == null)
+        {
+            throw ConditionFailedException("This game does not support voting.")
+        }
+
+        if (Bukkit.getOnlinePlayers().size <= 1)
+        {
+            throw ConditionFailedException("You cannot force-start voting when you are alone.")
+        }
+
+        if (CgsVotingMapService.votingEnabled)
+        {
+            throw ConditionFailedException("Voting is already enabled.")
+        }
+
+        if (CgsVotingMapService.votingFinished)
+        {
+            throw ConditionFailedException("Voting has been finished.")
+        }
+
+        CgsVotingMapService.votingForceStarted = true
+        CgsVotingMapService.start()
     }
 }
