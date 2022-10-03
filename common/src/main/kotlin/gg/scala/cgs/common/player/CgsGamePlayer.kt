@@ -23,9 +23,6 @@ class CgsGamePlayer(
     var lastPlayedGameId: UUID? = null
     var lastPlayedGameDisconnectionTimestamp: Long? = null
 
-    val gameSpecificStatistics =
-        mutableMapOf<String, GameSpecificStatistics>()
-
     override fun save(): CompletableFuture<Void>
     {
         return CgsPlayerHandler.handle

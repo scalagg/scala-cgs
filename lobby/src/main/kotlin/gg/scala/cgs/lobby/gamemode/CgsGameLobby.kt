@@ -5,9 +5,9 @@ import gg.scala.cgs.common.instance.CgsServerInstance
 import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.instance.handler.CgsInstanceService
 import gg.scala.cgs.common.player.CgsGamePlayer
+import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.statistics.CgsStatisticProvider
-import gg.scala.cgs.common.statistics.CgsStatisticService
 import gg.scala.cgs.lobby.CgsLobbyPlugin
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.cgs.lobby.modular.CgsLobbyModule
@@ -65,8 +65,6 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>(
             bind<CgsGameLobby<*>>() to this@CgsGameLobby
             bind<CgsLobbyPlugin>() to CgsLobbyPlugin.INSTANCE
             bind<CgsStatisticProvider<S>>() to this@CgsGameLobby
-
-            injected<CgsStatisticService<S>>().configure()
             startup()
         }
 
@@ -77,8 +75,9 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>(
             }
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun getStatistics(cgsGamePlayer: CgsGamePlayer): S
     {
-        return cgsGamePlayer.gameSpecificStatistics[statisticType.java.simpleName]!! as S
+        return CgsPlayerHandler.statistics[cgsGamePlayer.uniqueId]!! as S
     }
 }

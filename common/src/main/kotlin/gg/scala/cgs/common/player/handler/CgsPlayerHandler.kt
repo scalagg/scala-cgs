@@ -4,6 +4,7 @@ import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.instance.handler.CgsInstanceService
 import gg.scala.cgs.common.player.CgsGamePlayer
+import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
@@ -47,6 +48,8 @@ object CgsPlayerHandler
             this.connection.getConnection()
         }
 
+    val statistics = ConcurrentHashMap<UUID, GameSpecificStatistics>()
+
     fun find(uniqueId: UUID): CgsGamePlayer? = players[uniqueId]
     fun find(player: Player): CgsGamePlayer? = players[player.uniqueId]
 
@@ -54,6 +57,9 @@ object CgsPlayerHandler
     fun configure()
     {
         handle = DataStoreObjectControllerCache.create()
+
+        val statsLayer = DataStoreObjectControllerCache
+            .create(engine.statisticType)
 
         Events.subscribe(
             AsyncPlayerPreLoginEvent::class.java,
@@ -64,6 +70,13 @@ object CgsPlayerHandler
             ) {
                 CgsGamePlayer(event.uniqueId)
             }.join()
+
+            val gameSpecificStatistics = statsLayer
+                .load(event.uniqueId, DataStoreStorageType.MONGO)
+                .join()
+                ?: engine.statisticType.java.newInstance()
+
+            statistics[event.uniqueId] = gameSpecificStatistics
         }
 
         if (isGameServer())
@@ -76,7 +89,7 @@ object CgsPlayerHandler
                     // marked as not-null and will throw an exception if it is null.
                     if (cgsGamePlayer == null)
                     {
-                        it.player.kickPlayer("${CC.RED}Sorry, we were unable to load your CGS data.")
+                        it.player.kickPlayer("${CC.RED}Sorry, we were unable to load your game data.")
                         return@handler
                     }
 
@@ -131,9 +144,14 @@ object CgsPlayerHandler
                 it.player.removeMetadata("spectator", engine.plugin)
             }
 
-            players.remove(it.player.uniqueId)?.save()
-                ?.whenComplete { _, u ->
-                    u.printStackTrace()
+            players.remove(it.player.uniqueId)
+                ?.save()
+                ?.thenCompose { _ ->
+                    this.statistics[it.player.uniqueId]?.save()
+                }
+                ?.exceptionally { throwable ->
+                    throwable.printStackTrace()
+                    return@exceptionally null
                 }
         }
     }

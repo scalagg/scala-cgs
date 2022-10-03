@@ -26,7 +26,6 @@ import gg.scala.cgs.common.states.CgsGameStateService
 import gg.scala.cgs.common.states.machine.CgsGameStateMachine
 import gg.scala.cgs.common.states.machine.StateMachineAutoRegister
 import gg.scala.cgs.common.statistics.CgsStatisticProvider
-import gg.scala.cgs.common.statistics.CgsStatisticService
 import gg.scala.cgs.common.teams.CgsGameTeam
 import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.cgs.common.voting.CgsVotingMapService
@@ -35,7 +34,6 @@ import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.annotations.custom.CustomAnnotationProcessors
 import gg.scala.grape.GrapeSpigotPlugin
-import gg.scala.lemon.Lemon
 import me.lucko.helper.Events
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
@@ -133,8 +131,6 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             {
                 inject(CgsVotingMapService)
             }
-
-            injected<CgsStatisticService<S>>().configure()
         }
 
         if (
@@ -259,7 +255,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     @Suppress("UNCHECKED_CAST")
     override fun getStatistics(cgsGamePlayer: CgsGamePlayer): S
     {
-        return cgsGamePlayer.gameSpecificStatistics[statisticType.java.simpleName]!! as S
+        return CgsPlayerHandler.statistics[cgsGamePlayer.uniqueId]!! as S
     }
 
     lateinit var winningTeam: CgsGameTeam

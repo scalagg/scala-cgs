@@ -435,8 +435,8 @@ object CgsVotingMapService : Runnable
     override fun run()
     {
         if (
-            engine.gameState != CgsGameState.WAITING || Players.all().size < this
-                .configuration.minimumPlayersForVotingStart && this.votingEnabled
+            engine.gameState != CgsGameState.WAITING || (!this.votingForceStarted && Players.all().size < this
+                .configuration.minimumPlayersForVotingStart) && this.votingEnabled
         )
         {
             this.task.stop()

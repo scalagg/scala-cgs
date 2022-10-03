@@ -1,20 +1,27 @@
 package gg.scala.cgs.common.player.statistic
 
 import gg.scala.cgs.common.player.statistic.value.CgsGameStatistic
+import gg.scala.store.storage.storable.IDataStoreObject
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializable
+import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * @author GrowlyX
  * @since 11/30/2021
  */
-abstract class GameSpecificStatistics : AbstractTypeSerializable
+abstract class GameSpecificStatistics(
+    override val identifier: UUID
+) : AbstractTypeSerializable, IDataStoreObject
 {
-    abstract var gameKills: CgsGameStatistic
+    abstract fun save(): CompletableFuture<Void>
 
-    abstract var kills: CgsGameStatistic
-    abstract var deaths: CgsGameStatistic
+    var gameKills = CgsGameStatistic()
 
-    abstract var played: CgsGameStatistic
-    abstract var wins: CgsGameStatistic
-    abstract var losses: CgsGameStatistic
+    var kills = CgsGameStatistic()
+    var deaths = CgsGameStatistic()
+
+    var played = CgsGameStatistic()
+    var wins = CgsGameStatistic()
+    var losses = CgsGameStatistic()
 }
