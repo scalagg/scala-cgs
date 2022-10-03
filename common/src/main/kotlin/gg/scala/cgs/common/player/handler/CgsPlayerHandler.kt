@@ -74,7 +74,9 @@ object CgsPlayerHandler
             val gameSpecificStatistics = statsLayer
                 .load(event.uniqueId, DataStoreStorageType.MONGO)
                 .join()
-                ?: engine.statisticType.java.newInstance()
+                ?: engine.statisticType.java
+                    .getConstructor(UUID::class.java)
+                    .newInstance(event.uniqueId)
 
             statistics[event.uniqueId] = gameSpecificStatistics
         }
