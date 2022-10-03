@@ -5,7 +5,6 @@ import gg.scala.cgs.common.sponsor.SponsorMenu
 import gg.scala.cgs.common.sponsor.event.PreSponsorPlayerEvent
 import gg.scala.cgs.common.sponsor.event.SponsorPlayerEvent
 import gg.scala.cgs.common.teams.CgsGameTeamService
-import gg.scala.grape.GrapeSpigotPlugin
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.menus.ConfirmMenu
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
@@ -85,10 +84,7 @@ class CgsGameSpectateMenu : PaginatedMenu()
                 }
 
                 SponsorMenu(this.player) { prize ->
-                    val grape = GrapeSpigotPlugin.getInstance()
-                        .playerHandler.getByPlayer(player)
-
-                    if (prize.cost > grape.coins)
+                    if (prize.cost > CgsGameEngine.INSTANCE.platform.getCoins(player))
                     {
                         player.sendMessage("${CC.RED}You do not have enough coins to sponsor this player!")
                         return@SponsorMenu
@@ -106,8 +102,8 @@ class CgsGameSpectateMenu : PaginatedMenu()
                     ) {
                         if (it)
                         {
-                            grape.coins = grape.coins - prize.cost
-                            grape.save()
+                            CgsGameEngine.INSTANCE.platform
+                                .giveCoins(player, -prize.cost)
 
                             prize.apply(this.player)
 

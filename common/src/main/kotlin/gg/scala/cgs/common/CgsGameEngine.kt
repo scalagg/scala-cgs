@@ -15,6 +15,9 @@ import gg.scala.cgs.common.player.nametag.CgsGameNametagAdapter
 import gg.scala.cgs.common.player.scoreboard.CgsGameScoreboardRenderer
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.player.visibility.CgsGameVisibilityAdapter
+import gg.scala.cgs.common.rewards.CoinRewardPlatform
+import gg.scala.cgs.common.rewards.impl.DefaultCoinRewardPlatform
+import gg.scala.cgs.common.rewards.impl.GrapeCoinRewardPlatform
 import gg.scala.cgs.common.runnable.StateRunnableService
 import gg.scala.cgs.common.runnable.state.EndedStateRunnable
 import gg.scala.cgs.common.snapshot.CgsGameSnapshot
@@ -87,12 +90,19 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     val audience = BukkitAudiences.create(plugin)
 
+    var platform: CoinRewardPlatform = DefaultCoinRewardPlatform
+
     fun initialLoad()
     {
         INSTANCE = this
 
         kotlin.runCatching {
             gameArena = CgsGameArenaHandler.arena
+        }
+
+        if (Bukkit.getPluginManager().getPlugin("Grape") != null)
+        {
+            platform = GrapeCoinRewardPlatform
         }
     }
 

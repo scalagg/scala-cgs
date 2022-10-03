@@ -107,12 +107,13 @@ infix fun Player.giveCoins(
     information: Pair<Int, String>
 )
 {
-    val grapePlayer = GrapeSpigotPlugin.getInstance()
-        .playerHandler.getByPlayer(this)
-
-    if (grapePlayer != null && CgsGameEngine.INSTANCE.gameInfo.awards.awardCoins)
+    if (CgsGameEngine.INSTANCE.gameInfo.awards.awardCoins)
     {
-        grapePlayer.coins += information.first
+        CgsGameEngine.INSTANCE.platform
+            .giveCoins(
+                this, information.first
+            )
+
         sendMessage("${CC.GOLD}+${information.first} coins (${information.second})!")
     }
 }

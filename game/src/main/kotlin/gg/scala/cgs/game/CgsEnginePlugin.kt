@@ -1,6 +1,5 @@
 package gg.scala.cgs.game
 
-import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.information.arena.CgsGameArenaHandler
 import gg.scala.cgs.game.engine.CgsEngineConfigurationService
 import gg.scala.cgs.game.locator.CgsInstanceLocator
@@ -9,8 +8,6 @@ import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.commons.annotations.container.ContainerDisable
 import gg.scala.commons.annotations.container.ContainerEnable
 import gg.scala.commons.annotations.container.flavor.LazyStartup
-import gg.scala.flavor.Flavor
-import gg.scala.flavor.FlavorOptions
 import me.lucko.helper.plugin.ap.Plugin
 import me.lucko.helper.plugin.ap.PluginDependency
 
