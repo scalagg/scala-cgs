@@ -67,8 +67,8 @@ import kotlin.reflect.KProperty
  */
 abstract class CgsGameEngine<S : GameSpecificStatistics>(
     val plugin: ExtendedScalaPlugin,
-    val gameInfo: CgsGameGeneralInfo,
-    val gameMode: CgsGameMode,
+    var gameInfo: CgsGameGeneralInfo,
+    var gameMode: CgsGameMode,
     override val statisticType: KClass<S>
 ) : CgsStatisticProvider<S>
 {
@@ -151,15 +151,16 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             CgsGameArenaHandler.configure(gameMode)
         }
 
-        Events.subscribe(AsyncPlayerPreLoginEvent::class.java).handler {
-            if (!EndedStateRunnable.ALLOWED_TO_JOIN)
-            {
-                it.disallow(
-                    AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST,
-                    "${CC.RED}This server is currently whitelisted."
-                )
+        Events.subscribe(AsyncPlayerPreLoginEvent::class.java)
+            .handler {
+                if (!EndedStateRunnable.ALLOWED_TO_JOIN)
+                {
+                    it.disallow(
+                        AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST,
+                        "${CC.RED}This server is currently whitelisted."
+                    )
+                }
             }
-        }
 
         ServerSync.getLocalGameServer()
             .setMetadata(
@@ -310,7 +311,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     abstract fun getGameSnapshot(): CgsGameSnapshot
 
-    open fun createTeam(id: Int): CgsGameTeam {
+    open fun createTeam(id: Int): CgsGameTeam
+    {
         return CgsGameTeam(id)
     }
 
@@ -412,7 +414,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         val grapePlayer = GrapeSpigotPlugin.getInstance()
             .playerHandler.getByPlayer(player)
 
-        if (grapePlayer != null && CgsGameEngine.INSTANCE.gameInfo.awards.awardCoins)
+        if (grapePlayer != null && INSTANCE.gameInfo.awards.awardCoins)
         {
             grapePlayer.coins += information.first
             sendMessage("${CC.GOLD}+${information.first} coins (${information.second})!")
