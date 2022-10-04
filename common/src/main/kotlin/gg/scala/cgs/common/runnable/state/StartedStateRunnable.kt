@@ -16,11 +16,12 @@ object StartedStateRunnable : StateRunnable(
     CgsGameState.STARTED
 )
 {
-    private val engine = CgsGameEngine.INSTANCE
     private val machine = CgsGameStateService
 
     override fun onTick()
     {
+        val engine = CgsGameEngine.INSTANCE
+
         val teamsWithAlivePlayers = CgsGameTeamService.teams
             .values.filter { it.alive.isNotEmpty() }
 

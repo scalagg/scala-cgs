@@ -21,8 +21,6 @@ object StartingStateRunnable : StateRunnable(
     CgsGameState.STARTING
 )
 {
-    private val engine = CgsGameEngine.INSTANCE
-
     var hasBeenForceStarted = false
     var doWeCareAboutThis = false
 
@@ -42,12 +40,15 @@ object StartingStateRunnable : StateRunnable(
 
     override fun configure()
     {
+        val engine = CgsGameEngine.INSTANCE
+
         PRE_START_TIME = engine.gameInfo
             .startingCountdownSec + 1
     }
 
     override fun onTick()
     {
+        val engine = CgsGameEngine.INSTANCE
         PRE_START_TIME--
 
         if (

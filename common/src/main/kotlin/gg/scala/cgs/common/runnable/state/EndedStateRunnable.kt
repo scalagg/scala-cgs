@@ -30,14 +30,14 @@ object EndedStateRunnable : StateRunnable(
     @JvmField
     var ALLOWED_TO_JOIN = true
 
-    private val engine = CgsGameEngine.INSTANCE
-
     private val alertTicks = listOf(
         20, 15, 10, 5, 4, 3, 2, 1
     )
 
     override fun onTick()
     {
+        val engine = CgsGameEngine.INSTANCE
+
         if (currentTick == 0)
         {
             val description = mutableListOf<String>()
