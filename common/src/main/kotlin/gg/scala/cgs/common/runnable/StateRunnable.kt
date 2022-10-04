@@ -44,4 +44,9 @@ abstract class StateRunnable(
     }
 
     abstract fun onTick()
+
+    open fun configure()
+    {
+
+    }
 }

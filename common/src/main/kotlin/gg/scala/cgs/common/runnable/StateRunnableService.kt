@@ -46,6 +46,7 @@ object StateRunnableService
     fun startRunningAsync(state: CgsGameState)
     {
         registered[state]?.let {
+            it.configure()
             it.task = Schedulers.async()
                 .runRepeating(
                     it, 0L, 20L

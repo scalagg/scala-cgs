@@ -27,8 +27,7 @@ object StartingStateRunnable : StateRunnable(
     var doWeCareAboutThis = false
 
     @JvmField
-    var PRE_START_TIME = engine.gameInfo
-        .startingCountdownSec + 1
+    var PRE_START_TIME = 0
 
     private val alertTicks = listOf(
         18000, 14400, 10800, 7200, 3600, 2700,
@@ -40,6 +39,12 @@ object StartingStateRunnable : StateRunnable(
         0..5 to CC.RED,
         5..10 to CC.GOLD
     )
+
+    override fun configure()
+    {
+        PRE_START_TIME = engine.gameInfo
+            .startingCountdownSec + 1
+    }
 
     override fun onTick()
     {
