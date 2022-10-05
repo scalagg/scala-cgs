@@ -115,6 +115,12 @@ object CgsGameGeneralListener : Listener
     @EventHandler
     fun onEntityDamage(event: EntityDamageEvent)
     {
+        if (event.entity.hasMetadata("invincible"))
+        {
+            event.isCancelled = true
+            return
+        }
+
         if (event.entity is Player && shouldCancel(event.entity as Player))
         {
             event.isCancelled = true
