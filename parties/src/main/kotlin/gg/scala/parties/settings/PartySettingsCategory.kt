@@ -5,6 +5,7 @@ import gg.scala.basics.plugin.conversation.settings.MessagingSettingValue
 import gg.scala.basics.plugin.settings.SettingCategory
 import gg.scala.basics.plugin.settings.SettingContainer.buildEntry
 import gg.scala.basics.plugin.settings.defaults.values.StateSettingValue
+import gg.scala.commons.annotations.plugin.SoftDependency
 import gg.scala.flavor.service.Service
 import gg.scala.flavor.service.ignore.IgnoreAutoScan
 import net.evilblock.cubed.util.CC
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player
  */
 @Service
 @IgnoreAutoScan
+@SoftDependency("ScBasics")
 object PartySettingsCategory : SettingCategory
 {
     override val description = listOf(
