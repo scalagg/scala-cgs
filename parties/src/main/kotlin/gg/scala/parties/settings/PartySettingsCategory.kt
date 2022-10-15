@@ -21,7 +21,8 @@ import org.bukkit.entity.Player
 object PartySettingsCategory : SettingCategory
 {
     override val description = listOf(
-        "${CC.GRAY}Party privacy, spam, and other options."
+        "Party privacy, spam, and",
+        "other options."
     )
     override val displayName = "Parties"
 
