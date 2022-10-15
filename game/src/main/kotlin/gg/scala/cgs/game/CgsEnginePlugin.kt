@@ -16,7 +16,7 @@ import me.lucko.helper.plugin.ap.PluginDependency
  * @since 11/30/2021
  */
 @Plugin(
-    name = "CGS-Engine",
+    name = "ScGameFramework",
     apiVersion = "1.18",
     depends = [
         PluginDependency("scala-commons"),

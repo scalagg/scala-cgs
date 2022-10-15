@@ -1,5 +1,7 @@
 package gg.scala.parties.command
 
+import gg.scala.basics.plugin.profile.BasicsProfile
+import gg.scala.basics.plugin.settings.defaults.values.StateSettingValue
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.lemon.Lemon
@@ -23,9 +25,12 @@ import gg.scala.commons.acf.annotation.Optional
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.issuer.ScalaPlayer
 import gg.scala.parties.event.PartyLeaveEvent
+import gg.scala.store.controller.DataStoreObjectControllerCache
+import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.md_5.bungee.api.chat.ClickEvent
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import java.util.*
@@ -351,6 +356,34 @@ object PartyCommand : ScalaCommand()
         player: Player, target: UUID, party: Party
     ): CompletableFuture<Void>
     {
+        if (Bukkit.getPluginManager().isPluginEnabled("ScBasics"))
+        {
+            return DataStoreObjectControllerCache
+                .findNotNull<BasicsProfile>()
+                .load(target, DataStoreStorageType.MONGO)
+                .thenCompose {
+                    if (it == null)
+                    {
+                        throw ConditionFailedException("${CC.YELLOW}${target.username()}${CC.RED} has never logged on the server.")
+                    }
+
+                    val stateSettingValue = it
+                        .setting(
+                            id = "party_invites",
+                            default = StateSettingValue.ENABLED
+                        )
+
+                    if (stateSettingValue == StateSettingValue.DISABLED)
+                    {
+                        throw ConditionFailedException(
+                            "${CC.YELLOW}${target.username()}${CC.RED} has their party invites disabled."
+                        )
+                    }
+
+                    internalHandlePartyInviteDispatch(player, target, party)
+                }
+        }
+
         return AsyncLemonPlayer.of(target, true).future
             .thenCompose {
                 if (it.isEmpty())
