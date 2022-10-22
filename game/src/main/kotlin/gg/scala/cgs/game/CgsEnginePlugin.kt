@@ -8,8 +8,11 @@ import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.commons.annotations.container.ContainerDisable
 import gg.scala.commons.annotations.container.ContainerEnable
 import gg.scala.commons.annotations.container.flavor.LazyStartup
-import me.lucko.helper.plugin.ap.Plugin
-import me.lucko.helper.plugin.ap.PluginDependency
+import gg.scala.commons.core.plugin.Plugin
+import gg.scala.commons.core.plugin.PluginAuthor
+import gg.scala.commons.core.plugin.PluginDependency
+import gg.scala.commons.core.plugin.PluginDependencyComposite
+import gg.scala.commons.core.plugin.PluginWebsite
 
 /**
  * @author GrowlyX
@@ -17,15 +20,17 @@ import me.lucko.helper.plugin.ap.PluginDependency
  */
 @Plugin(
     name = "ScGameFramework",
-    apiVersion = "1.18",
-    depends = [
-        PluginDependency("scala-commons"),
-        PluginDependency("Lemon"),
-        PluginDependency("Parties"),
-        PluginDependency("cloudsync"),
-        PluginDependency("LunarClient-API", soft = true),
-        PluginDependency("SlimeWorldManager", soft = true),
-    ]
+    version = "%remote%/%branch%/%id%"
+)
+@PluginAuthor("Scala")
+@PluginWebsite("https://scala.gg")
+@PluginDependencyComposite(
+    PluginDependency("scala-commons"),
+    PluginDependency("Lemon"),
+    PluginDependency("Parties"),
+    PluginDependency("cloudsync"),
+    PluginDependency("LunarClient-API", soft = true),
+    PluginDependency("SlimeWorldManager", soft = true)
 )
 @LazyStartup
 class CgsEnginePlugin : ExtendedScalaPlugin()
