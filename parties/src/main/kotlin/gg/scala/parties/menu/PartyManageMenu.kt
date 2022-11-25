@@ -2,9 +2,8 @@ package gg.scala.parties.menu
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.aware.message.AwareMessage
-import gg.scala.cookie.settings.builder.MultiOptionPlayerSettingsBuilder
+import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.player.metadata.Metadata
 import gg.scala.lemon.util.QuickAccess
 import gg.scala.parties.command.PartyCommand
 import gg.scala.parties.menu.members.PartyMemberMenu
@@ -15,14 +14,15 @@ import gg.scala.parties.model.PartyStatus
 import gg.scala.parties.prefix
 import gg.scala.parties.receiver.PartyReceiverHandler
 import gg.scala.parties.stream.PartyMessageStream
-import gg.scala.commons.acf.ConditionFailedException
-import gg.scala.parties.service.PartyService
-import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.Menu
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
-import net.evilblock.cubed.util.bukkit.*
+import net.evilblock.cubed.util.bukkit.ColorUtil
+import net.evilblock.cubed.util.bukkit.Constants
+import net.evilblock.cubed.util.bukkit.FancyMessage
+import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.bukkit.prompt.InputPrompt
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -62,7 +62,7 @@ class PartyManageMenu(
                 )
                 .fallbackOf("Private")
                 .providerOverrideOf { _, _ ->
-                    Metadata(party.status.capitalized)
+                    party.status.capitalized
                 }
                 .valueOverrideOf {
                     val status = PartyStatus
@@ -93,9 +93,9 @@ class PartyManageMenu(
                 .fallbackOf("Disabled")
                 .providerOverrideOf { _, _ ->
                     if (party.isEnabled(PartySetting.ALL_INVITE))
-                        Metadata("Enabled")
+                        "Enabled"
                     else
-                        Metadata("Disabled")
+                        "Disabled"
                 }
                 .valueOverrideOf {
                     party.update(PartySetting.ALL_INVITE, it == "Enabled")
@@ -128,9 +128,9 @@ class PartyManageMenu(
                 .fallbackOf("Disabled")
                 .providerOverrideOf { _, _ ->
                     if (party.isEnabled(PartySetting.CHAT_MUTED))
-                        Metadata("Enabled")
+                        "Enabled"
                     else
-                        Metadata("Disabled")
+                        "Disabled"
                 }
                 .valueOverrideOf {
                     party.update(PartySetting.CHAT_MUTED, it == "Enabled")
