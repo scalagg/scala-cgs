@@ -54,8 +54,8 @@ subprojects {
 
         compileOnly "com.grinderwolf:slimeworldmanager-api:2.2.1"
 
-        compileOnly "gg.scala.commons:bukkit:3.0.6"
-        kapt "gg.scala.commons:bukkit:3.0.6"
+        compileOnly "gg.scala.commons:bukkit:3.0.8"
+        kapt "gg.scala.commons:bukkit:3.0.8"
     }
 
     compileKotlin {
