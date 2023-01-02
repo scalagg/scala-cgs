@@ -78,6 +78,14 @@ object StartingStateRunnable : StateRunnable(
 
         if (PRE_START_TIME <= 0)
         {
+            if (
+                Bukkit.getOnlinePlayers().size < engine.gameInfo.minimumPlayers
+            )
+            {
+                engine.gameState = CgsGameState.WAITING
+                return
+            }
+
             val currentTitle = Title.title(
                 Component.text("BEGIN")
                     .decorate(TextDecoration.BOLD)
