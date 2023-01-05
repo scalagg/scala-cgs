@@ -33,18 +33,21 @@ object CgsFrontendService
             CgsGameScoreboardProvider(engine)
         )
 
-        val channel = ChatChannelBuilder.newBuilder()
-            .import(CgsSpectatorChannelComposite)
-            .compose()
-            .monitor()
-            .allowOnlyIf {
-                it.hasMetadata("spectator")
-            }
-            .override(10) {
-                it.hasMetadata("spectator")
-            }
+        if (engine.gameInfo.configureSpectatorChat)
+        {
+            val channel = ChatChannelBuilder.newBuilder()
+                .import(CgsSpectatorChannelComposite)
+                .compose()
+                .monitor()
+                .allowOnlyIf {
+                    it.hasMetadata("spectator")
+                }
+                .override(10) {
+                    it.hasMetadata("spectator")
+                }
 
-        ChatChannelService.register(channel)
+            ChatChannelService.register(channel)
+        }
 
         VisibilityHandler.registerAdapter(
             "cgs", CgsGameVisibility

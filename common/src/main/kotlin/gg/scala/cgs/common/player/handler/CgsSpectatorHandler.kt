@@ -30,7 +30,7 @@ object CgsSpectatorHandler
     private val engine = CgsGameEngine.INSTANCE
 
     private val invisibility = PotionEffect(
-        PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 0, false
+        PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 0, false, false
     )
 
     private val spectateMenu = ItemBuilder(Material.ITEM_FRAME)

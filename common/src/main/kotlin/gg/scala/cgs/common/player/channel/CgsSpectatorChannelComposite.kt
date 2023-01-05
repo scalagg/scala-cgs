@@ -21,7 +21,7 @@ object CgsSpectatorChannelComposite : ChatChannelComposite
     ): TextComponent
     {
         return LegacyComponentSerializer.legacySection()
-            .deserialize("${CC.GRAY}[Spec] ${rank.color}${
+            .deserialize("${CC.GRAY}[Spectator] ${
                 sender.username()
             }${CC.GRAY}: $message")
     }

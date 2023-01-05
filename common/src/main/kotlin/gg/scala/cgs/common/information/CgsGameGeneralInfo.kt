@@ -20,3 +20,6 @@ open class CgsGameGeneralInfo(
     val usesCustomArenaWorld: Boolean,
     val gameModes: List<CgsGameMode>
 )
+{
+    var configureSpectatorChat: Boolean = true
+}
