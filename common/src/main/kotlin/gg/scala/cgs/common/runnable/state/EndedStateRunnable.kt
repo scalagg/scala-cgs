@@ -59,9 +59,14 @@ object EndedStateRunnable : StateRunnable(
                 }
             }")
 
-            description.add("")
-            description.addAll(engine.getGameSnapshot().getExtraInformation())
-            description.add("")
+            val info = engine.getGameSnapshot().getExtraInformation()
+
+            if (info.isNotEmpty())
+            {
+                description.add("")
+                description.addAll(info)
+                description.add("")
+            }
 
             description.add(" ${CC.GREEN}Thanks for playing ${engine.gameInfo.fancyNameRender}!")
             description.add("")

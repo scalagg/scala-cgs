@@ -384,7 +384,8 @@ object PartyCommand : ScalaCommand()
                 }
         }
 
-        return AsyncLemonPlayer.of(target, true).future
+        return AsyncLemonPlayer.of(target)
+            .computeNow()
             .thenCompose {
                 if (it.isEmpty())
                 {
