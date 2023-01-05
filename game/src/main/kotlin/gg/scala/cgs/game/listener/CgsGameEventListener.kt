@@ -203,7 +203,7 @@ object CgsGameEventListener : Listener
                     "${Bukkit.getOnlinePlayers().size - 1}/${Bukkit.getMaxPlayers()}"
                 })${CC.YELLOW}!"
             )
-        } else if (engine.gameState.isAfter(CgsGameState.STARTED))
+        } else if (engine.gameState.isAfter(CgsGameState.STARTED) && !engine.gameState.equals(CgsGameState.ENDED))
         {
             val cgsGamePlayer = CgsPlayerHandler
                 .find(event.participant) ?: return
