@@ -71,9 +71,7 @@ object EndedStateRunnable : StateRunnable(
             description.add(" ${CC.GREEN}Thanks for playing ${engine.gameInfo.fancyNameRender}!")
             description.add("")
 
-            engine.sendMessage(
-                FancyMessage().withMessage(*description.toTypedArray())
-            )
+            engine.sendMessage(description)
 
             val currentTitle = Title.title(
                 Component.text("YOU WON")

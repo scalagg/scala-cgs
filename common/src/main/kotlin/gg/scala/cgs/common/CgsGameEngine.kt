@@ -171,6 +171,27 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             gameMode.getMaxTeams() * gameMode.getTeamSize()
     }
 
+    fun sendMessage(message: List<String>)
+    {
+        for (team in CgsGameTeamService.teams.values)
+        {
+            team.participants.forEach { uuid ->
+                val bukkitPlayer = Bukkit.getPlayer(uuid)
+                    ?: return@forEach
+
+                if (!bukkitPlayer.hasMetadata("spectator"))
+                    message.forEach(bukkitPlayer::sendMessage)
+            }
+        }
+
+        for (spectator in Bukkit.getOnlinePlayers()
+            .filter { it.hasMetadata("spectator") }
+        )
+        {
+            message.forEach(spectator::sendMessage)
+        }
+    }
+
     fun sendMessage(message: String)
     {
         for (team in CgsGameTeamService.teams.values)
