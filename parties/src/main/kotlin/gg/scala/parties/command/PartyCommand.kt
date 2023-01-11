@@ -469,7 +469,7 @@ object PartyCommand : ScalaCommand()
 
         val fancy = FancyMessage()
         fancy.withMessage(
-            "$prefix ${CC.PRI}[${
+            "$prefix${CC.AQUA}[${
                 ServerSync.getLocalGameServer().id
             }] ${QuickAccess.coloredName(player, ignoreMinequest = true)}${CC.GRAY}: ${CC.WHITE}$message"
         )
