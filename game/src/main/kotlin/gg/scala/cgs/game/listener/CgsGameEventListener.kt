@@ -266,7 +266,9 @@ object CgsGameEventListener : Listener
         val statistics = engine.getStatistics(cgsGamePlayer)
         statistics.deaths++
 
-        respawnPlayer(event)
+        player.health = player.maxHealth;
+        player.foodLevel = 20;
+        player.saturation = 20.0f
 
         if (killer != null)
         {
@@ -277,8 +279,13 @@ object CgsGameEventListener : Listener
             killerStatistics.gameKills++
         }
 
-        event.deathMessage = CgsDeathHandler
-            .formDeathMessage(player, killer)
+        event.deathMessage = if (engine.gameInfo.customDeathMessage)
+        {
+            engine.gameInfo.customDeathMessageService(player)
+        } else
+        {
+            CgsDeathHandler.formDeathMessage(player, killer)
+        }
 
         val cgsDeathEvent = CgsGameEngine
             .CgsGameParticipantDeathEvent(player, killer, location)

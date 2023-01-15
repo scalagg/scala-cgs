@@ -81,6 +81,10 @@ object CgsSpectatorHandler
     {
         player.setMetadata("spectator", FixedMetadataValue(engine.plugin, true))
 
+        player.health = player.maxHealth
+        player.foodLevel = 20
+        player.saturation = 20f
+
         Tasks.delayed(1L)
         {
             player refresh (true to GameMode.CREATIVE)
@@ -95,12 +99,9 @@ object CgsSpectatorHandler
                 }
             }
 
-            Tasks.delayed(1L)
-            {
-                player.teleport(
-                    engine.gameArena!!.getSpectatorLocation()
-                )
-            }
+            player.teleport(
+                engine.gameArena!!.getSpectatorLocation()
+            )
 
             player.playerListName = "${CC.GRAY}${player.name}"
 

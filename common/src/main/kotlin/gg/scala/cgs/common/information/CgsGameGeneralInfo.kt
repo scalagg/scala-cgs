@@ -1,6 +1,7 @@
 package gg.scala.cgs.common.information
 
 import gg.scala.cgs.common.information.mode.CgsGameMode
+import org.bukkit.entity.Player
 
 /**
  * @author GrowlyX
@@ -22,4 +23,7 @@ open class CgsGameGeneralInfo(
 )
 {
     var configureSpectatorChat: Boolean = true
+
+    var customDeathMessage: Boolean = false
+    var customDeathMessageService = { player: Player -> "" }
 }
