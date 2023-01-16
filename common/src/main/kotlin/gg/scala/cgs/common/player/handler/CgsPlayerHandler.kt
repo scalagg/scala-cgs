@@ -6,6 +6,7 @@ import gg.scala.cgs.common.instance.handler.CgsInstanceService
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.states.CgsGameState
+import gg.scala.cgs.common.statistics.CgsStatisticProvider
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
@@ -37,7 +38,7 @@ object CgsPlayerHandler
     val RE_LOG_DELTA = TimeUnit.MINUTES.toMillis(2L)
 
     @Inject
-    lateinit var engine: CgsGameEngine<*>
+    lateinit var engine: CgsStatisticProvider<*>
 
     lateinit var handle: DataStoreObjectController<CgsGamePlayer>
 
@@ -99,11 +100,11 @@ object CgsPlayerHandler
 
                     // Checking if the last played game is this current game instance.
                     // If this is true, we will call the reconnect event for bukkit to handle.
-                    if (cgsGamePlayer.lastPlayedGameId == engine.uniqueId)
+                    if (cgsGamePlayer.lastPlayedGameId == CgsGameEngine.INSTANCE.uniqueId)
                     {
                         // Only allowing players to go through the reconnection
                         // logic if the game is still in progress.
-                        if (engine.gameState != CgsGameState.STARTED)
+                        if ( CgsGameEngine.INSTANCE.gameState != CgsGameState.STARTED)
                             return@handler
 
                         val logoutTimestamp = cgsGamePlayer
@@ -143,7 +144,7 @@ object CgsPlayerHandler
 
                 cgsParticipantDisconnect.callNow()
 
-                it.player.removeMetadata("spectator", engine.plugin)
+                it.player.removeMetadata("spectator",  CgsGameEngine.INSTANCE.plugin)
             }
 
             players.remove(it.player.uniqueId)

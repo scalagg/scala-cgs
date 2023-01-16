@@ -34,6 +34,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.PlayerDeathEvent
+import org.bukkit.event.inventory.InventoryCreativeEvent
 import org.bukkit.event.inventory.InventoryMoveItemEvent
 import org.bukkit.scoreboard.DisplaySlot
 import kotlin.math.ceil
@@ -249,6 +250,17 @@ object CgsGameEventListener : Listener
         {
             event.isCancelled = true
             event.player.sendMessage("${CC.RED}You are not allowed to disguise at this time.")
+        }
+    }
+
+    @EventHandler(
+        priority = EventPriority.HIGHEST
+    )
+    fun onPreDisguise(event: InventoryCreativeEvent)
+    {
+        if (event.whoClicked.hasMetadata("spectator"))
+        {
+            event.isCancelled = true
         }
     }
 
