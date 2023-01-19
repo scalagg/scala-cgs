@@ -3,10 +3,12 @@ package gg.scala.cgs.game.listener
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.menu.CgsGameSpectateMenu
+import gg.scala.cgs.common.login.PlayerLoginService
 import gg.scala.commons.annotations.Listeners
 import gg.scala.flavor.inject.Inject
 import gg.scala.lemon.cooldown.CooldownHandler
 import gg.scala.lemon.cooldown.type.PlayerStaticCooldown
+import gg.scala.lemon.redirection.impl.VelocityRedirectSystem
 import org.bukkit.Material
 import org.bukkit.entity.ItemFrame
 import org.bukkit.entity.Player
@@ -152,10 +154,15 @@ object CgsGameGeneralListener : Listener
             cooldown.addOrOverride(event.player)
 
             when (event.item.type) {
-                Material.BED ->
+                Material.INK_SACK ->
                 {
                     if (event.item.hasItemMeta() && event.item.itemMeta.displayName.contains("Lobby")) {
-                        event.player.kickPlayer("")
+                        val cached = PlayerLoginService.cached[event.player.uniqueId]
+                            ?: return run {
+                                event.player.kickPlayer("")
+                            }
+
+                        VelocityRedirectSystem.redirect(event.player, cached)
                     }
                 }
                 Material.ITEM_FRAME ->

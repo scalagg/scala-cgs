@@ -1,5 +1,6 @@
 package gg.scala.cgs.common.player.handler
 
+import com.cryptomorin.xseries.XMaterial
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.adventure
 import gg.scala.cgs.common.refresh
@@ -41,8 +42,8 @@ object CgsSpectatorHandler
             CC.GRAY + "teleport to and spectate."
         ).build()
 
-    private val returnToLobby = ItemBuilder(Material.BED)
-        .name(CC.B_RED + "Return to Lobby")
+    private val returnToLobby = ItemBuilder(XMaterial.RED_DYE)
+        .name(CC.RED + "Return to Lobby")
         .addToLore(
             CC.RED + "Return to the ${engine.gameInfo.fancyNameRender} lobby."
         ).build()

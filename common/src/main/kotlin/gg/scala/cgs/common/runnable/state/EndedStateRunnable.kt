@@ -4,9 +4,11 @@ import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.adventure
 import gg.scala.cgs.common.giveCoins
+import gg.scala.cgs.common.login.PlayerLoginService
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.runnable.StateRunnable
 import gg.scala.cgs.common.snapshot.CgsGameSnapshotEngine
+import gg.scala.lemon.redirection.impl.VelocityRedirectSystem
 import gg.scala.lemon.util.CubedCacheUtil
 import me.lucko.helper.Schedulers
 import net.evilblock.cubed.util.CC
@@ -114,6 +116,18 @@ object EndedStateRunnable : StateRunnable(
                 for (onlinePlayer in Bukkit.getOnlinePlayers())
                 {
                     onlinePlayer.kickPlayer(kickMessage)
+
+                    val cached = PlayerLoginService
+                        .cached[onlinePlayer.uniqueId]
+
+                    if (cached == null)
+                    {
+                        onlinePlayer.kickPlayer("")
+                        continue
+                    }
+
+                    VelocityRedirectSystem
+                        .redirect(onlinePlayer, cached)
                 }
             }
 
