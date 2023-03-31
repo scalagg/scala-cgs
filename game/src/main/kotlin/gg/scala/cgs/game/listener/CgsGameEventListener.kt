@@ -7,16 +7,12 @@ import gg.scala.cgs.common.player.handler.CgsGameDisqualificationHandler
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.player.handler.CgsSpectatorHandler
 import gg.scala.cgs.common.refresh
-import gg.scala.cgs.common.respawnPlayer
 import gg.scala.cgs.common.runnable.StateRunnableService
 import gg.scala.cgs.common.snapshot.inventory.CgsInventorySnapshotEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.teams.CgsGameTeamService
-import gg.scala.cgs.game.client.CgsLunarClientService
 import gg.scala.commons.annotations.Listeners
-import gg.scala.flavor.inject.Inject
 import gg.scala.lemon.Lemon
-import gg.scala.lemon.disguise.update.event.PreDisguiseEvent
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.parties.receiver.PartyReceiverHandler
 import gg.scala.parties.service.PartyService
@@ -241,7 +237,8 @@ object CgsGameEventListener : Listener
         }
     }
 
-    @EventHandler(
+    // TODO: re-implement
+    /*@EventHandler(
         priority = EventPriority.HIGHEST
     )
     fun onPreDisguise(event: PreDisguiseEvent)
@@ -251,7 +248,7 @@ object CgsGameEventListener : Listener
             event.isCancelled = true
             event.player.sendMessage("${CC.RED}You are not allowed to disguise at this time.")
         }
-    }
+    }*/
 
     @EventHandler(
         priority = EventPriority.HIGHEST

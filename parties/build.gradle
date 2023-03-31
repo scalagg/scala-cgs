@@ -1,4 +1,4 @@
 dependencies {
     compileOnly "gg.scala.cookie:Cookie:1.1.5"
-    compileOnly "gg.scala.basics.plugin:scala-basics-plugin:1.0.0"
+    compileOnly "gg.scala.basics.plugin:scala-basics-plugin:1.0.5"
 }

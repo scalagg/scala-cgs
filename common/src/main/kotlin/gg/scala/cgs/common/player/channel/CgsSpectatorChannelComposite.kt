@@ -16,7 +16,7 @@ import java.util.*
 object CgsSpectatorChannelComposite : ChatChannelComposite
 {
     override fun format(
-        sender: UUID, receiver: Player,
+        sender: UUID, receiver: Player?,
         message: String, server: String, rank: Rank
     ): TextComponent
     {
