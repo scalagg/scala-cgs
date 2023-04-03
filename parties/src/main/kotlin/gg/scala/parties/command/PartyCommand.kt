@@ -27,6 +27,7 @@ import gg.scala.commons.issuer.ScalaPlayer
 import gg.scala.parties.event.PartyLeaveEvent
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.md_5.bungee.api.chat.ClickEvent
@@ -45,13 +46,7 @@ import java.util.concurrent.TimeUnit
 @CommandAlias("party|p|parties")
 object PartyCommand : ScalaCommand()
 {
-    val connection: StatefulRedisConnection<String, String>
-            by lazy {
-                val internal = Lemon
-                    .instance.aware.internal()
-
-                internal.connect()
-            }
+    val connection = ScalaCommonsSpigot.instance.kvConnection
 
     @Default
     @HelpCommand
