@@ -122,7 +122,8 @@ object CgsGameEventListener : Listener
                         .thenAccept {
                             engine.gameState = CgsGameState.STARTING
                         }
-                } else {
+                } else
+                {
                     engine.sendMessage("${CC.SEC}The game requires ${CC.PRI + (engine.gameInfo.minimumPlayers - participantSize) + CC.SEC} more players to start.")
                 }
             }
@@ -275,8 +276,8 @@ object CgsGameEventListener : Listener
         val statistics = engine.getStatistics(cgsGamePlayer)
         statistics.deaths++
 
-        player.health = player.maxHealth;
-        player.foodLevel = 20;
+        player.health = player.maxHealth
+        player.foodLevel = 20
         player.saturation = 20.0f
 
         if (killer != null)
@@ -330,6 +331,12 @@ object CgsGameEventListener : Listener
 
         participants.forEach {
             NametagHandler.reloadPlayer(it)
+
+            engine
+                .getStatistics(
+                    CgsPlayerHandler.find(it)!!
+                )
+                .gameKills.reset()
         }
 
         if (this.engine.gameInfo.showNameHearts)
@@ -407,9 +414,11 @@ object CgsGameEventListener : Listener
         event: CgsGameEngine.CgsGameForceStartEvent
     )
     {
-        engine.sendMessage("${CC.GREEN}The game has been force-started. ${CC.GRAY}(by ${
-            if (event.starter is Player) event.starter.name else "Console"
-        })")
+        engine.sendMessage(
+            "${CC.GREEN}The game has been force-started. ${CC.GRAY}(by ${
+                if (event.starter is Player) event.starter.name else "Console"
+            })"
+        )
     }
 
     @EventHandler(
