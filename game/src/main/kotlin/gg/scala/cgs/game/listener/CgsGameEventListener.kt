@@ -114,7 +114,7 @@ object CgsGameEventListener : Listener
                 }
             }
 
-            if (engine.getVotingConfig() == null)
+            if (engine.getVotingConfig() == null || !engine.gameInfo.requiresNoManualConfiguration)
             {
                 if (participantSize >= engine.gameInfo.minimumPlayers)
                 {
