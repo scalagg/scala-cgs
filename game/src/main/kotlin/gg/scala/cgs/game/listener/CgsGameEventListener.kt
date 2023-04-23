@@ -114,7 +114,8 @@ object CgsGameEventListener : Listener
                 }
             }
 
-            if (engine.getVotingConfig() == null || !engine.gameInfo.requiresNoManualConfiguration)
+            // TODO: temp to fix artifactory thing
+            if (engine.getVotingConfig() == null && Bukkit.getPluginManager().getPlugin("UHC") == null)
             {
                 if (participantSize >= engine.gameInfo.minimumPlayers)
                 {
@@ -415,7 +416,7 @@ object CgsGameEventListener : Listener
     )
     {
         engine.sendMessage(
-            "${CC.GREEN}The game has been force-started. ${CC.GRAY}(by ${
+            "${CC.GREEN}The game has been started. ${CC.GRAY}(by ${
                 if (event.starter is Player) event.starter.name else "Console"
             })"
         )

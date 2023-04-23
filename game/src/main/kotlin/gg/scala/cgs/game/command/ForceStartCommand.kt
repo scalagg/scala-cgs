@@ -31,24 +31,29 @@ object ForceStartCommand : ScalaCommand()
     {
         if (Bukkit.getOnlinePlayers().size <= 1)
         {
-            throw ConditionFailedException("You cannot force-start the game when you are alone.")
+            throw ConditionFailedException("You cannot start the game when you are alone.")
         }
 
         if (engine.gameState.isAfter(CgsGameState.STARTING))
         {
-            throw ConditionFailedException("You cannot force-start the game at this time.")
+            throw ConditionFailedException("You cannot start the game at this time.")
         }
 
         StartingStateRunnable.hasBeenForceStarted = true
 
+        val cgsGameForceStart = CgsGameEngine
+            .CgsGameForceStartEvent(sender)
+
+        cgsGameForceStart.callNow()
+
+        if (cgsGameForceStart.isCancelled)
+        {
+            return
+        }
+
         engine.onAsyncPreStartResourceInitialization()
             .thenAccept {
                 engine.gameState = CgsGameState.STARTING
-
-                val cgsGameForceStart = CgsGameEngine
-                    .CgsGameForceStartEvent(sender)
-
-                cgsGameForceStart.callNow()
 
                 StartingStateRunnable.PRE_START_TIME = 11
             }
