@@ -23,20 +23,29 @@ import org.bukkit.inventory.ItemStack
  */
 class CgsGameSpectateMenu : PaginatedMenu()
 {
+    companion object
+    {
+        @JvmStatic
+        var filter = { player: Player -> true }
+    }
+
     override fun getAllPagesButtons(player: Player): Map<Int, Button>
     {
         return mutableMapOf<Int, Button>().also { buttons ->
             CgsGameTeamService.teams.values.forEach { team ->
-                team.alive.mapNotNull {
-                    Bukkit.getPlayer(it)
-                }.forEach second@{
-                    if (it.hasMetadata("spectator"))
-                    {
-                        return@second
+                team.alive
+                    .mapNotNull {
+                        Bukkit.getPlayer(it)
                     }
+                    .filter(filter)
+                    .forEach second@{
+                        if (it.hasMetadata("spectator"))
+                        {
+                            return@second
+                        }
 
-                    buttons[buttons.size] = SpectateButton(it)
-                }
+                        buttons[buttons.size] = SpectateButton(it)
+                    }
             }
         }
     }
@@ -75,7 +84,7 @@ class CgsGameSpectateMenu : PaginatedMenu()
             if (clickType.isShiftClick && sponsorConfig != null)
             {
 
-                val event = PreSponsorPlayerEvent(player, this.player);
+                val event = PreSponsorPlayerEvent(player, this.player)
                 event.callEvent()
 
                 if (event.isCancelled)
