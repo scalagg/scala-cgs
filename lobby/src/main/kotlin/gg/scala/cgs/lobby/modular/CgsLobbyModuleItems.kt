@@ -12,6 +12,7 @@ import gg.scala.tangerine.module.impl.HubModuleItemAdapter
 import me.lucko.helper.Events
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
+import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractEvent
@@ -54,19 +55,21 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
     fun configure()
     {
         Events.subscribe(PlayerJoinEvent::class.java).handler {
-            TangerineItems2Service.plugin
-                .config<Items2Config>()
-                .items
-                .forEach { model ->
-                    it.player.inventory.setItem(model.position, model.item)
-                }
+            Tasks.delayed(3L) {
+                TangerineItems2Service.plugin
+                    .config<Items2Config>()
+                    .items
+                    .forEach { model ->
+                        it.player.inventory.setItem(model.position, model.item)
+                    }
 
-            it.player.inventory.setItem(4, joinGameItem)
-            it.player.inventory.setItem(6, spectateItem)
+                it.player.inventory.setItem(4, joinGameItem)
+                it.player.inventory.setItem(6, spectateItem)
 
-            it.player.inventory.setItem(1, recentGamesItem)
+                it.player.inventory.setItem(1, recentGamesItem)
 
-            it.player.updateInventory()
+                it.player.updateInventory()
+            }
         }
 
         Events.subscribe(PlayerInteractEvent::class.java)

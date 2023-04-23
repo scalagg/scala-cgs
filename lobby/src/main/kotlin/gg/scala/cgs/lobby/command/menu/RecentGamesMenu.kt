@@ -91,12 +91,6 @@ class RecentGamesMenu(
                 )
                 .addToLore(
                     "",
-                    *recentGame.extraInformation
-                        .map {
-                            it.removePrefix(" ")
-                        }
-                        .toTypedArray(),
-                    "",
                     "${CC.GREEN}Click to view snapshots!"
                 )
                 .name("${CC.GREEN}${recentGame.gameName}")

@@ -14,9 +14,7 @@ import gg.scala.commons.command.ScalaCommandManager
 object CgsCommandCustomizer
 {
     @CommandManagerCustomizer
-    fun customize(
-        manager: ScalaCommandManager
-    )
+    fun customize(manager: ScalaCommandManager)
     {
         manager.commandContexts.registerContext(
             CgsLobbyRankingEntry::class.java
