@@ -26,7 +26,7 @@ class CgsGameSpectateMenu : PaginatedMenu()
     companion object
     {
         @JvmStatic
-        var filter = { player: Player -> true }
+        var filter = { _: Player -> true }
     }
 
     override fun getAllPagesButtons(player: Player): Map<Int, Button>

@@ -41,6 +41,7 @@ object CgsPlayerHandler
     lateinit var engine: CgsStatisticProvider<*>
 
     lateinit var handle: DataStoreObjectController<CgsGamePlayer>
+    lateinit var statsLayer: DataStoreObjectController<*>
 
     private val players: ConcurrentHashMap<UUID, CgsGamePlayer>
         get() = handle.useLayerWithReturn<CachedDataStoreStorageLayer<CgsGamePlayer>, ConcurrentHashMap<UUID, CgsGamePlayer>>(
@@ -58,8 +59,7 @@ object CgsPlayerHandler
     fun configure()
     {
         handle = DataStoreObjectControllerCache.create()
-
-        val statsLayer = DataStoreObjectControllerCache
+        statsLayer = DataStoreObjectControllerCache
             .create(engine.statisticType)
 
         Events.subscribe(

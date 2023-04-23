@@ -1,6 +1,19 @@
 package gg.scala.cgs.lobby.leaderboard
 
-import gg.scala.cgs.common.player.CgsGamePlayer
+import net.evilblock.cubed.serializers.Serializers
+import org.bson.Document
+import java.util.UUID
+
+fun Document.parseIntoLeaderboardResult(): LeaderboardResult =
+    Serializers.gson
+        .fromJson(
+            toJson(), LeaderboardResult::class.java
+        )
+
+data class LeaderboardResult(
+    val uniqueId: UUID,
+    val value: Int
+)
 
 /**
  * @author GrowlyX
@@ -11,5 +24,30 @@ interface CgsLobbyRankingEntry
     fun getId(): String
     fun getDisplay(): String
 
-    fun getValue(cgsGamePlayer: CgsGamePlayer): Int
+    fun getStatLabel(): String
+
+    fun buildAggregation() = listOf(
+        Document(
+            "\$project",
+            Document("uniqueId", "\$_id")
+                .append("value", "\$${getStatLabel()}.value")
+        ),
+        Document(
+            "\$sort",
+            Document("value", -1L)
+        ),
+        Document("\$limit", 10)
+    )
+
+    fun buildAggregationMatchingUser(player: UUID) = listOf(
+        Document(
+            "\$match",
+            Document("_id", player.toString())
+        ),
+        Document(
+            "\$project",
+            Document("uniqueId", "\$_id")
+                .append("value", "\$${getStatLabel()}.value")
+        )
+    )
 }
