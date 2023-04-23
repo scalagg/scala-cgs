@@ -1,5 +1,6 @@
 package gg.scala.cgs.lobby.customizer
 
+import gg.scala.cgs.lobby.gamemode.CgsGameLobby
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEngine
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.commons.annotations.commands.customizer.CommandManagerCustomizer
@@ -29,8 +30,7 @@ object CgsCommandCustomizer
         manager.commandCompletions.registerCompletion(
             "leaderboards"
         ) {
-            CgsLobbyRankingEngine.entries
-                .map { it.getId() }
+            CgsGameLobby.INSTANCE.getRankingEntries().map { it.getId() }
         }
     }
 }

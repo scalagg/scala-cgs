@@ -64,28 +64,28 @@ class RecentGamesMenu(
                     "${CC.D_GRAY}${
                         TimeUtil.formatIntoCalendarString(recentGame.datePlayed)
                     }",
-                    "${CC.SEC}Duration: ${CC.PRI}${
+                    "${CC.GRAY}Duration: ${CC.GREEN}${
                         TimeUtil.formatIntoDetailedString((recentGame.elapsedTime / 1000).toInt())
                     }",
                     "",
-                    "${CC.SEC}Mode: ${CC.PRI}${
+                    "${CC.GRAY}Mode: ${CC.GREEN}${
                         recentGame.gameMode
                     }",
                 )
                 .also {
                     if (recentGame.mapName != "Random")
                     {
-                        it.addToLore("${CC.SEC}Map: ${CC.PRI}${
+                        it.addToLore("${CC.GRAY}Map: ${CC.GREEN}${
                             recentGame.mapName
                         }")
                     }
                 }
                 .addToLore(
                     "",
-                    "${CC.SEC}Server: ${CC.PRI}${
+                    "${CC.GRAY}Server: ${CC.GREEN}${
                         recentGame.server
                     }",
-                    "${CC.SEC}Players: ${CC.PRI}${
+                    "${CC.GRAY}Players: ${CC.GREEN}${
                         recentGame.players.size
                     }"
                 )
@@ -99,7 +99,7 @@ class RecentGamesMenu(
                     "",
                     "${CC.GREEN}Click to view snapshots!"
                 )
-                .name("${CC.D_AQUA}${recentGame.gameName}")
+                .name("${CC.GREEN}${recentGame.gameName}")
                 .build()
         }
 

@@ -41,7 +41,7 @@ object CgsPlayerHandler
     lateinit var engine: CgsStatisticProvider<*>
 
     lateinit var handle: DataStoreObjectController<CgsGamePlayer>
-    lateinit var statsLayer: DataStoreObjectController<*>
+    lateinit var statsLayer: DataStoreObjectController<out GameSpecificStatistics>
 
     private val players: ConcurrentHashMap<UUID, CgsGamePlayer>
         get() = handle.useLayerWithReturn<CachedDataStoreStorageLayer<CgsGamePlayer>, ConcurrentHashMap<UUID, CgsGamePlayer>>(
