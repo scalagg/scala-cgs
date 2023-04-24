@@ -4,6 +4,7 @@ import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.runnable.state.StartingStateRunnable
 import gg.scala.cgs.common.voting.CgsVotingMapService
+import gg.scala.cgs.game.listener.CgsGameEventListener
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
 import gg.scala.commons.acf.BaseCommand
@@ -11,8 +12,10 @@ import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.CommandAlias
 import gg.scala.commons.acf.annotation.CommandPermission
 import gg.scala.flavor.inject.Inject
+import net.evilblock.cubed.util.CC
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 
 /**
  * @author GrowlyX
@@ -54,6 +57,11 @@ object ForceStartCommand : ScalaCommand()
         engine.onAsyncPreStartResourceInitialization()
             .thenAccept {
                 engine.gameState = CgsGameState.STARTING
+                engine.sendMessage(
+                    "${CC.GREEN}The game has been started. ${CC.GRAY}(by ${
+                        if (sender is Player) sender.name else "Console"
+                    })"
+                )
 
                 StartingStateRunnable.PRE_START_TIME = 11
             }

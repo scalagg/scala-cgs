@@ -413,20 +413,6 @@ object CgsGameEventListener : Listener
     @EventHandler(
         priority = EventPriority.HIGHEST
     )
-    fun onCgsForceStart(
-        event: CgsGameEngine.CgsGameForceStartEvent
-    )
-    {
-        engine.sendMessage(
-            "${CC.GREEN}The game has been started. ${CC.GRAY}(by ${
-                if (event.starter is Player) event.starter.name else "Console"
-            })"
-        )
-    }
-
-    @EventHandler(
-        priority = EventPriority.HIGHEST
-    )
     fun onEntityDamage(event: EntityDamageByEntityEvent)
     {
         val entity = event.entity
