@@ -159,10 +159,6 @@ object CgsGameEventListener : Listener
                 return
             }
 
-            // The CGS game team should never be null.
-            val cgsGameTeam = CgsGameTeamService.getTeamOf(event.participant)!!
-            cgsGameTeam.eliminated.remove(event.participant.uniqueId)
-
             val cgsParticipantReinstate = CgsGameEngine
                 .CgsGameParticipantReinstateEvent(event.participant, snapshot, true)
 
@@ -373,6 +369,9 @@ object CgsGameEventListener : Listener
         {
             CgsSpectatorHandler.removeSpectator(event.participant)
         }
+
+        val cgsGameTeam = CgsGameTeamService.getTeamOf(event.participant)!!
+        cgsGameTeam.eliminated.remove(event.participant.uniqueId)
 
         event.snapshot.restore(event.participant)
 
