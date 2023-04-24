@@ -44,7 +44,7 @@ object CgsFrontendService
                     it.hasMetadata("spectator") || CgsGameEngine.INSTANCE.gameState != CgsGameState.STARTED
                 }
                 .override(10) {
-                    it.hasMetadata("spectator") && CgsGameEngine.INSTANCE.gameState == CgsGameState.STARTED
+                    it.hasMetadata("spectator")
                 }
 
             ChatChannelService.register(channel)
