@@ -1,6 +1,7 @@
 package gg.scala.cgs.game.command
 
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.player.handler.CgsSpectatorHandler
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.CommandAlias
@@ -22,13 +23,13 @@ object SpectateCommand : ScalaCommand()
     @CommandAlias("spectate|spec")
     fun onSpectate(player: ScalaPlayer, @Optional confirm: String?)
     {
+        if (CgsGameEngine.INSTANCE.gameState.isAfter(CgsGameState.STARTED))
+        {
+            throw ConditionFailedException("You cannot become a spectator right now!")
+        }
+
         if (confirm == null)
         {
-            if (CgsGameEngine.INSTANCE.gameState == CgsGameState.STARTED)
-            {
-                throw ConditionFailedException("You cannot become a spectator right now!")
-            }
-
             if (player.bukkit().hasMetadata("spectator"))
             {
                 player.sendMessage(
@@ -57,6 +58,22 @@ object SpectateCommand : ScalaCommand()
                     )
             )
             return
+        }
+
+        if (player.bukkit().hasMetadata("spectator"))
+        {
+            CgsSpectatorHandler.removeSpectator(player.bukkit())
+            player.bukkit().teleport(
+                CgsGameEngine.INSTANCE.gameArena!!.getPreLobbyLocation()
+            )
+        } else
+        {
+            CgsSpectatorHandler.setSpectator(
+                player.bukkit(),
+                teleportLocation = player.bukkit()
+                    .location.clone()
+                    .add(0.0, 2.0, 0.0)
+            )
         }
     }
 }

@@ -17,6 +17,7 @@ import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
@@ -113,7 +114,8 @@ object CgsSpectatorHandler
 
     @JvmOverloads
     fun setSpectator(
-        player: Player, sendTitle: Boolean = true
+        player: Player, sendTitle: Boolean = true,
+        teleportLocation: Location = engine.gameArena!!.getSpectatorLocation()
     )
     {
         player.setMetadata("spectator", FixedMetadataValue(engine.plugin, true))
@@ -136,10 +138,7 @@ object CgsSpectatorHandler
                 }
             }
 
-            player.teleport(
-                engine.gameArena!!.getSpectatorLocation()
-            )
-
+            player.teleport(teleportLocation)
             player.playerListName = "${CC.GRAY}${player.name}"
 
             player.inventory.setItem(0, spectateMenu)
