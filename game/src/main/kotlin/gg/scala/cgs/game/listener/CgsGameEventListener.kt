@@ -86,9 +86,9 @@ object CgsGameEventListener : Listener
             }
 
             engine.sendMessage(
-                "${coloredName(event.participant)}${CC.SEC} has joined ${CC.AQUA}(${
+                "${CC.GREEN}${event.participant.name}${CC.SEC} joined. ${CC.GRAY}(${
                     "${participantSize}/${Bukkit.getMaxPlayers()}"
-                })${CC.YELLOW}!"
+                })"
             )
 
             event.participant.removeMetadata("spectator", engine.plugin)
@@ -159,10 +159,6 @@ object CgsGameEventListener : Listener
                 return
             }
 
-            // The CGS game team should never be null.
-            val cgsGameTeam = CgsGameTeamService.getTeamOf(event.participant)!!
-            cgsGameTeam.eliminated.remove(event.participant.uniqueId)
-
             val cgsParticipantReinstate = CgsGameEngine
                 .CgsGameParticipantReinstateEvent(event.participant, snapshot, true)
 
@@ -197,9 +193,9 @@ object CgsGameEventListener : Listener
             CgsGameTeamService.removePlayerFromTeam(event.participant)
 
             engine.sendMessage(
-                "${event.participant.name}${CC.SEC} has left ${CC.AQUA}(${
+                "${CC.GREEN}${event.participant.name}${CC.SEC} left. ${CC.GRAY}(${
                     "${Bukkit.getOnlinePlayers().size - 1}/${Bukkit.getMaxPlayers()}"
-                })${CC.YELLOW}!"
+                })"
             )
         } else if (engine.gameState.isAfter(CgsGameState.STARTED) && !engine.gameState.equals(CgsGameState.ENDED))
         {
@@ -374,6 +370,9 @@ object CgsGameEventListener : Listener
             CgsSpectatorHandler.removeSpectator(event.participant)
         }
 
+        val cgsGameTeam = CgsGameTeamService.getTeamOf(event.participant)!!
+        cgsGameTeam.eliminated.remove(event.participant.uniqueId)
+
         event.snapshot.restore(event.participant)
 
         event.participant.sendMessage(
@@ -427,7 +426,7 @@ object CgsGameEventListener : Listener
             {
                 event.isCancelled = true
                 event.damager.sendMessage(
-                    "${CC.RED}You're unable to hurt ${CC.ITALIC}${entity.name}${CC.RED}."
+                    "${CC.RED}You cannot hurt your teammate ${CC.B_RED}${entity.name}${CC.RED}!"
                 )
             }
         }
@@ -469,7 +468,7 @@ object CgsGameEventListener : Listener
 
                     if (health > 0.0)
                     {
-                        shooter.sendMessage("${coloredName(player)}${CC.SEC} is now at ${CC.RED}$health${HEART_SYMBOL}${CC.SEC}.")
+                        shooter.sendMessage("${coloredName(player)}${CC.SEC} is now at ${CC.PRI}$health${HEART_SYMBOL}${CC.SEC}.")
                     }
                 }
             }
