@@ -438,6 +438,7 @@ object CgsGameEventListener : Listener
     fun onInventoryMove(event: InventoryMoveItemEvent)
     {
         if (
+            engine.gameState != CgsGameState.STARTED ||
             event.initiator.viewers.firstOrNull()
                 ?.hasMetadata("spectator") == true
         )
