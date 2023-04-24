@@ -60,18 +60,19 @@ object AnnounceCommand : ScalaCommand()
 
         val fancyMessage = FancyMessage()
         fancyMessage.withMessage(
-            "${CC.BD_AQUA}Alert ${CC.B_GRAY}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}Come play ${CC.WHITE}${
+            "${CC.B_PRI}Alert ${CC.B_GRAY}${Constants.DOUBLE_ARROW_RIGHT} ${CC.SEC}Come play ${CC.WHITE}${
                 engine.gameInfo.fancyNameRender
             }${CC.SEC} with $lastAnnouncementCreator${CC.SEC} on ${CC.GREEN}${
                 Lemon.instance.settings.id
-            }${CC.SEC}! ${CC.B_GREEN}[Connect]"
+            }${CC.SEC}! ${CC.GREEN}(Join)"
         )
         fancyMessage.andHoverOf(
-            "${CC.GREEN}Click to switch to ${CC.D_GREEN}${
+            "${CC.GREEN}Click to switch to ${CC.WHITE}${
                 Lemon.instance.settings.id
             }${CC.GREEN}!",
             "",
-            "${CC.B_RED}Warning:${CC.RED} This will switch your server!"
+            "${CC.B_RED}Warning:",
+            "${CC.RED}This will switch your server!"
         )
         fancyMessage.andCommandOf(
             ClickEvent.Action.RUN_COMMAND,

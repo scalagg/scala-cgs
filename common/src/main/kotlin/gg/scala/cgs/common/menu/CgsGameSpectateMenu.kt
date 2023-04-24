@@ -50,7 +50,7 @@ class CgsGameSpectateMenu : PaginatedMenu()
         }
     }
 
-    override fun getPrePaginatedTitle(player: Player) = "Spectate Menu"
+    override fun getPrePaginatedTitle(player: Player) = "Spectate"
 
     inner class SpectateButton(
         private val player: Player
@@ -60,14 +60,14 @@ class CgsGameSpectateMenu : PaginatedMenu()
         {
             return ItemBuilder(Material.SKULL_ITEM)
                 .owner(this.player.name)
-                .name(this.player.displayName)
+                .name("${CC.GREEN}this.player.name")
                 .addToLore(
-                    "${CC.YELLOW}Click to teleport."
+                    "${CC.GRAY}Click to teleport."
                 )
                 .apply {
                     if (CgsGameEngine.INSTANCE.getSponsorConfig() != null)
                     {
-                        addToLore("${CC.GREEN}Shift-click to sponsor.")
+                        addToLore("${CC.GOLD}Shift-click to sponsor.")
                     }
                 }
                 .data(3)
@@ -127,7 +127,7 @@ class CgsGameSpectateMenu : PaginatedMenu()
             }
 
             player.teleport(this.player)
-            player.sendMessage("${CC.GREEN}You've been teleported to ${CC.ID_GREEN}${this.player.displayName}${CC.GREEN}.")
+            player.sendMessage("${CC.GREEN}You've been teleported to ${this.player.name}.")
         }
     }
 }
