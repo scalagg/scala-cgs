@@ -426,7 +426,7 @@ object CgsGameEventListener : Listener
             {
                 event.isCancelled = true
                 event.damager.sendMessage(
-                    "${CC.RED}You're unable to hurt ${CC.ITALIC}${entity.name}${CC.RED}."
+                    "${CC.RED}You cannot hurt your teammate ${CC.B_RED}${entity.name}${CC.RED}!"
                 )
             }
         }
@@ -468,7 +468,7 @@ object CgsGameEventListener : Listener
 
                     if (health > 0.0)
                     {
-                        shooter.sendMessage("${coloredName(player)}${CC.SEC} is now at ${CC.RED}$health${HEART_SYMBOL}${CC.SEC}.")
+                        shooter.sendMessage("${coloredName(player)}${CC.SEC} is now at ${CC.PRI}$health${HEART_SYMBOL}${CC.SEC}.")
                     }
                 }
             }
