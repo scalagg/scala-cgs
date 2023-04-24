@@ -71,7 +71,7 @@ object StartingStateRunnable : StateRunnable(
 
             engine.sendTitle(currentTitle)
             engine.playSound(Sound.NOTE_STICKS)
-            engine.sendMessage("${CC.SEC}The game starts in ${getCurrentColor()}${
+            engine.sendMessage("${CC.SEC}The game starts in ${CC.PRI}${
                 TimeUtil.formatIntoDetailedString((PRE_START_TIME))
             }${CC.SEC}.")
         }
@@ -97,7 +97,7 @@ object StartingStateRunnable : StateRunnable(
 
             engine.sendTitle(currentTitle)
             engine.playSound(Sound.LEVEL_UP)
-            engine.sendMessage("${CC.GREEN}The game has commenced!")
+            engine.sendMessage("${CC.GREEN}The game has started!")
 
             if (engine.gameInfo.gameVersion < 1.0)
             {
