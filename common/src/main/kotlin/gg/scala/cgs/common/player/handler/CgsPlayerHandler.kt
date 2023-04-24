@@ -37,6 +37,8 @@ object CgsPlayerHandler
     @JvmStatic
     val RE_LOG_DELTA = TimeUnit.MINUTES.toMillis(2L)
 
+    var dynamicRelogTime = { player: Player -> RE_LOG_DELTA }
+
     @Inject
     lateinit var engine: CgsStatisticProvider<*>
 
@@ -104,7 +106,7 @@ object CgsPlayerHandler
                     {
                         // Only allowing players to go through the reconnection
                         // logic if the game is still in progress.
-                        if ( CgsGameEngine.INSTANCE.gameState != CgsGameState.STARTED)
+                        if (CgsGameEngine.INSTANCE.gameState != CgsGameState.STARTED)
                             return@handler
 
                         val logoutTimestamp = cgsGamePlayer
@@ -112,7 +114,7 @@ object CgsPlayerHandler
 
                         // Checking if it has been less than two minutes since the logout
                         val withinTimeframe =
-                            System.currentTimeMillis() < logoutTimestamp + RE_LOG_DELTA
+                            System.currentTimeMillis() < logoutTimestamp + dynamicRelogTime.invoke(it.player)
 
                         val cgsParticipantReconnect = CgsGameEngine
                             .CgsGameParticipantReconnectEvent(it.player, withinTimeframe)
