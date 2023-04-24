@@ -114,8 +114,7 @@ object CgsGameEventListener : Listener
                 }
             }
 
-            // TODO: temp to fix artifactory thing
-            if (engine.getVotingConfig() == null && Bukkit.getPluginManager().getPlugin("UHC") == null)
+            if (engine.getVotingConfig() == null && engine.gameInfo.requiresNoManualConfiguration)
             {
                 if (participantSize >= engine.gameInfo.minimumPlayers)
                 {
