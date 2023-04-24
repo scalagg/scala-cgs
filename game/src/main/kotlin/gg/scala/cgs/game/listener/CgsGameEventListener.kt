@@ -327,7 +327,6 @@ object CgsGameEventListener : Listener
             .filter { !it.hasMetadata("spectator") }
 
         engine.gameStart = System.currentTimeMillis()
-
         engine.originalRemaining = participants
             .map { it.uniqueId }
             .toMutableList()

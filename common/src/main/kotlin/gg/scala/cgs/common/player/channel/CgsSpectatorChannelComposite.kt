@@ -21,9 +21,9 @@ object CgsSpectatorChannelComposite : ChatChannelComposite
     ): TextComponent
     {
         return LegacyComponentSerializer.legacySection()
-            .deserialize("${CC.GRAY}[Spectator] ${
+            .deserialize("${CC.GRAY}[Spec] ${
                 sender.username()
-            }${CC.GRAY}: $message")
+            }: ${CC.WHITE}$message")
     }
 
     override fun identifier() = "spectator"

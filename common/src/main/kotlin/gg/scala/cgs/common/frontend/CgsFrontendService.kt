@@ -5,6 +5,7 @@ import gg.scala.cgs.common.player.channel.CgsSpectatorChannelComposite
 import gg.scala.cgs.common.player.nametag.CgsGameNametag
 import gg.scala.cgs.common.player.scoreboard.CgsGameScoreboardProvider
 import gg.scala.cgs.common.player.visibility.CgsGameVisibility
+import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.flavor.inject.Inject
 import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
@@ -40,10 +41,10 @@ object CgsFrontendService
                 .compose()
                 .monitor()
                 .allowOnlyIf {
-                    it.hasMetadata("spectator")
+                    it.hasMetadata("spectator") || CgsGameEngine.INSTANCE.gameState != CgsGameState.STARTED
                 }
                 .override(10) {
-                    it.hasMetadata("spectator")
+                    it.hasMetadata("spectator") && CgsGameEngine.INSTANCE.gameState == CgsGameState.STARTED
                 }
 
             ChatChannelService.register(channel)
