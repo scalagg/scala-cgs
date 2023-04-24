@@ -393,6 +393,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         val spectator: Player
     ) : CgsGameEvent()
 
+    class CgsGameSpectatorRemoveEvent(
+        val spectator: Player
+    ) : CgsGameEvent()
+
     abstract class CgsGameEvent : Event(), Cancellable
     {
         companion object

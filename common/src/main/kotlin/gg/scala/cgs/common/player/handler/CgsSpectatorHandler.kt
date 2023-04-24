@@ -6,7 +6,6 @@ import gg.scala.cgs.common.adventure
 import gg.scala.cgs.common.refresh
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.nametag.NametagHandler
-import net.evilblock.cubed.nametag.NametagHandler.reloadPlayer
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -33,12 +32,8 @@ object CgsSpectatorHandler
 {
     private val engine = CgsGameEngine.INSTANCE
 
-    private val invisibility = PotionEffect(
-        PotionEffectType.INVISIBILITY, Int.MAX_VALUE, 0, false, false
-    )
-
     private val spectateMenu = ItemBuilder(Material.ITEM_FRAME)
-        .name(CC.B_PRI + "Spectate Menu")
+        .name(CC.GOLD + "Spectate Menu ${CC.GRAY}(Right Click)")
         .addToLore(
             CC.GRAY + "See a list of players",
             CC.GRAY + "that you're able to",
@@ -46,9 +41,9 @@ object CgsSpectatorHandler
         ).build()
 
     private val returnToLobby = ItemBuilder(XMaterial.RED_DYE)
-        .name(CC.RED + "Return to Lobby")
+        .name(CC.RED + "Return to Lobby ${CC.GRAY}(Right Click)")
         .addToLore(
-            CC.RED + "Return to the ${engine.gameInfo.fancyNameRender} lobby."
+            CC.GRAY + "Return to the ${engine.gameInfo.fancyNameRender} lobby."
         ).build()
 
     private val spectateTitle = Title.title(
@@ -75,6 +70,11 @@ object CgsSpectatorHandler
         player.updateInventory()
 
         QuickAccess.reloadPlayer(player.uniqueId, false)
+
+        val cgsSpectatorRemove = CgsGameEngine
+            .CgsGameSpectatorRemoveEvent(player)
+
+        cgsSpectatorRemove.callNow()
     }
 
     private const val GHOST_VIS = "ghost"
@@ -101,15 +101,16 @@ object CgsSpectatorHandler
             ghostVisibility.setCanSeeFriendlyInvisibles(true)
         }
         ghostVisibility!!.addPlayer(player)
+
     }
 
     fun removeGhost(player: Player)
     {
         player.removePotionEffect(PotionEffectType.INVISIBILITY)
+
         val scoreboard = player.scoreboard ?: return
         val ghostVisibility = scoreboard.getTeam(GHOST_VIS) ?: return
         ghostVisibility.removePlayer(player)
-        reloadPlayer(player)
     }
 
     @JvmOverloads
