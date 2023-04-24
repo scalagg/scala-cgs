@@ -6,6 +6,7 @@ import gg.scala.cgs.common.adventure
 import gg.scala.cgs.common.refresh
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.nametag.NametagHandler
+import net.evilblock.cubed.nametag.NametagHandler.reloadPlayer
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -14,6 +15,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
+import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -66,13 +68,47 @@ object CgsSpectatorHandler
         }
 
         player refresh (false to GameMode.SURVIVAL)
-        player.playerListName = QuickAccess.coloredName(player)
+        removeGhost(player)
 
         player.inventory.clear()
         player.updateInventory()
 
-        VisibilityHandler.update(player)
-        NametagHandler.reloadPlayer(player)
+        QuickAccess.reloadPlayer(player.uniqueId, false)
+    }
+
+    private const val GHOST_VIS = "ghost"
+
+    fun addGhost(player: Player)
+    {
+        player.addPotionEffect(
+            PotionEffect(
+                PotionEffectType.INVISIBILITY, 10000, 1, false, false
+            )
+        )
+        var scoreboard = player.scoreboard
+        if (scoreboard == null)
+        {
+            player.scoreboard = Bukkit.getScoreboardManager().newScoreboard
+            scoreboard = player.scoreboard
+        }
+        var ghostVisibility = scoreboard!!.getTeam(GHOST_VIS)
+        if (ghostVisibility == null)
+        {
+            ghostVisibility = scoreboard
+                .registerNewTeam(GHOST_VIS)
+            ghostVisibility.setAllowFriendlyFire(true)
+            ghostVisibility.setCanSeeFriendlyInvisibles(true)
+        }
+        ghostVisibility!!.addPlayer(player)
+    }
+
+    fun removeGhost(player: Player)
+    {
+        player.removePotionEffect(PotionEffectType.INVISIBILITY)
+        val scoreboard = player.scoreboard ?: return
+        val ghostVisibility = scoreboard.getTeam(GHOST_VIS) ?: return
+        ghostVisibility.removePlayer(player)
+        reloadPlayer(player)
     }
 
     @JvmOverloads
@@ -89,7 +125,7 @@ object CgsSpectatorHandler
         Tasks.delayed(1L)
         {
             player refresh (true to GameMode.CREATIVE)
-            player.addPotionEffect(invisibility, true)
+            addGhost(player)
 
             player.sendMessage("${CC.D_RED}✘ ${CC.RED}You've been made a spectator.")
 
