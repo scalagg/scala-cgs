@@ -144,18 +144,21 @@ object CgsPlayerHandler
 
                 cgsParticipantDisconnect.callNow()
 
-                it.player.removeMetadata("spectator",  CgsGameEngine.INSTANCE.plugin)
-            }
+                it.player.removeMetadata(
+                    "spectator",  
+                    CgsGameEngine.INSTANCE.plugin
+                )
 
-            players.remove(it.player.uniqueId)
-                ?.save()
-                ?.thenCompose { _ ->
-                    this.statistics[it.player.uniqueId]?.save()
-                }
-                ?.exceptionally { throwable ->
-                    throwable.printStackTrace()
-                    return@exceptionally null
-                }
+                players.remove(it.player.uniqueId)
+                    ?.save()
+                    ?.thenCompose { _ ->
+                        this.statistics[it.player.uniqueId]?.save()
+                    }
+                    ?.exceptionally { throwable ->
+                        throwable.printStackTrace()
+                        return@exceptionally null
+                    }
+            }
         }
     }
 
