@@ -23,7 +23,8 @@ open class CgsGameGeneralInfo(
 )
 {
     var configureSpectatorChat: Boolean = true
-    var requiresNoManualConfiguration = false
+    var requiresNoManualConfiguration = true
+    var timeUntilShutdown = 10
 
     var customDeathMessage: Boolean = false
     var customDeathMessageService = { player: Player -> "" }

@@ -33,7 +33,7 @@ object EndedStateRunnable : StateRunnable(
     var ALLOWED_TO_JOIN = true
 
     private val alertTicks = listOf(
-        20, 15, 10, 5, 4, 3, 2, 1
+        60, 50, 40, 30, 20, 15, 10, 5, 4, 3, 2, 1
     )
 
     override fun onTick()
@@ -99,12 +99,12 @@ object EndedStateRunnable : StateRunnable(
             CgsGameSnapshotEngine.submitWrappedSnapshot()
         }
 
-        if (alertTicks.contains(10 - currentTick))
+        if (alertTicks.contains(engine.gameInfo.timeUntilShutdown - currentTick))
         {
-            engine.sendMessage("${CC.B_RED}The server will automatically reboot in ${10 - currentTick} seconds.")
+            engine.sendMessage("${CC.RED}The server will automatically reboot in ${engine.gameInfo.timeUntilShutdown - currentTick} seconds.")
         }
 
-        if (currentTick == 10)
+        if (currentTick >= engine.gameInfo.timeUntilShutdown)
         {
             val kickMessage = CC.YELLOW + engine.winningTeam.alive.joinToString(
                 separator = "${CC.GREEN}, ${CC.YELLOW}"

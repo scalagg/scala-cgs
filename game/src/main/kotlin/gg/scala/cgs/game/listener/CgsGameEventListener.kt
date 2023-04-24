@@ -211,11 +211,14 @@ object CgsGameEventListener : Listener
             // mean disqualification on log-out.
             if (engine.gameInfo.disqualifyOnLogout)
             {
-                CgsGameDisqualificationHandler.disqualifyPlayer(
-                    player = event.participant,
-                    broadcastNotification = true,
-                    setSpectator = false
-                )
+                if (!event.participant.hasMetadata("spectator"))
+                {
+                    CgsGameDisqualificationHandler.disqualifyPlayer(
+                        player = event.participant,
+                        broadcastNotification = true,
+                        setSpectator = false
+                    )
+                }
             } else
             {
                 // We are not considering spectators as
