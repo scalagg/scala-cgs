@@ -21,6 +21,7 @@ import org.bukkit.event.entity.*
 import org.bukkit.event.hanging.HangingPlaceEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerPickupItemEvent
 import org.bukkit.event.vehicle.VehicleEnterEvent
 import org.bukkit.event.weather.WeatherChangeEvent
@@ -126,6 +127,14 @@ object CgsGameGeneralListener : Listener
         if (event.entity is Player && shouldCancel(event.entity as Player))
         {
             event.isCancelled = true
+
+            if (
+                event.cause == EntityDamageEvent.DamageCause.VOID &&
+                engine.gameState == CgsGameState.WAITING
+                )
+            {
+                event.entity.teleport(engine.gameArena!!.getPreLobbyLocation())
+            }
         }
     }
 
