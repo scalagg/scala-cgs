@@ -142,12 +142,15 @@ object CgsPlayerHandler
             if (isGameServer())
             {
                 val cgsParticipantDisconnect = CgsGameEngine
-                    .CgsGameParticipantDisconnectEvent(it.player)
+                    .CgsGameParticipantDisconnectEvent(
+                        it.player,
+                        it.player.hasMetadata("vanished")
+                    )
 
                 cgsParticipantDisconnect.callNow()
 
                 it.player.removeMetadata(
-                    "spectator",  
+                    "spectator",
                     CgsGameEngine.INSTANCE.plugin
                 )
 

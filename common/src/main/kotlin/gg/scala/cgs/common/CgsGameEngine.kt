@@ -56,7 +56,6 @@ import org.bukkit.event.HandlerList
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import kotlin.properties.Delegates
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -380,7 +379,8 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     ) : CgsGameEvent()
 
     class CgsGameParticipantDisconnectEvent(
-        val participant: Player
+        val participant: Player,
+        val participantInVanish: Boolean = false
     ) : CgsGameEvent()
 
     class CgsGameParticipantDeathEvent(

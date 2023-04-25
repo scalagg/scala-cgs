@@ -196,7 +196,7 @@ object CgsGameEventListener : Listener
         {
             CgsGameTeamService.removePlayerFromTeam(event.participant)
 
-            if (!event.participant.hasMetadata("vanished"))
+            if (!event.participantInVanish)
             {
                 engine.sendMessage(
                     "${CC.GREEN}${event.participant.name}${CC.SEC} left. ${CC.GRAY}(${
@@ -217,7 +217,7 @@ object CgsGameEventListener : Listener
                 {
                     CgsGameDisqualificationHandler.disqualifyPlayer(
                         player = event.participant,
-                        broadcastNotification = true,
+                        broadcastNotification = !event.participantInVanish,
                         setSpectator = false
                     )
                 }
