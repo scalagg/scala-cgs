@@ -86,11 +86,14 @@ object CgsGameEventListener : Listener
                 }
             }
 
-            engine.sendMessage(
-                "${CC.GREEN}${event.participant.name}${CC.SEC} joined. ${CC.GRAY}(${
-                    "${Bukkit.getOnlinePlayers().size}/${Bukkit.getMaxPlayers()}"
-                })"
-            )
+            if (!event.participant.hasMetadata("vanished"))
+            {
+                engine.sendMessage(
+                    "${CC.GREEN}${event.participant.name}${CC.SEC} joined. ${CC.GRAY}(${
+                        "${Bukkit.getOnlinePlayers().size}/${Bukkit.getMaxPlayers()}"
+                    })"
+                )
+            }
 
             event.participant.removeMetadata("spectator", engine.plugin)
 
@@ -193,11 +196,14 @@ object CgsGameEventListener : Listener
         {
             CgsGameTeamService.removePlayerFromTeam(event.participant)
 
-            engine.sendMessage(
-                "${CC.GREEN}${event.participant.name}${CC.SEC} left. ${CC.GRAY}(${
-                    "${Bukkit.getOnlinePlayers().size - 1}/${Bukkit.getMaxPlayers()}"
-                })"
-            )
+            if (!event.participant.hasMetadata("vanished"))
+            {
+                engine.sendMessage(
+                    "${CC.GREEN}${event.participant.name}${CC.SEC} left. ${CC.GRAY}(${
+                        "${Bukkit.getOnlinePlayers().size - 1}/${Bukkit.getMaxPlayers()}"
+                    })"
+                )
+            }
         } else if (engine.gameState.isAfter(CgsGameState.STARTED) && !engine.gameState.equals(CgsGameState.ENDED))
         {
             val cgsGamePlayer = CgsPlayerHandler
