@@ -1,6 +1,7 @@
 package gg.scala.cgs.common.runnable.state
 
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.alive
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.runnable.StateRunnable
 import gg.scala.cgs.common.startMessage
@@ -52,7 +53,7 @@ object StartingStateRunnable : StateRunnable(
         PRE_START_TIME--
 
         if (
-            Bukkit.getOnlinePlayers().size < engine.gameInfo.minimumPlayers &&
+            alive.size < engine.gameInfo.minimumPlayers &&
             !hasBeenForceStarted && doWeCareAboutThis
         )
         {
@@ -78,9 +79,7 @@ object StartingStateRunnable : StateRunnable(
 
         if (PRE_START_TIME <= 0)
         {
-            if (
-                Bukkit.getOnlinePlayers().size < engine.gameInfo.minimumPlayers
-            )
+            if (alive.size < engine.gameInfo.minimumPlayers)
             {
                 engine.gameState = CgsGameState.WAITING
                 return

@@ -1,6 +1,7 @@
 package gg.scala.cgs.common.instance.game
 
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.alive
 import gg.scala.cgs.common.states.CgsGameState
 import org.bukkit.Bukkit
 import java.util.*
@@ -20,8 +21,7 @@ class CgsGameServerInfo(
 
     fun refresh()
     {
-        participants = Bukkit.getOnlinePlayers()
-            .filter { !it.hasMetadata("spectator") }
+        participants = alive
             .map { it.uniqueId }.toMutableList()
 
         spectators = Bukkit.getOnlinePlayers()

@@ -2,6 +2,7 @@ package gg.scala.cgs.common.voting
 
 import com.cryptomorin.xseries.XMaterial
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.alive
 import gg.scala.cgs.common.information.arena.CgsGameArenaHandler
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.voting.event.VoteCompletionEvent
@@ -207,9 +208,11 @@ object CgsVotingMapService : Runnable
                     }
                 }
 
-                if (Bukkit.getOnlinePlayers().size < configuration.minimumPlayersForVotingStart)
+                val alivePlayers = alive.size
+
+                if (alivePlayers < configuration.minimumPlayersForVotingStart)
                 {
-                    val required = configuration.minimumPlayersForVotingStart - Bukkit.getOnlinePlayers().size + 1
+                    val required = configuration.minimumPlayersForVotingStart - alivePlayers + 1
 
                     it.player.sendMessage(
                         "${CC.PRI}$required${CC.SEC} more player${
@@ -220,7 +223,7 @@ object CgsVotingMapService : Runnable
                 }
 
                 if (
-                    Bukkit.getOnlinePlayers().size >= configuration.minimumPlayersForVotingStart &&
+                    alivePlayers >= configuration.minimumPlayersForVotingStart &&
                     !votingEnabled
                 )
                 {
@@ -229,7 +232,7 @@ object CgsVotingMapService : Runnable
                 }
 
                 if (
-                    Bukkit.getOnlinePlayers().size < configuration.minimumPlayersForVotingStart &&
+                    alivePlayers < configuration.minimumPlayersForVotingStart &&
                     votingEnabled
                 )
                 {

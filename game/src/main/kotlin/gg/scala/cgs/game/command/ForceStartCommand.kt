@@ -1,6 +1,7 @@
 package gg.scala.cgs.game.command
 
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.alive
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.runnable.state.StartingStateRunnable
 import gg.scala.cgs.common.voting.CgsVotingMapService
@@ -32,7 +33,7 @@ object ForceStartCommand : ScalaCommand()
     @CommandPermission("op")
     fun onForceStart(sender: CommandSender)
     {
-        if (Bukkit.getOnlinePlayers().size <= 1)
+        if (alive.size <= 1)
         {
             throw ConditionFailedException("You cannot start the game when you are alone.")
         }
@@ -76,7 +77,7 @@ object ForceStartCommand : ScalaCommand()
             throw ConditionFailedException("This game does not support voting.")
         }
 
-        if (Bukkit.getOnlinePlayers().size <= 1)
+        if (alive.size <= 1)
         {
             throw ConditionFailedException("You cannot force-start voting when you are alone.")
         }

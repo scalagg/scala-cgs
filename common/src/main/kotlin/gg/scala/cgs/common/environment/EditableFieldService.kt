@@ -20,6 +20,7 @@ object EditableFieldService
         casters[Int::class.java] = { it.toInt() }
         casters[Boolean::class.java] = { it.toBoolean() }
         casters[Double::class.java] = { it.toDouble() }
+        casters[String::class.java] = { it }
     }
 
     fun castFancy(

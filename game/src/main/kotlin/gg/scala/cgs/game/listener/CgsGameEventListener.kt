@@ -2,6 +2,7 @@ package gg.scala.cgs.game.listener
 
 import gg.scala.aware.message.AwareMessage
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.alive
 import gg.scala.cgs.common.player.handler.CgsDeathHandler
 import gg.scala.cgs.common.player.handler.CgsGameDisqualificationHandler
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
@@ -57,7 +58,7 @@ object CgsGameEventListener : Listener
 
         if (engine.gameState == CgsGameState.WAITING || engine.gameState == CgsGameState.STARTING)
         {
-            val participantSize = Bukkit.getOnlinePlayers().size
+            val participantSize = alive.size
 
             val party = PartyService
                 .findPartyByUniqueId(event.participant.uniqueId)
@@ -87,7 +88,7 @@ object CgsGameEventListener : Listener
 
             engine.sendMessage(
                 "${CC.GREEN}${event.participant.name}${CC.SEC} joined. ${CC.GRAY}(${
-                    "${participantSize}/${Bukkit.getMaxPlayers()}"
+                    "${Bukkit.getOnlinePlayers().size}/${Bukkit.getMaxPlayers()}"
                 })"
             )
 
@@ -319,8 +320,7 @@ object CgsGameEventListener : Listener
         event: CgsGameEngine.CgsGameStartEvent
     )
     {
-        val participants = Bukkit.getOnlinePlayers()
-            .filter { !it.hasMetadata("spectator") }
+        val participants = alive
 
         engine.gameStart = System.currentTimeMillis()
         engine.originalRemaining = participants

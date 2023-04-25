@@ -1,6 +1,7 @@
 package gg.scala.cgs.common
 
 import gg.scala.lemon.Lemon
+import me.lucko.helper.utils.Players
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -9,11 +10,18 @@ import net.md_5.bungee.api.chat.ClickEvent
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
+import java.util.logging.Level
 
 /**
  * @author GrowlyX
  * @since 12/2/2021
  */
+val alive: List<Player>
+    get() = Players.all()
+        .filterNot {
+            it.hasMetadata("spectator")
+        }
+
 val startMessage by lazy {
     FancyMessage().apply {
         withMessage(
@@ -29,7 +37,7 @@ val startMessage by lazy {
         )
 
         andHoverOf(
-            "${CC.YELLOW}Click to join our discord server!"
+            "${CC.GREEN}Click to join our discord server!"
         )
 
         andCommandOf(
@@ -43,16 +51,9 @@ fun Exception.printStackTraceV2(
     rootedFrom: String = "N/A"
 )
 {
-    CgsGameEngine.INSTANCE.plugin.logger.severe {
-        """
-            An exception was thrown from $rootedFrom!
-              Compressed: $message
-              Localized: $localizedMessage
-              
-            Complete stack trace:
-            ${stackTraceToString()}
-        """.trimIndent()
-    }
+    CgsGameEngine.INSTANCE.plugin.logger.log(
+        Level.SEVERE, rootedFrom, this
+    )
 }
 
 infix fun Player.refresh(
