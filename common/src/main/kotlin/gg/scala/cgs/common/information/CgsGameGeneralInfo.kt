@@ -14,7 +14,7 @@ open class CgsGameGeneralInfo(
     val startingCountdownSec: Int,
     val awards: CgsGameAwardInfo,
     val preStartVoting: Boolean,
-    val disqualifyOnLogout: Boolean,
+    var disqualifyOnLogout: Boolean,
     val spectateOnDeath: Boolean,
     val showTabHearts: Boolean,
     val showNameHearts: Boolean,
