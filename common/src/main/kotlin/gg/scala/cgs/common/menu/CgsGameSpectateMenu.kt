@@ -60,7 +60,7 @@ class CgsGameSpectateMenu : PaginatedMenu()
         {
             return ItemBuilder(Material.SKULL_ITEM)
                 .owner(this.player.name)
-                .name("${CC.GREEN}this.player.name")
+                .name("${CC.GREEN}${this.player.name}")
                 .addToLore(
                     "${CC.GRAY}Click to teleport."
                 )
