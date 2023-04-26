@@ -9,6 +9,7 @@ import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.ItemBuilder
 import net.evilblock.cubed.util.bukkit.Tasks
+import net.evilblock.cubed.util.nms.MinecraftProtocol
 import net.evilblock.cubed.visibility.VisibilityHandler
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
@@ -86,31 +87,37 @@ object CgsSpectatorHandler
                 PotionEffectType.INVISIBILITY, 10000, 1, false, false
             )
         )
-        var scoreboard = player.scoreboard
-        if (scoreboard == null)
-        {
-            player.scoreboard = Bukkit.getScoreboardManager().newScoreboard
-            scoreboard = player.scoreboard
-        }
-        var ghostVisibility = scoreboard!!.getTeam(GHOST_VIS)
-        if (ghostVisibility == null)
-        {
-            ghostVisibility = scoreboard
-                .registerNewTeam(GHOST_VIS)
-            ghostVisibility.setAllowFriendlyFire(true)
-            ghostVisibility.setCanSeeFriendlyInvisibles(true)
-        }
-        ghostVisibility!!.addPlayer(player)
 
+        if (MinecraftProtocol.getPlayerVersion(player) > 5)
+        {
+            var scoreboard = player.scoreboard
+            if (scoreboard == null)
+            {
+                player.scoreboard = Bukkit.getScoreboardManager().newScoreboard
+                scoreboard = player.scoreboard
+            }
+            var ghostVisibility = scoreboard!!.getTeam(GHOST_VIS)
+            if (ghostVisibility == null)
+            {
+                ghostVisibility = scoreboard
+                    .registerNewTeam(GHOST_VIS)
+                ghostVisibility.setAllowFriendlyFire(true)
+                ghostVisibility.setCanSeeFriendlyInvisibles(true)
+            }
+            ghostVisibility!!.addPlayer(player)
+        }
     }
 
     fun removeGhost(player: Player)
     {
         player.removePotionEffect(PotionEffectType.INVISIBILITY)
 
-        val scoreboard = player.scoreboard ?: return
-        val ghostVisibility = scoreboard.getTeam(GHOST_VIS) ?: return
-        ghostVisibility.removePlayer(player)
+        if (MinecraftProtocol.getPlayerVersion(player) > 5)
+        {
+            val scoreboard = player.scoreboard ?: return
+            val ghostVisibility = scoreboard.getTeam(GHOST_VIS) ?: return
+            ghostVisibility.removePlayer(player)
+        }
     }
 
     @JvmOverloads

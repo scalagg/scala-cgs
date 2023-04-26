@@ -27,13 +27,6 @@ class CgsGameScoreboardProvider(
 
     override fun onScoreboardCreate(player: Player, scoreboard: Scoreboard)
     {
-        if (engine.gameInfo.spectateOnDeath)
-        {
-            scoreboard.registerNewTeam("ghost").also {
-                it.setCanSeeFriendlyInvisibles(true)
-            }
-        }
-
         if (engine.gameInfo.showTabHearts)
         {
             scoreboard.registerNewObjective("tabHealth", "health").also {
