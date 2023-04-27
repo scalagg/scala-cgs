@@ -23,7 +23,9 @@ object StartedStateRunnable : StateRunnable(
         val engine = CgsGameEngine.INSTANCE
 
         val teamsWithAlivePlayers = CgsGameTeamService.teams
-            .values.filter { it.alive.isNotEmpty() }
+            .values.filter {
+                it.alive.isNotEmpty()
+            }
 
         if (machine.stateMachines.isNotEmpty())
         {

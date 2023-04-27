@@ -1,6 +1,7 @@
 package gg.scala.cgs.game
 
 import gg.scala.cgs.common.information.arena.CgsGameArenaHandler
+import gg.scala.cgs.game.client.CgsLunarClientService
 import gg.scala.cgs.game.engine.CgsEngineConfigurationService
 import gg.scala.cgs.game.locator.CgsInstanceLocator
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
@@ -13,6 +14,7 @@ import gg.scala.commons.core.plugin.PluginAuthor
 import gg.scala.commons.core.plugin.PluginDependency
 import gg.scala.commons.core.plugin.PluginDependencyComposite
 import gg.scala.commons.core.plugin.PluginWebsite
+import org.bukkit.Bukkit
 
 /**
  * @author GrowlyX
@@ -56,6 +58,10 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
 
         CgsInstanceLocator.configure {
             flavor().inject(CgsEngineConfigurationService)
+            if (Bukkit.getPluginManager().getPlugin("LunarClient-API") != null)
+            {
+                flavor().inject(CgsLunarClientService)
+            }
         }
 
         CloudSyncDiscoveryService

@@ -14,14 +14,6 @@ import java.util.UUID
 object CgsGameDisqualificationHandler
 {
     fun disqualifyPlayer(
-        player: UUID
-    )
-    {
-        val cgsGameTeam = CgsGameTeamService.getTeamOf(player) ?: return
-        cgsGameTeam.eliminated.add(player)
-    }
-
-    fun disqualifyPlayer(
         player: Player,
         broadcastNotification: Boolean = false,
         setSpectator: Boolean = true

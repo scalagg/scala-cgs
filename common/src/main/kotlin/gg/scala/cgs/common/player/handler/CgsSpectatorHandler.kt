@@ -4,6 +4,7 @@ import com.cryptomorin.xseries.XMaterial
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.adventure
 import gg.scala.cgs.common.refresh
+import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.nametag.NametagHandler
 import net.evilblock.cubed.util.CC
@@ -63,6 +64,11 @@ object CgsSpectatorHandler
         {
             player.removeMetadata("spectator", engine.plugin)
         }
+
+        CgsGameTeamService.getTeamOf(player)
+            ?.apply {
+                this.eliminated.remove(player.uniqueId)
+            }
 
         player refresh (false to GameMode.SURVIVAL)
         removeGhost(player)
@@ -151,6 +157,11 @@ object CgsSpectatorHandler
 
             player.inventory.setItem(0, spectateMenu)
             player.inventory.setItem(8, returnToLobby)
+
+            CgsGameTeamService.getTeamOf(player)
+                ?.apply {
+                    this.eliminated.add(player.uniqueId)
+                }
 
             player.updateInventory()
 

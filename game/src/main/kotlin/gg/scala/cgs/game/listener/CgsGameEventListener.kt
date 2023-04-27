@@ -236,6 +236,12 @@ object CgsGameEventListener : Listener
                         event.participant, true
                     )
 
+                // temp, we'll get rid of them once they rejoin
+                CgsGameTeamService.getTeamOf(event.participant)
+                    ?.apply {
+                        this.eliminated.add(event.participant.uniqueId)
+                    }
+
                 // We're only adding reconnection data if the
                 // player will not be disqualified on logout
                 cgsGamePlayer.lastPlayedGameId = engine.uniqueId
@@ -374,13 +380,15 @@ object CgsGameEventListener : Listener
         if (!event.connected)
         {
             CgsSpectatorHandler.removeSpectator(event.participant)
+        } else
+        {
+            CgsGameTeamService.getTeamOf(event.participant)
+                ?.apply {
+                    this.eliminated.remove(event.participant.uniqueId)
+                }
         }
 
-        val cgsGameTeam = CgsGameTeamService.getTeamOf(event.participant)!!
-        cgsGameTeam.eliminated.remove(event.participant.uniqueId)
-
         event.snapshot.restore(event.participant)
-
         event.participant.sendMessage(
             "${CC.D_GREEN}✓ ${CC.GREEN}You've been added back into the game."
         )

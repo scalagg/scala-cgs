@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit
  */
 @Service
 @IgnoreAutoScan
-//@SoftDependency("LunarClient-API")
 object CgsLunarClientService : Runnable
 {
     private val unreadTeamLeader = UUID.randomUUID()
