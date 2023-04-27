@@ -403,6 +403,25 @@ object CgsGameEventListener : Listener
             .startRunningAsync(CgsGameState.STARTING)
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST)
+    fun onCgsGameForceStart(
+        event: CgsGameEngine.CgsGameForceStartEvent
+    )
+    {
+        val teamsWithAlivePlayers = CgsGameTeamService.teams
+            .values.filter {
+                it.alive.isNotEmpty()
+            }
+
+        if (teamsWithAlivePlayers.size <= 1)
+        {
+            event.isCancelled = true
+            event.starter.sendMessage(
+                "${CC.RED}You must have at least two teams with participants to start the game!"
+            )
+        }
+    }
+
     @EventHandler
     fun onCgsGameEnd(
         event: CgsGameEngine.CgsGameEndEvent
