@@ -21,6 +21,7 @@ import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
 import org.apache.commons.lang3.time.DurationFormatUtils
 import org.bukkit.Bukkit
+import java.time.Duration
 
 /**
  * @author GrowlyX
@@ -80,7 +81,12 @@ object EndedStateRunnable : StateRunnable(
                 Component.text("VICTORY!")
                     .decorate(TextDecoration.BOLD)
                     .color(NamedTextColor.GOLD),
-                Component.text("You won the game!")
+                Component.text("You won the game!"),
+                Title.Times.times(
+                    Duration.ofMillis(500L),
+                    Duration.ofSeconds(10L),
+                    Duration.ofMillis(500L)
+                )
             )
 
             engine.winningTeam.alive.forEach {

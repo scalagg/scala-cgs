@@ -3,6 +3,9 @@ package gg.scala.cgs.common.player.nametag
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.teams.CgsGameTeamService
+import gg.scala.lemon.handler.PlayerHandler
+import gg.scala.lemon.player.sorter.TeamBasedSortStrategy
+import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.nametag.NametagInfo
 import net.evilblock.cubed.nametag.NametagProvider
 import net.evilblock.cubed.util.CC
@@ -30,12 +33,19 @@ object CgsGameNametag : NametagProvider(
         val viewer = CgsPlayerHandler.find(toRefresh)!!
         val target = CgsPlayerHandler.find(refreshFor)!!
 
+        val lemonPlayer = PlayerHandler
+            .find(toRefresh.uniqueId)
+            ?: return SPECTATOR
+
+        val rank = lemonPlayer.disguiseRank()
+            ?: QuickAccess.realRank(toRefresh)
+
         if (
             toRefresh.hasMetadata("spectator") &&
             refreshFor.hasMetadata("spectator")
         )
         {
-            return SPECTATOR
+            return createNametag(CC.GRAY, "", "§0§9§9z")
         }
 
         val computed = CgsGameEngine.INSTANCE.getNametagAdapter()
@@ -44,7 +54,10 @@ object CgsGameNametag : NametagProvider(
         val teamOfViewer = CgsGameTeamService.getTeamOf(toRefresh)
         val teamOfTarget = CgsGameTeamService.getTeamOf(refreshFor)
 
-        return computed ?:
-            if (teamOfTarget == teamOfViewer) GREEN else RED
+        return computed ?: createNametag(
+            if (teamOfTarget == teamOfViewer) CC.GREEN else CC.RED,
+            "",
+            TeamBasedSortStrategy.teamMappings[rank.uuid] ?: "z"
+        )
     }
 }
