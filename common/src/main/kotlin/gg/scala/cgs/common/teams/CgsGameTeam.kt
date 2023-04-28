@@ -13,6 +13,8 @@ open class CgsGameTeam(
     val participants = mutableListOf<UUID>()
     val eliminated = mutableSetOf<UUID>()
 
+    var totalKills = 0
+
     val alive: List<UUID>
         get() = participants.filter { !eliminated.contains(it) }
 }

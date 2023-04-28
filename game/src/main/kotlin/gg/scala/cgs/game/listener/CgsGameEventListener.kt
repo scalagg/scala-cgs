@@ -299,6 +299,11 @@ object CgsGameEventListener : Listener
 
             killerStatistics.kills++
             killerStatistics.gameKills++
+
+            CgsGameTeamService.getTeamOf(killer)
+                ?.apply {
+                    this.totalKills += 1
+                }
         }
 
         event.deathMessage = if (engine.gameInfo.customDeathMessage)
