@@ -15,6 +15,7 @@ import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
 import net.evilblock.cubed.util.bukkit.Tasks
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.title.Title
@@ -76,10 +77,10 @@ object EndedStateRunnable : StateRunnable(
             engine.sendMessage(description)
 
             val currentTitle = Title.title(
-                Component.text("YOU WON")
+                Component.text("VICTORY!")
                     .decorate(TextDecoration.BOLD)
-                    .color(TextColor.fromHexString("#2acc29")),
-                Component.text("Congratulations!")
+                    .color(NamedTextColor.GOLD),
+                Component.text("You won the game!")
             )
 
             engine.winningTeam.alive.forEach {
