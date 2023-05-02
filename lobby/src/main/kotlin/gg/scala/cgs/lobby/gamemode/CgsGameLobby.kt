@@ -12,6 +12,7 @@ import gg.scala.cgs.lobby.CgsLobbyPlugin
 import gg.scala.cgs.lobby.command.commands.LeaderboardPlacementCommand
 import gg.scala.cgs.lobby.command.commands.RecentGamesCommand
 import gg.scala.cgs.lobby.command.commands.RejoinCommand
+import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEngine
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.cgs.lobby.modular.CgsLobbyModule
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
@@ -21,6 +22,8 @@ import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.scoreboard.ScoreboardAdapter
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
+import net.evilblock.cubed.util.bukkit.Tasks
+import net.evilblock.cubed.util.bukkit.Tasks.timer
 import org.bukkit.entity.Player
 import kotlin.properties.Delegates
 import kotlin.reflect.KClass
@@ -75,7 +78,9 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>(
 
         resourcePlugin.commandManager.registerCommand(RejoinCommand)
         resourcePlugin.commandManager.registerCommand(RecentGamesCommand)
-        resourcePlugin.commandManager.registerCommand(LeaderboardPlacementCommand)
+        plugin.commandManager.registerCommand(LeaderboardPlacementCommand)
+
+        timer(1L, 5 * 60 * 20L, CgsLobbyRankingEngine)
 
         CloudSyncDiscoveryService
             .discoverable.assets

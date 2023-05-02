@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap
  * @since 12/4/2021
  */
 @Service
-@Repeating(20 * 60, context = ThreadContext.ASYNC)
 object CgsLobbyRankingEngine : Runnable
 {
     @JvmStatic
