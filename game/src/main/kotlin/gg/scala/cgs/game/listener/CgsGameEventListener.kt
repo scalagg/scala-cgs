@@ -3,6 +3,7 @@ package gg.scala.cgs.game.listener
 import gg.scala.aware.message.AwareMessage
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.alive
+import gg.scala.cgs.common.player.GameSave
 import gg.scala.cgs.common.player.handler.CgsDeathHandler
 import gg.scala.cgs.common.player.handler.CgsGameDisqualificationHandler
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
@@ -17,7 +18,9 @@ import gg.scala.lemon.Lemon
 import gg.scala.lemon.util.QuickAccess.coloredName
 import gg.scala.parties.receiver.PartyReceiverHandler
 import gg.scala.parties.service.PartyService
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.nametag.NametagHandler
+import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Constants.HEART_SYMBOL
 import net.evilblock.cubed.util.bukkit.Tasks
@@ -204,7 +207,7 @@ object CgsGameEventListener : Listener
                     })"
                 )
             }
-        } else if (engine.gameState.isAfter(CgsGameState.STARTED) && !engine.gameState.equals(CgsGameState.ENDED))
+        } else if (engine.gameState.isAfter(CgsGameState.STARTED) && engine.gameState != CgsGameState.ENDED)
         {
             val cgsGamePlayer = CgsPlayerHandler
                 .find(event.participant) ?: return
@@ -227,7 +230,10 @@ object CgsGameEventListener : Listener
                 // active players in the game.
                 if (event.participant.hasMetadata("spectator"))
                 {
-                    cgsGamePlayer.lastPlayedGameId = null
+                    ScalaCommonsSpigot.instance.kvConnection
+                        .sync().del(
+                            "game-saves:${event.participant.uniqueId}"
+                        )
                     return
                 }
 
@@ -242,10 +248,19 @@ object CgsGameEventListener : Listener
                         this.eliminated.add(event.participant.uniqueId)
                     }
 
-                // We're only adding reconnection data if the
-                // player will not be disqualified on logout
-                cgsGamePlayer.lastPlayedGameId = engine.uniqueId
-                cgsGamePlayer.lastPlayedGameDisconnectionTimestamp = System.currentTimeMillis()
+                val relogTime = CgsPlayerHandler.dynamicRelogTime.invoke(event.participant)
+
+                ScalaCommonsSpigot.instance.kvConnection
+                    .sync()
+                    .apply {
+                        psetex(
+                            "game-saves:${event.participant.uniqueId}", relogTime,
+                            Serializers.gson.toJson(GameSave(
+                                expirationTimestamp = System.currentTimeMillis() + relogTime,
+                                serverId = Lemon.instance.settings.id
+                            ))
+                        )
+                    }
             }
         }
     }

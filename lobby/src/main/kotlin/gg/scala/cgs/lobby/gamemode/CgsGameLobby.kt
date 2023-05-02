@@ -9,6 +9,9 @@ import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.statistics.CgsStatisticProvider
 import gg.scala.cgs.lobby.CgsLobbyPlugin
+import gg.scala.cgs.lobby.command.commands.LeaderboardPlacementCommand
+import gg.scala.cgs.lobby.command.commands.RecentGamesCommand
+import gg.scala.cgs.lobby.command.commands.RejoinCommand
 import gg.scala.cgs.lobby.leaderboard.CgsLobbyRankingEntry
 import gg.scala.cgs.lobby.modular.CgsLobbyModule
 import gg.scala.cloudsync.shared.discovery.CloudSyncDiscoveryService
@@ -67,6 +70,10 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>(
             bind<CgsStatisticProvider<S>>() to this@CgsGameLobby
             startup()
         }
+
+        plugin.commandManager.registerCommand(RejoinCommand)
+        plugin.commandManager.registerCommand(RecentGamesCommand)
+        plugin.commandManager.registerCommand(LeaderboardPlacementCommand)
 
         CloudSyncDiscoveryService
             .discoverable.assets

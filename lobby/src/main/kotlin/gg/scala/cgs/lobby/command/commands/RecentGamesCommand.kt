@@ -21,7 +21,6 @@ import java.util.concurrent.CompletableFuture
  * @author GrowlyX
  * @since 2/22/2022
  */
-@AutoRegister
 object RecentGamesCommand : ScalaCommand()
 {
     @CommandAlias("recentgames|rg|mygames")

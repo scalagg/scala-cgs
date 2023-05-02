@@ -14,7 +14,6 @@ import org.bukkit.entity.Player
  * @author GrowlyX
  * @since 12/5/2021
  */
-@AutoRegister
 object LeaderboardPlacementCommand : ScalaCommand()
 {
     @CommandAlias("place-leaderboard")

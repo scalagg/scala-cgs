@@ -4,6 +4,7 @@ import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.instance.handler.CgsInstanceService
 import gg.scala.cgs.common.player.CgsGamePlayer
+import gg.scala.cgs.common.player.GameSave
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.states.CgsGameState
 import gg.scala.cgs.common.statistics.CgsStatisticProvider
@@ -15,6 +16,8 @@ import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.impl.CachedDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
 import me.lucko.helper.Events
+import net.evilblock.cubed.ScalaCommonsSpigot
+import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
 import org.bukkit.entity.Player
 import org.bukkit.event.EventPriority
@@ -99,27 +102,28 @@ object CgsPlayerHandler
                     }
 
                     var calledReconnectEvent = false
+                    val gameSave = ScalaCommonsSpigot.instance
+                        .kvConnection.sync().get(
+                            "game-saves:${it.player.uniqueId}"
+                        )
+                        ?.let { snapshot ->
+                            Serializers.gson.fromJson(snapshot, GameSave::class.java)
+                        }
 
                     // Checking if the last played game is this current game instance.
                     // If this is true, we will call the reconnect event for bukkit to handle.
-                    if (cgsGamePlayer.lastPlayedGameId == CgsGameEngine.INSTANCE.uniqueId)
+                    if (gameSave?.lastPlayedGameId == CgsGameEngine.INSTANCE.uniqueId)
                     {
                         // Only allowing players to go through the reconnection
                         // logic if the game is still in progress.
                         if (CgsGameEngine.INSTANCE.gameState != CgsGameState.STARTED)
                             return@handler
 
-                        val logoutTimestamp = cgsGamePlayer
-                            .lastPlayedGameDisconnectionTimestamp!!
-
-                        // Checking if it has been less than two minutes since the logout
-                        val withinTimeframe =
-                            System.currentTimeMillis() < logoutTimestamp + dynamicRelogTime.invoke(it.player)
-
                         val cgsParticipantReconnect = CgsGameEngine
-                            .CgsGameParticipantReconnectEvent(it.player, withinTimeframe)
+                            .CgsGameParticipantReconnectEvent(it.player, true)
 
-                        cgsParticipantReconnect.callNow(); calledReconnectEvent = true
+                        cgsParticipantReconnect.callNow()
+                        calledReconnectEvent = true
                     }
 
                     // Calling the participant connection event which
