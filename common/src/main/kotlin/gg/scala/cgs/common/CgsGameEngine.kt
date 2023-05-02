@@ -431,21 +431,6 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         }
     }
 
-    fun giveCoins(
-        player: Player,
-        information: Pair<Int, String>
-    )
-    {
-        val grapePlayer = GrapeSpigotPlugin.getInstance()
-            .playerHandler.getByPlayer(player)
-
-        if (grapePlayer != null && INSTANCE.gameInfo.awards.awardCoins)
-        {
-            grapePlayer.coins += information.first
-            sendMessage("${CC.GOLD}+${information.first} coins (${information.second})!")
-        }
-    }
-
     private inner class SmartCgsState : ReadWriteProperty<Any, CgsGameState>
     {
         private var value = CgsGameState.WAITING

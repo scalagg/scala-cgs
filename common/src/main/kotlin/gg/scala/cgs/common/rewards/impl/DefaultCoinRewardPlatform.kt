@@ -10,9 +10,9 @@ import org.bukkit.entity.Player
  */
 object DefaultCoinRewardPlatform : CoinRewardPlatform
 {
-    override fun giveCoins(player: Player, amount: Int)
+    override fun giveCoins(player: Player, amount: Pair<Int, String>, notify: Boolean)
     {
-
+        TODO("Not yet implemented")
     }
 
     override fun getCoins(player: Player) = 0

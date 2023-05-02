@@ -8,6 +8,6 @@ import org.bukkit.entity.Player
  */
 interface CoinRewardPlatform
 {
-    fun giveCoins(player: Player, amount: Int)
+    fun giveCoins(player: Player, amount: Pair<Int, String>, notify: Boolean)
     fun getCoins(player: Player): Int
 }

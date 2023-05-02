@@ -112,7 +112,7 @@ class CgsGameSpectateMenu : PaginatedMenu()
                         if (it)
                         {
                             CgsGameEngine.INSTANCE.platform
-                                .giveCoins(player, -prize.cost)
+                                .giveCoins(player, -prize.cost to "", false)
 
                             prize.apply(this.player)
 

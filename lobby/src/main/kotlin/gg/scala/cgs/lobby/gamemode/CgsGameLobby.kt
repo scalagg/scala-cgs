@@ -39,6 +39,8 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>(
         var INSTANCE by Delegates.notNull<CgsGameLobby<*>>()
     }
 
+    lateinit var resourcePlugin: ExtendedScalaPlugin
+
     abstract fun getScoreboardAdapter(): ScoreboardAdapter
     abstract fun getGameInfo(): CgsGameGeneralInfo
 
@@ -71,9 +73,9 @@ abstract class CgsGameLobby<S : GameSpecificStatistics>(
             startup()
         }
 
-        plugin.commandManager.registerCommand(RejoinCommand)
-        plugin.commandManager.registerCommand(RecentGamesCommand)
-        plugin.commandManager.registerCommand(LeaderboardPlacementCommand)
+        resourcePlugin.commandManager.registerCommand(RejoinCommand)
+        resourcePlugin.commandManager.registerCommand(RecentGamesCommand)
+        resourcePlugin.commandManager.registerCommand(LeaderboardPlacementCommand)
 
         CloudSyncDiscoveryService
             .discoverable.assets

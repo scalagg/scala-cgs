@@ -109,10 +109,8 @@ infix fun Player.giveCoins(
     {
         CgsGameEngine.INSTANCE.platform
             .giveCoins(
-                this, information.first
+                this, information, true
             )
-
-        sendMessage("${CC.GOLD}+${information.first} coins (${information.second})!")
     }
 }
 
