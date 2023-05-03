@@ -27,7 +27,7 @@ import org.bukkit.inventory.ItemStack
 object CgsLobbyModuleItems : HubModuleItemAdapter
 {
     private val spectateItem = ItemBuilder(Material.WATCH)
-        .name("${CC.D_AQUA}Spectate Game ${CC.GRAY}(Right Click)")
+        .name("${CC.GREEN}Spectate a Game")
         .addToLore(
             "${CC.GRAY}Spectate an ongoing game."
         )
@@ -63,10 +63,10 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
                         it.player.inventory.setItem(model.position, model.item)
                     }
 
-                it.player.inventory.setItem(4, joinGameItem)
-                it.player.inventory.setItem(6, spectateItem)
+                it.player.inventory.setItem(4, spectateItem)
+                /*it.player.inventory.setItem(6, spectateItem)
 
-                it.player.inventory.setItem(1, recentGamesItem)
+                it.player.inventory.setItem(1, recentGamesItem)*/
 
                 it.player.updateInventory()
             }
