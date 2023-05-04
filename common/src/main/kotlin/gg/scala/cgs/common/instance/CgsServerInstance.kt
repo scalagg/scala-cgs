@@ -1,5 +1,6 @@
 package gg.scala.cgs.common.instance
 
+import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.instance.game.CgsGameServerInfo
 import gg.scala.store.storage.storable.IDataStoreObject
 import java.util.*
@@ -13,7 +14,7 @@ class CgsServerInstance(
     val type: CgsServerType,
     var online: Int = 0,
     override val identifier: UUID =
-        UUID.randomUUID()
+        CgsGameEngine.INSTANCE.uniqueId
 ) : IDataStoreObject
 {
     var gameServerInfo: CgsGameServerInfo? = null

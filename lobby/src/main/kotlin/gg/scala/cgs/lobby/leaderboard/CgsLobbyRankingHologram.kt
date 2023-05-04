@@ -25,9 +25,7 @@ class CgsLobbyRankingHologram(
     }
 
     override fun getNewLines() = mutableListOf<String>().also {
-        it.add("${CC.B_PRI}${CgsGameLobby.INSTANCE.getGameInfo().fancyNameRender}")
-        it.add("${CC.GRAY}Top 10 ${entryId.capitalize()}")
-        it.add("")
+        it.add("${CC.B_PRI}Top 10 ${CgsGameLobby.INSTANCE.getGameInfo().fancyNameRender} $entryId")
         it.addAll(CgsLobbyRankingEngine.ID_TO_FORMAT[entryId] ?: listOf())
     }
 

@@ -43,7 +43,7 @@ object CgsLobbyRankingEngine : Runnable
                 )
                 .forEachIndexed { index, document ->
                     val result = document.parseIntoLeaderboardResult()
-                    formatted += "${CC.PRI}#${index + 1} ${CC.GRAY}- ${CC.RESET}${result.uniqueId.username()} ${CC.GRAY}- ${CC.GOLD}${
+                    formatted += "${CC.PRI}#${index + 1} ${CC.GRAY}- ${CC.RESET}${result.uniqueId.username()} ${CC.GRAY}- ${CC.PRI}${
                         Numbers.format(
                             result.value
                         )

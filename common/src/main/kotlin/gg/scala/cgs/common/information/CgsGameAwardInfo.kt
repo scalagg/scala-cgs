@@ -5,7 +5,7 @@ package gg.scala.cgs.common.information
  * @since 11/30/2021
  */
 open class CgsGameAwardInfo(
-    val awardCoins: Boolean,
-    val winningCoinRange: IntRange,
-    val participationCoinRange: IntRange,
+    var awardCoins: Boolean,
+    var winningCoinRange: IntRange,
+    var participationCoinRange: IntRange,
 )

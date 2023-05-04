@@ -8,18 +8,18 @@ import org.bukkit.entity.Player
  * @since 11/30/2021
  */
 open class CgsGameGeneralInfo(
-    val fancyNameRender: String,
-    val gameVersion: Float,
-    val minimumPlayers: Int,
-    val startingCountdownSec: Int,
-    val awards: CgsGameAwardInfo,
-    val preStartVoting: Boolean,
+    var fancyNameRender: String,
+    var gameVersion: Float,
+    var minimumPlayers: Int,
+    var startingCountdownSec: Int,
+    var awards: CgsGameAwardInfo,
+    var preStartVoting: Boolean,
     var disqualifyOnLogout: Boolean,
-    val spectateOnDeath: Boolean,
-    val showTabHearts: Boolean,
-    val showNameHearts: Boolean,
-    val usesCustomArenaWorld: Boolean,
-    val gameModes: List<CgsGameMode>
+    var spectateOnDeath: Boolean,
+    var showTabHearts: Boolean,
+    var showNameHearts: Boolean,
+    var usesCustomArenaWorld: Boolean,
+    var gameModes: List<CgsGameMode>
 )
 {
     var configureSpectatorChat: Boolean = true
