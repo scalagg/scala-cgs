@@ -51,7 +51,9 @@ object GameRejoinService
                             ?.let { snapshot ->
                                 Serializers.gson.fromJson(snapshot, GameSave::class.java)
                             }
-                            ?: return@runAsync
+                            ?: return@runAsync kotlin.run {
+                                println("not serialized")
+                            }
 
                         val server = CgsInstanceService.service
                             .load(
@@ -59,10 +61,14 @@ object GameRejoinService
                                 DataStoreStorageType.REDIS
                             )
                             .join()
-                            ?: return@runAsync
+                            ?: return@runAsync kotlin.run {
+                                println("not found")
+                            }
 
                         val gameServer = server.gameServerInfo
-                            ?: return@runAsync
+                            ?: return@runAsync kotlin.run {
+                                println("not game server")
+                            }
 
                         if (gameServer.state == CgsGameState.STARTED)
                         {
@@ -80,6 +86,9 @@ object GameRejoinService
                                     } to join back."  else ""
                                 }"
                             )
+                        } else
+                        {
+                            println("not started")
                         }
                     }
             }

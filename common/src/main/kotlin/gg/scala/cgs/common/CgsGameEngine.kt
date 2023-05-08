@@ -9,6 +9,7 @@ import gg.scala.cgs.common.information.CgsGameGeneralInfo
 import gg.scala.cgs.common.information.arena.CgsGameArena
 import gg.scala.cgs.common.information.arena.CgsGameArenaHandler
 import gg.scala.cgs.common.information.mode.CgsGameMode
+import gg.scala.cgs.common.instance.handler.CgsInstanceService
 import gg.scala.cgs.common.player.CgsGamePlayer
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.player.nametag.CgsGameNametagAdapter
@@ -79,7 +80,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
     var gameArena: CgsGameArena? = null
 
-    val uniqueId: UUID = UUID.randomUUID()
+    val uniqueId: UUID
+        get() = CgsInstanceService.current
+            .gameServerInfo!!.uniqueId
+
     var gameState by SmartCgsState()
 
     var gameStart = 0L
