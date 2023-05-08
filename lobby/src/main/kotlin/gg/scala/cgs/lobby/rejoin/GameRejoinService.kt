@@ -75,16 +75,11 @@ object GameRejoinService
                                 ?: -1L
 
                             gameSaves[it.player.uniqueId] = gameSave
-                            println(expireTime)
 
                             Tasks.delayed(2L) {
                                 FancyMessage()
                                     .withMessage(
-                                        "${CC.GREEN}Looks like you were last in ${server.internalServerId}. Use ${CC.BOLD}/rejoin${CC.GREEN} to join back.${
-                                            if (expireTime == -1L) " You have ${
-                                                DurationFormatUtils.formatDurationWords(expireTime - System.currentTimeMillis(), true, true)
-                                            } to join back."  else ""
-                                        }"
+                                        "${CC.GREEN}Looks like you were last in ${server.internalServerId}. Use ${CC.BOLD}/rejoin${CC.GREEN} to join back."
                                     )
                                     .andHoverOf(
                                         "${CC.GREEN}Rejoin your game!",
@@ -95,6 +90,15 @@ object GameRejoinService
                                         "/rejoin"
                                     )
                                     .sendToPlayer(it.player)
+
+                                if (expireTime != -1L)
+                                {
+                                    it.player.sendMessage(
+                                        "${CC.GREEN}You have ${
+                                            DurationFormatUtils.formatDurationWords(expireTime - System.currentTimeMillis(), true, true)
+                                        } until your rejoin ticket expires."
+                                    )
+                                }
                             }
                         } else
                         {
