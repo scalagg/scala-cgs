@@ -124,6 +124,12 @@ object CgsPlayerHandler
 
                         cgsParticipantReconnect.callNow()
                         calledReconnectEvent = true
+
+                        ScalaCommonsSpigot.instance
+                            .kvConnection.sync()
+                            .del(
+                                "game-saves:${it.player.uniqueId}"
+                            )
                     }
 
                     // Calling the participant connection event which
