@@ -12,6 +12,9 @@ import me.lucko.helper.Events
 import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.CC
+import net.evilblock.cubed.util.bukkit.FancyMessage
+import net.evilblock.cubed.util.bukkit.Tasks
+import net.md_5.bungee.api.chat.ClickEvent
 import org.apache.commons.lang.time.DurationFormatUtils
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
@@ -51,9 +54,7 @@ object GameRejoinService
                             ?.let { snapshot ->
                                 Serializers.gson.fromJson(snapshot, GameSave::class.java)
                             }
-                            ?: return@runAsync kotlin.run {
-                                println("not serialized")
-                            }
+                            ?: return@runAsync
 
                         val server = CgsInstanceService.service
                             .load(
@@ -61,35 +62,48 @@ object GameRejoinService
                                 DataStoreStorageType.REDIS
                             )
                             .join()
-                            ?: return@runAsync kotlin.run {
-                                println("not found")
-                            }
+                            ?: return@runAsync
 
                         val gameServer = server.gameServerInfo
-                            ?: return@runAsync kotlin.run {
-                                println("not game server")
-                            }
+                            ?: return@runAsync
 
                         if (gameServer.state == CgsGameState.STARTED)
                         {
                             val expireTime = ScalaCommonsSpigot.instance
                                 .kvConnection.sync()
-                                .expiretime(key)
+                                .pexpiretime(key)
                                 ?: -1L
 
                             gameSaves[it.player.uniqueId] = gameSave
+                            println(expireTime)
 
-                            it.player.sendMessage(
-                                "${CC.GREEN}Looks like you were last in ${server.internalServerId}. Use ${CC.BOLD}/rejoin${CC.GREEN} to join back.${
-                                    if (expireTime == -1L) " You have ${
-                                        DurationFormatUtils.formatDurationWords(expireTime - System.currentTimeMillis(), true, true)
-                                    } to join back."  else ""
-                                }"
-                            )
+                            Tasks.delayed(2L) {
+                                FancyMessage()
+                                    .withMessage(
+                                        "${CC.GREEN}Looks like you were last in ${server.internalServerId}. Use ${CC.BOLD}/rejoin${CC.GREEN} to join back.${
+                                            if (expireTime == -1L) " You have ${
+                                                DurationFormatUtils.formatDurationWords(expireTime - System.currentTimeMillis(), true, true)
+                                            } to join back."  else ""
+                                        }"
+                                    )
+                                    .andHoverOf(
+                                        "${CC.GREEN}Rejoin your game!",
+                                        "${CC.WHITE}Server: ${CC.GREEN}${server.internalServerId}"
+                                    )
+                                    .andCommandOf(
+                                        ClickEvent.Action.RUN_COMMAND,
+                                        "/rejoin"
+                                    )
+                                    .sendToPlayer(it.player)
+                            }
                         } else
                         {
                             println("not started")
                         }
+                    }
+                    .exceptionally {
+                        it.printStackTrace()
+                        return@exceptionally null
                     }
             }
             .bindWith(plugin)

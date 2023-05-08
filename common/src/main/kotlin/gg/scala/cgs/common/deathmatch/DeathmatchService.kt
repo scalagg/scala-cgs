@@ -80,7 +80,14 @@ object DeathmatchService
 
                                 override fun onEnd()
                                 {
-                                    configureTeleportation(deathmatchConfig)
+                                    Tasks.sync {
+                                        deathmatchConfig.onTeleporation()
+
+                                        broadcast("${CC.GREEN}You have been teleported to the deathmatch!")
+
+                                        this@DeathmatchService
+                                            .configureDeathmatch(deathmatchConfig)
+                                    }
                                 }
 
                                 override fun onRun()
