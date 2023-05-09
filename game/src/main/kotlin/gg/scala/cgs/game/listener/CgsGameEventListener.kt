@@ -3,6 +3,7 @@ package gg.scala.cgs.game.listener
 import gg.scala.aware.message.AwareMessage
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.alive
+import gg.scala.cgs.common.giveCoins
 import gg.scala.cgs.common.player.GameSave
 import gg.scala.cgs.common.player.handler.CgsDeathHandler
 import gg.scala.cgs.common.player.handler.CgsGameDisqualificationHandler
@@ -313,12 +314,16 @@ object CgsGameEventListener : Listener
             val killerStatistics = engine.getStatistics(cgsGameKiller)
 
             killerStatistics.kills++
+            killerStatistics.save()
+
             killerStatistics.gameKills++
 
             CgsGameTeamService.getTeamOf(killer)
                 ?.apply {
                     this.totalKills += 1
                 }
+
+            killer.giveCoins(100 to "Killing a player")
         }
 
         event.deathMessage = if (engine.gameInfo.customDeathMessage)
