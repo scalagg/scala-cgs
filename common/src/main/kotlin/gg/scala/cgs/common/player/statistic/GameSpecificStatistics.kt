@@ -21,7 +21,6 @@ abstract class GameSpecificStatistics(
     var kills = CgsGameStatistic()
     var deaths = CgsGameStatistic()
 
-    var played = CgsGameStatistic()
     var wins = CgsGameStatistic()
     var losses = CgsGameStatistic()
 }
