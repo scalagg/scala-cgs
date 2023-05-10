@@ -1,5 +1,6 @@
 package gg.scala.cgs.common
 
+import gg.scala.cgs.common.combat.CombatLogService
 import gg.scala.cgs.common.deathmatch.DeathmatchConfiguration
 import gg.scala.cgs.common.deathmatch.DeathmatchService
 import gg.scala.cgs.common.environment.EditableFieldService
@@ -143,6 +144,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
             if (gameInfo.preStartVoting)
             {
                 inject(CgsVotingMapService)
+            }
+
+            if (gameInfo.configureCombatLog)
+            {
+                inject(CombatLogService)
             }
         }
 

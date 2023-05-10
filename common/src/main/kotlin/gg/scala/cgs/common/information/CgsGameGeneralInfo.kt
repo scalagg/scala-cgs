@@ -23,6 +23,8 @@ open class CgsGameGeneralInfo(
 )
 {
     var configureSpectatorChat: Boolean = true
+    var configureCombatLog = true
+
     var requiresNoManualConfiguration = true
     var timeUntilShutdown = 10
 

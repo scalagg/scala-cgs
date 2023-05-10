@@ -16,7 +16,7 @@ import kotlin.math.ceil
  */
 object CgsDeathHandler
 {
-    fun formDeathMessage(entity: Player, killer: Entity?): String
+    fun formDeathMessage(entity: Entity, killer: Entity?): String
     {
         var output = getEntityName(entity, true) + CC.SEC
         val cause = entity.lastDamageCause

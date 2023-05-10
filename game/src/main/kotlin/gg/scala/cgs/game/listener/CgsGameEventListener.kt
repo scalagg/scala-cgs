@@ -3,6 +3,7 @@ package gg.scala.cgs.game.listener
 import gg.scala.aware.message.AwareMessage
 import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.alive
+import gg.scala.cgs.common.combat.CombatLogService
 import gg.scala.cgs.common.giveCoins
 import gg.scala.cgs.common.player.GameSave
 import gg.scala.cgs.common.player.handler.CgsDeathHandler
@@ -251,17 +252,35 @@ object CgsGameEventListener : Listener
 
                 val relogTime = CgsPlayerHandler.dynamicRelogTime.invoke(event.participant)
 
-                ScalaCommonsSpigot.instance.kvConnection
-                    .sync()
-                    .apply {
-                        psetex(
-                            "game-saves:${event.participant.uniqueId}", relogTime,
-                            Serializers.gson.toJson(GameSave(
-                                expirationTimestamp = System.currentTimeMillis() + relogTime,
-                                serverId = Lemon.instance.settings.id
-                            ))
+                if (relogTime > 0L)
+                {
+                    if (engine.gameInfo.configureCombatLog)
+                    {
+                        CombatLogService.create(event.participant, relogTime / 1000)
+                        Bukkit.broadcastMessage(
+                            "${CC.GRAY}(Combat Log) ${CC.GREEN}${event.participant.name}${CC.SEC} disconnected."
                         )
                     }
+
+                    ScalaCommonsSpigot.instance.kvConnection
+                        .sync()
+                        .apply {
+                            psetex(
+                                "game-saves:${event.participant.uniqueId}", relogTime,
+                                Serializers.gson.toJson(GameSave(
+                                    expirationTimestamp = System.currentTimeMillis() + relogTime,
+                                    serverId = Lemon.instance.settings.id
+                                ))
+                            )
+                        }
+                } else
+                {
+                    CgsGameDisqualificationHandler.disqualifyPlayer(
+                        player = event.participant,
+                        broadcastNotification = !event.participantInVanish,
+                        setSpectator = false
+                    )
+                }
             }
         }
     }
