@@ -18,8 +18,10 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 import org.bukkit.entity.Zombie
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDeathEvent
-import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent
+import org.bukkit.metadata.FixedMetadataValue
 import java.time.Instant
 import java.util.*
 
@@ -32,10 +34,30 @@ import java.util.*
 object CombatLogService
 {
     private val combatLogs = mutableMapOf<UUID, CombatLog>()
+    private val combatLogEntities = mutableSetOf<Int>()
 
     @Configure
     fun configure()
     {
+        Events
+            .subscribe(EntityDamageByEntityEvent::class.java)
+            .filter {
+                it.entity.entityId in combatLogEntities ||
+                    it.damager.entityId in combatLogEntities
+            }
+            .handler {
+                it.isCancelled = true
+            }
+
+        Events
+            .subscribe(EntityTargetLivingEntityEvent::class.java)
+            .filter {
+                it.entity.entityId in combatLogEntities
+            }
+            .handler {
+                it.isCancelled = true
+            }
+
         Events
             .subscribe(CgsGameEngine.CgsGameParticipantConnectEvent::class.java)
             .handler {
@@ -76,11 +98,18 @@ object CombatLogService
                     killer.giveCoins(100 to "Killing a player")
                 }
 
-                Bukkit.broadcastMessage(
-                    "${CC.GRAY}(Combat Log) ${
-                        CgsDeathHandler.formDeathMessage(it.entity, killer)
-                    }"
-                )
+                if (!it.entity.hasMetadata("broadcasted"))
+                {
+                    Bukkit.broadcastMessage(
+                        "${CC.GRAY}(Combat Log) ${
+                            CgsDeathHandler.formDeathMessage(it.entity, killer)
+                        }"
+                    )
+                }
+
+                it.entity.remove()
+                combatLogs.remove(combatLog.player)
+                combatLogEntities.remove(it.entity.entityId)
             }
     }
 
@@ -96,7 +125,9 @@ object CombatLogService
 
     fun invalidate(player: Player) =
         combatLogs[player.uniqueId]?.apply {
+            combatLogEntities.remove(entity.entityId)
             entity.remove()
+
             combatLogs.remove(this.player)
         }
 
@@ -129,16 +160,21 @@ object CombatLogService
 
         val entityId = combatLog.entity.entityId
         combatLogs[player.uniqueId] = combatLog
+        combatLogEntities.add(entityId)
 
         delayed(relogTimeSeconds * 20L) {
             val combatLogZombie = combatLog(entityId)
                 ?: return@delayed
 
+            combatLogZombie.entity.setMetadata(
+                "broadcasted",
+                FixedMetadataValue(CgsGameEngine.INSTANCE.plugin, true)
+            )
             combatLogZombie.entity.health = 0.0
+
             Bukkit.broadcastMessage(
                 "${CC.GRAY}(Combat Log) ${CC.RED}${combatLogZombie.player.username()}${CC.SEC} was disconnected for too long."
             )
-            combatLogs.remove(combatLogZombie.player)
         }
     }
 }
