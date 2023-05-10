@@ -161,6 +161,7 @@ object DeathmatchService
                     config.onStart()
 
                     broadcast("${CC.GREEN}Deathmatch has begun, you may now fight!")
+                    engine.playSound(Sound.NOTE_PLING)
                 }
             }
 
