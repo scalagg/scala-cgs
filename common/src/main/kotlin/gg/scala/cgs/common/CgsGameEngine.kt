@@ -452,6 +452,13 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
         override fun setValue(thisRef: Any, property: KProperty<*>, value: CgsGameState)
         {
+            if (this.value == CgsGameState.STARTED && value == CgsGameState.STARTING)
+            {
+                throw RuntimeException(
+                    "Some dumb bitch tried to set the game to STARTING from STARTED! what the fuck!"
+                )
+            }
+
             val oldValue = this.value
             this.value = value
 
