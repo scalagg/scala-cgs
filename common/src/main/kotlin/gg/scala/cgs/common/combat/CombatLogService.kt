@@ -43,7 +43,7 @@ object CombatLogService
         Events
             .subscribe(EntityDamageByEntityEvent::class.java)
             .filter {
-                it.entity.entityId in combatLogEntities
+                it.entity.entityId in combatLogEntities && it.damager !is Player
             }
             .handler {
                 it.isCancelled = true
