@@ -1,6 +1,7 @@
 package gg.scala.cgs.common.player.handler
 
 import gg.scala.cgs.common.CgsGameEngine
+import gg.scala.cgs.common.combat.CombatLogService
 import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.instance.handler.CgsInstanceService
 import gg.scala.cgs.common.player.CgsGamePlayer
@@ -118,6 +119,15 @@ object CgsPlayerHandler
                         // logic if the game is still in progress.
                         if (CgsGameEngine.INSTANCE.gameState != CgsGameState.STARTED)
                             return@handler
+
+                        if (CgsGameEngine.INSTANCE.gameInfo.configureCombatLog)
+                        {
+                            // someone killed their combat log!!
+                            if (CombatLogService.combatLogFor(it.player.uniqueId) == null)
+                            {
+                                return@handler
+                            }
+                        }
 
                         val cgsParticipantReconnect = CgsGameEngine
                             .CgsGameParticipantReconnectEvent(it.player, true)

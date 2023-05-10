@@ -43,8 +43,7 @@ object CombatLogService
         Events
             .subscribe(EntityDamageByEntityEvent::class.java)
             .filter {
-                it.entity.entityId in combatLogEntities &&
-                    it.damager.entityId !in combatLogEntities
+                it.entity.entityId in combatLogEntities
             }
             .handler {
                 it.isCancelled = true
@@ -102,17 +101,16 @@ object CombatLogService
                 if (!it.entity.hasMetadata("broadcasted"))
                 {
                     Bukkit.broadcastMessage(
-                        "${CC.GRAY}(Combat Log) ${
-                            CgsDeathHandler.formDeathMessage(it.entity, killer)
-                        }"
+                        CgsDeathHandler.formDeathMessage(it.entity, killer)
                     )
                 }
 
-                it.entity.remove()
                 combatLogs.remove(combatLog.player)
                 combatLogEntities.remove(it.entity.entityId)
             }
     }
+
+    fun combatLogFor(uniqueId: UUID) = combatLogs[uniqueId]
 
     fun combatLog(entity: Entity) =
         combatLogs.values.firstOrNull {
