@@ -8,7 +8,7 @@ import java.time.Duration
  */
 enum class DeathmatchStartStrategy
 {
-    Timed, AlivePlayerCount
+    Timed, AlivePlayerCount, Both
 }
 
 interface DeathmatchConfiguration
