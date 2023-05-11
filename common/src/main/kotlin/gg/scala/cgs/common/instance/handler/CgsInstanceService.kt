@@ -4,6 +4,7 @@ import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.instance.CgsServerInstance
 import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.instance.game.CgsGameServerInfo
+import gg.scala.cgs.common.uniqueIdGlobal
 import gg.scala.lemon.Lemon
 import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
@@ -32,7 +33,7 @@ object CgsInstanceService
         current = CgsServerInstance(
             Lemon.instance.settings.id,
             type,
-            identifier = CgsGameEngine.INSTANCE.uniqueId
+            identifier = uniqueIdGlobal
         )
 
         if (type == CgsServerType.GAME_SERVER)

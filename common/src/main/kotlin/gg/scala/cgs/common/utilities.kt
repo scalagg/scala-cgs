@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.ClickEvent
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
 import org.bukkit.event.entity.PlayerDeathEvent
+import java.util.*
 import java.util.logging.Level
 
 /**
@@ -94,6 +95,8 @@ infix fun Player.refresh(
         removePotionEffect(potionEffect.type)
     }
 }
+
+val uniqueIdGlobal = UUID.randomUUID()
 
 infix fun Player.adventure(lambda: (Audience) -> Unit)
 {
