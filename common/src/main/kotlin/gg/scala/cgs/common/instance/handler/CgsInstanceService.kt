@@ -6,16 +6,11 @@ import gg.scala.cgs.common.instance.CgsServerType
 import gg.scala.cgs.common.instance.game.CgsGameServerInfo
 import gg.scala.cgs.common.uniqueIdGlobal
 import gg.scala.lemon.Lemon
-import gg.scala.store.controller.DataStoreObjectController
-import gg.scala.store.controller.DataStoreObjectControllerCache
-import gg.scala.store.storage.impl.RedisDataStoreStorageLayer
-import gg.scala.store.storage.type.DataStoreStorageType
 import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
-import java.util.UUID
-import java.util.concurrent.ConcurrentHashMap
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
@@ -47,16 +42,12 @@ object CgsInstanceService
         }
 
         Tasks.asyncTimer(0L, 20L) {
-            if (current.gameServerInfo != null)
-            {
-                current.gameServerInfo!!.refresh()
-            }
-
+            current.gameServerInfo?.refresh()
             current.online = Bukkit.getOnlinePlayers().size
 
             ScalaCommonsSpigot.instance.kvConnection
                 .sync().psetex(
-                    "minigames:servers:${CgsGameEngine.INSTANCE.uniqueId}",
+                    "minigames:servers:$uniqueIdGlobal",
                     TimeUnit.SECONDS.toMillis(5L),
                     Serializers.gson.toJson(current)
                 )
