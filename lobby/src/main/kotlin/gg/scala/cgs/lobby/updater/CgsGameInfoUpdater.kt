@@ -62,10 +62,7 @@ object CgsGameInfoUpdater : Runnable
     override fun run()
     {
         val engine = CgsGameLobby.INSTANCE
-
-        val instances = CgsInstanceService.service
-            .loadAll(DataStoreStorageType.REDIS)
-            .join()
+        val instances = CgsInstanceService.servers
 
         lobbies = instances.values
             .filter { it.type == CgsServerType.LOBBY }

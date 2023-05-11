@@ -13,7 +13,6 @@ import me.lucko.helper.Events
 import me.lucko.helper.utils.entityspawner.EntitySpawner
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.Tasks.delayed
-import net.minecraft.server.v1_8_R3.EntityPlayer
 import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.entity.Entity

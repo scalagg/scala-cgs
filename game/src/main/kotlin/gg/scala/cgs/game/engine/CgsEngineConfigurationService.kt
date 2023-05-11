@@ -9,6 +9,7 @@ import gg.scala.flavor.service.Configure
 import gg.scala.flavor.service.Service
 import gg.scala.lemon.Lemon
 import gg.scala.lemon.handler.RedisHandler.buildMessage
+import net.evilblock.cubed.ScalaCommonsSpigot
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
 
@@ -23,17 +24,7 @@ object CgsEngineConfigurationService
     fun configure()
     {
         CgsInstanceService.configure(CgsServerType.GAME_SERVER)
-
         CgsGameEngine.INSTANCE.initialResourceLoad()
-
-        buildMessage(
-            "add-server",
-            "id" to Lemon.instance
-                .settings.id,
-            "address" to "127.0.0.1",
-            "port" to Bukkit.getPort()
-                .toString()
-        ).publish()
 
         Tasks.asyncTimer({
             ServerSync.getLocalGameServer()
@@ -54,14 +45,10 @@ object CgsEngineConfigurationService
     @Close
     fun close()
     {
-        buildMessage(
-            "remove-server",
-            "id" to Lemon.instance
-                .settings.id
-        ).publish()
-
-        Lemon.instance.aware.publishConnection.apply {
-            sync().hdel("cgs:servers", Lemon.instance.settings.id)
-        }
+        ScalaCommonsSpigot
+            .instance.kvConnection
+            .sync().hdel(
+                "minigames:servers:${CgsGameEngine.INSTANCE.uniqueId}"
+            )
     }
 }

@@ -80,10 +80,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     }
 
     var gameArena: CgsGameArena? = null
-
-    val uniqueId: UUID
-        get() = CgsInstanceService.current
-            .gameServerInfo!!.uniqueId
+    val uniqueId = UUID.randomUUID()
 
     var gameState by SmartCgsState()
 

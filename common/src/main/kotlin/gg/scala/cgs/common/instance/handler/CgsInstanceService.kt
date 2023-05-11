@@ -9,8 +9,13 @@ import gg.scala.store.controller.DataStoreObjectController
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.impl.RedisDataStoreStorageLayer
 import gg.scala.store.storage.type.DataStoreStorageType
+import net.evilblock.cubed.ScalaCommonsSpigot
+import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.util.bukkit.Tasks
 import org.bukkit.Bukkit
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
 /**
@@ -20,18 +25,15 @@ import kotlin.properties.Delegates
 object CgsInstanceService
 {
     var current by Delegates.notNull<CgsServerInstance>()
-    var service by Delegates.notNull<DataStoreObjectController<CgsServerInstance>>()
+    var servers = mapOf<UUID, CgsServerInstance>()
 
     fun configure(type: CgsServerType)
     {
-        service = DataStoreObjectControllerCache.create()
-
-        current = service
-            .useLayerWithReturn<RedisDataStoreStorageLayer<CgsServerInstance>, CgsServerInstance>(DataStoreStorageType.REDIS) {
-                this.loadWithFilterSync {
-                    it.internalServerId == Lemon.instance.settings.id
-                } ?: CgsServerInstance(Lemon.instance.settings.id, type)
-            }
+        current = CgsServerInstance(
+            Lemon.instance.settings.id,
+            type,
+            identifier = CgsGameEngine.INSTANCE.uniqueId
+        )
 
         if (type == CgsServerType.GAME_SERVER)
         {
@@ -51,7 +53,30 @@ object CgsInstanceService
 
             current.online = Bukkit.getOnlinePlayers().size
 
-            service.save(current, DataStoreStorageType.REDIS)
+            ScalaCommonsSpigot.instance.kvConnection
+                .sync().psetex(
+                    "minigames:servers:${CgsGameEngine.INSTANCE.uniqueId}",
+                    TimeUnit.SECONDS.toMillis(5L),
+                    Serializers.gson.toJson(current)
+                )
+
+            servers = ScalaCommonsSpigot
+                .instance.kvConnection.sync()
+                .keys("minigames:servers:*")
+                .map {
+                    ScalaCommonsSpigot
+                        .instance.kvConnection
+                        .sync()
+                        .get(it)
+                }
+                .map {
+                    Serializers.gson.fromJson(
+                        it, CgsServerInstance::class.java
+                    )
+                }
+                .associateBy(
+                    CgsServerInstance::identifier
+                )
         }
     }
 }
