@@ -54,20 +54,14 @@ object GameRejoinService
                             ?.let { snapshot ->
                                 Serializers.gson.fromJson(snapshot, GameSave::class.java)
                             }
-                            ?: return@runAsync run {
-                                println("1")
-                            }
+                            ?: return@runAsync
 
                         val server = CgsInstanceService
                             .servers[gameSave.lastPlayedGameId]
-                            ?: return@runAsync run {
-                                println("2")
-                            }
+                            ?: return@runAsync
 
                         val gameServer = server.gameServerInfo
-                            ?: return@runAsync run {
-                                println("3")
-                            }
+                            ?: return@runAsync
 
                         if (gameServer.state == CgsGameState.STARTED)
                         {
