@@ -37,7 +37,10 @@ object CgsGameInfoUpdater : Runnable
             .filter { it.gameServerInfo != null }
             .filter { it.gameServerInfo!!.gameType == gameType }
             .filter { it.gameServerInfo!!.gameMode == gameMode.getId() }
-            .filter { it.gameServerInfo!!.state == CgsGameState.WAITING || it.gameServerInfo!!.state == CgsGameState.STARTING }
+            .filter { it.gameServerInfo!!.state == CgsGameState.WAITING }
+            .sortedByDescending {
+                it.online
+            }
             .firstOrNull()
     }
 
