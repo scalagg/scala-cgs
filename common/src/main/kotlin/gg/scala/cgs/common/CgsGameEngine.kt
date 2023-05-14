@@ -270,6 +270,31 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         }
     }
 
+    fun playSound(sound: Sound, pitch: Float)
+    {
+        for (team in CgsGameTeamService.teams.values)
+        {
+            team.participants.forEach { uuid ->
+                val bukkitPlayer = Bukkit.getPlayer(uuid)
+                        ?: return@forEach
+
+                if (!bukkitPlayer.hasMetadata("spectator"))
+                    bukkitPlayer.playSound(
+                            bukkitPlayer.location, sound, 1F, 1F
+                    )
+            }
+        }
+
+        for (spectator in Bukkit.getOnlinePlayers()
+                .filter { it.hasMetadata("spectator") }
+        )
+        {
+            spectator.playSound(
+                    spectator.location, sound, 1.0F, pitch
+            )
+        }
+    }
+
     fun sendMessage(fancyMessage: FancyMessage)
     {
         for (team in CgsGameTeamService.teams.values)

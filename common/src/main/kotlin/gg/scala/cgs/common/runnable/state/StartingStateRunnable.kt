@@ -34,11 +34,6 @@ object StartingStateRunnable : StateRunnable(
         60, 50, 40, 30, 15, 10, 5, 4, 3, 2, 1
     )
 
-    private val rangeToColor = mutableMapOf(
-        0..5 to CC.RED,
-        5..10 to CC.GOLD
-    )
-
     override fun configure()
     {
         val engine = CgsGameEngine.INSTANCE
@@ -71,8 +66,8 @@ object StartingStateRunnable : StateRunnable(
             )
 
             engine.sendTitle(currentTitle)
-            engine.playSound(Sound.NOTE_STICKS)
-            engine.sendMessage("${CC.SEC}The game starts in ${CC.PRI}${
+            engine.playSound(Sound.NOTE_PLING, 1.0f)
+            engine.sendMessage("${CC.SEC}The game begins in ${CC.PRI}${
                 TimeUtil.formatIntoDetailedString((PRE_START_TIME))
             }${CC.SEC}.")
         }
@@ -95,7 +90,7 @@ object StartingStateRunnable : StateRunnable(
             engine.gameState = CgsGameState.STARTED
 
             engine.sendTitle(currentTitle)
-            engine.playSound(Sound.LEVEL_UP)
+            engine.playSound(Sound.NOTE_PLING, 2.0f)
             engine.sendMessage("${CC.GREEN}The game has started!")
 
             if (engine.gameInfo.gameVersion < 1.0)
@@ -103,12 +98,5 @@ object StartingStateRunnable : StateRunnable(
                 engine.sendMessage(startMessage)
             }
         }
-    }
-
-    private fun getCurrentColor(): String
-    {
-        return rangeToColor.entries
-            .firstOrNull { it.key.contains(PRE_START_TIME) }?.value
-            ?: CC.GREEN
     }
 }

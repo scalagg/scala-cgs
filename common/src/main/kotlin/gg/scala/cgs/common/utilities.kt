@@ -26,19 +26,14 @@ val alive: List<Player>
 val startMessage by lazy {
     FancyMessage().apply {
         withMessage(
-            "",
-            " ${CC.B_PRI}${
-                CgsGameEngine.INSTANCE.gameInfo.fancyNameRender
-            } is currently in BETA!",
-            " ${CC.SEC}Remember, there may be bugs/incomplete features!",
-            "",
-            " ${CC.SEC}If you think you have found a bug, report it at:",
-            " ${CC.WHITE}${Lemon.instance.lemonWebData.discord}",
-            ""
+            "${CC.GRAY}${CC.STRIKE_THROUGH}--------------------------------------",
+            "${CC.RED}This game is currently in BETA.",
+            "${CC.RED}Please report any bugs to our Discord.",
+            "${CC.GRAY}${CC.STRIKE_THROUGH}--------------------------------------",
         )
 
         andHoverOf(
-            "${CC.GREEN}Click to join our discord server!"
+            "${CC.RED}Click to join our Discord server."
         )
 
         andCommandOf(
