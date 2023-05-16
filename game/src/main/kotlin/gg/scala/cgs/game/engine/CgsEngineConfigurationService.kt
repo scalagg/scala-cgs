@@ -47,7 +47,7 @@ object CgsEngineConfigurationService
     {
         ScalaCommonsSpigot
             .instance.kvConnection
-            .sync().hdel(
+            .sync().del(
                 "minigames:servers:${CgsGameEngine.INSTANCE.uniqueId}"
             )
     }
