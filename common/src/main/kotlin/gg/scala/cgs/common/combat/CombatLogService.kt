@@ -136,6 +136,7 @@ object CombatLogService
 
             }
 
+        zombie.maxHealth = player.maxHealth
         zombie.health = player.health
 
         zombie.customName = "${CC.GRAY}(Combat Log) ${CC.GREEN}${player.name}"
