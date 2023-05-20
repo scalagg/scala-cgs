@@ -4,7 +4,7 @@ import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.player.handler.CgsPlayerHandler
 import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.lemon.handler.PlayerHandler
-import gg.scala.lemon.player.sorter.TeamBasedSortStrategy
+import gg.scala.lemon.player.sorter.SortedRankCache
 import gg.scala.lemon.util.QuickAccess
 import net.evilblock.cubed.nametag.NametagInfo
 import net.evilblock.cubed.nametag.NametagProvider
@@ -57,7 +57,7 @@ object CgsGameNametag : NametagProvider(
         return computed ?: createNametag(
             if (teamOfTarget == teamOfViewer) CC.GREEN else CC.RED,
             "",
-            TeamBasedSortStrategy.teamMappings[rank.uuid] ?: "z"
+            "§0§9§9" + (SortedRankCache.teamMappings[rank.uuid] ?: "z")
         )
     }
 }
