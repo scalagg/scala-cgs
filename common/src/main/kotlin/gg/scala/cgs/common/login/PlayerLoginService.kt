@@ -23,7 +23,6 @@ object PlayerLoginService
             .subscribe(PlayerRedirectExpectationEvent::class.java)
             .handler {
                 cached[it.uniqueId] = it.from
-                println("Expectation from ${it.from}")
             }
 
         Events
