@@ -174,8 +174,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
                 "game", "game-server", true
             )
 
-        Bukkit.getServer().maxPlayers =
-            gameMode.getMaxTeams() * gameMode.getTeamSize()
+        if ("event" !in ServerSync.getLocalGameServer().groups)
+        {
+            Bukkit.getServer().maxPlayers =
+                gameMode.getMaxTeams() * gameMode.getTeamSize()
+        }
     }
 
     fun sendMessage(message: List<String>)
