@@ -106,6 +106,11 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         {
             platform = GrapeCoinRewardPlatform
         }
+
+        if (Bukkit.getPluginManager().getPlugin("CoreGameExtensions") != null)
+        {
+            platform = GrapeCoinRewardPlatform
+        }
     }
 
     fun initialResourceLoad()
