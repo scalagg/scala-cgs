@@ -18,6 +18,7 @@ import gg.scala.cgs.common.player.scoreboard.CgsGameScoreboardRenderer
 import gg.scala.cgs.common.player.statistic.GameSpecificStatistics
 import gg.scala.cgs.common.player.visibility.CgsGameVisibilityAdapter
 import gg.scala.cgs.common.rewards.CoinRewardPlatform
+import gg.scala.cgs.common.rewards.impl.CGECoinRewardPlatform
 import gg.scala.cgs.common.rewards.impl.DefaultCoinRewardPlatform
 import gg.scala.cgs.common.rewards.impl.GrapeCoinRewardPlatform
 import gg.scala.cgs.common.runnable.StateRunnableService
@@ -109,7 +110,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
         if (Bukkit.getPluginManager().getPlugin("CoreGameExtensions") != null)
         {
-            platform = GrapeCoinRewardPlatform
+            platform = CGECoinRewardPlatform
         }
     }
 

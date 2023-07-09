@@ -53,12 +53,13 @@ object EndedStateRunnable : StateRunnable(
                     true, true
                 )
             }")
+
+            val winningTeam = engine.winningTeam
+
             description.add(" ${CC.GRAY}Winner${
-                if (engine.gameMode.getTeamSize() == 1) "" else "s"
+                if (winningTeam.alive.size == 1) "" else "s"
             }: ${CC.WHITE}${
-                engine.winningTeam.alive.joinToString(
-                    separator = ", "
-                ) { 
+                winningTeam.alive.joinToString { 
                     Bukkit.getPlayer(it)?.name ?: "???"
                 }
             }")
