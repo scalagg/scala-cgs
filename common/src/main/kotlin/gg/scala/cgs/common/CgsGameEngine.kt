@@ -40,6 +40,8 @@ import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.annotations.custom.CustomAnnotationProcessors
 import gg.scala.grape.GrapeSpigotPlugin
+import gg.tropic.game.extensions.cosmetics.CosmeticCommand
+import gg.tropic.game.extensions.cosmetics.CosmeticLocalConfig
 import me.lucko.helper.Events
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
@@ -111,6 +113,7 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         if (Bukkit.getPluginManager().getPlugin("CoreGameExtensions") != null)
         {
             platform = CGECoinRewardPlatform
+            CosmeticLocalConfig.enableCosmeticResources = false
         }
     }
 

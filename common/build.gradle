@@ -3,7 +3,7 @@ dependencies {
     compileOnly "net.kyori:adventure-platform-bukkit:4.1.2"
 
     compileOnly "com.solexgames:Grape:1.0.0"
-    compileOnly "gg.tropic.game.extensions:tropic-core-game-extensions:1.0.7"
+    compileOnly "gg.tropic.game.extensions:tropic-core-game-extensions:1.1.1"
 
     compileOnly project(":parties")
     compileOnly fileTree("library")
