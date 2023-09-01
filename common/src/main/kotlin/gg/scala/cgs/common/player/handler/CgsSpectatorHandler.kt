@@ -129,7 +129,8 @@ object CgsSpectatorHandler
     @JvmOverloads
     fun setSpectator(
         player: Player, sendTitle: Boolean = true,
-        teleportLocation: Location = engine.gameArena!!.getSpectatorLocation()
+        teleportLocation: Location = engine.gameArena!!.getSpectatorLocation(),
+        temporary: Boolean = false
     )
     {
         player.setMetadata("spectator", FixedMetadataValue(engine.plugin, true))
@@ -158,10 +159,13 @@ object CgsSpectatorHandler
             player.inventory.setItem(0, spectateMenu)
             player.inventory.setItem(8, returnToLobby)
 
-            CgsGameTeamService.getTeamOf(player)
-                ?.apply {
-                    this.eliminated.add(player.uniqueId)
-                }
+            if (temporary)
+            {
+                CgsGameTeamService.getTeamOf(player)
+                    ?.apply {
+                        this.eliminated.add(player.uniqueId)
+                    }
+            }
 
             player.updateInventory()
 
