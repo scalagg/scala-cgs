@@ -159,7 +159,7 @@ object CgsSpectatorHandler
             player.inventory.setItem(0, spectateMenu)
             player.inventory.setItem(8, returnToLobby)
 
-            if (temporary)
+            if (!temporary)
             {
                 CgsGameTeamService.getTeamOf(player)
                     ?.apply {
