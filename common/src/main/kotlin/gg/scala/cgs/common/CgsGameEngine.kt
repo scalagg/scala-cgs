@@ -93,7 +93,9 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
     var originalRemaining =
         mutableListOf<UUID>()
 
-    val audience = BukkitAudiences.create(plugin)
+    val audience by lazy {
+        BukkitAudiences.create(plugin)
+    }
 
     var platform: CoinRewardPlatform = DefaultCoinRewardPlatform
 
