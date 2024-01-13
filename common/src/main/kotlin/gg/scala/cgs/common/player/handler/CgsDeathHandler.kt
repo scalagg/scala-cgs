@@ -1,5 +1,6 @@
 package gg.scala.cgs.common.player.handler
 
+import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.combat.CombatLogService
 import net.evilblock.cubed.util.CC
 import org.apache.commons.lang.WordUtils
@@ -20,7 +21,7 @@ object CgsDeathHandler
 {
     fun formDeathMessage(entity: Entity, killer: Entity?): String
     {
-        var output = getEntityName(entity, true) + CC.SEC
+        var output = getEntityName(entity) + CC.YELLOW
         val cause = entity.lastDamageCause
 
         if (cause != null)
@@ -52,7 +53,7 @@ object CgsDeathHandler
                                 hand.type.name.replace("_", " ")
                             )
 
-                        output += CC.SEC + " using " + CC.RED + handString
+                        output += CC.YELLOW + " using " + CC.RED + handString
                     }
                 }
                 Cause.FALL -> output += if (killer != null)
@@ -106,7 +107,7 @@ object CgsDeathHandler
             output += " died for unknown reasons"
         }
 
-        return "$output${CC.SEC}."
+        return "$output${CC.YELLOW}."
     }
 
     private fun getEntityName(entity: Entity?, doNotAddHealth: Boolean = false): String
@@ -118,8 +119,8 @@ object CgsDeathHandler
             val health = ceil(if (entity is Player) entity.health else (entity as Zombie).health) / 2.0
 
             "${entity.displayName}${
-                if (!doNotAddHealth)
-                    " ${CC.D_RED}[${health}❤]"
+                if (!doNotAddHealth && entity is Player)
+                    " ${CC.GRAY}[${CC.WHITE}${CgsPlayerHandler.find(entity)?.let { CgsGameEngine.INSTANCE.getStatistics(it).gameKills.value } ?: "0"}${CC.GRAY}]"
                 else 
                     ""
             }"
@@ -128,7 +129,7 @@ object CgsDeathHandler
             val entityName: String = if (entity.customName != null)
                 entity.customName else entity.type.name
 
-            CC.SEC + "a " + CC.RED + WordUtils.capitalizeFully(entityName.replace("_", ""))
+            CC.YELLOW + "a " + CC.RED + WordUtils.capitalizeFully(entityName.replace("_", ""))
         }
 
         return output
