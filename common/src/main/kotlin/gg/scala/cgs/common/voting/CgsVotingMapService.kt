@@ -212,7 +212,7 @@ object CgsVotingMapService : Runnable
 
                 if (alivePlayers < configuration.minimumPlayersForVotingStart)
                 {
-                    val required = configuration.minimumPlayersForVotingStart - alivePlayers + 1
+                    val required = configuration.minimumPlayersForVotingStart - alivePlayers
 
                     it.player.sendMessage(
                         "${CC.PRI}$required${CC.SEC} more player${
