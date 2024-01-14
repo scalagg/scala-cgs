@@ -35,7 +35,7 @@ class VoteMenu : Menu()
                     TextSplitter.split(
                         entry.description,
                         linePrefix = CC.GRAY,
-                        wordSuffix = ""
+                        wordSuffix = " "
                     )
                 )
                 .addToLore(
