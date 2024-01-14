@@ -33,24 +33,28 @@ object CgsGameArenaHandler
         arena = arenaOverride
             ?: gameMode.getArenas().random()
 
-        val directory = arena.getDirectory()
-            ?: return
+        if (arena.getDirectory() != null)
+        {
+            val directory = arena.getDirectory()!!
 
-        val childDirectory = File(
-            Bukkit.getWorldContainer(),
-            arena.getBukkitWorldName()
-        )
+            val childDirectory = File(
+                Bukkit.getWorldContainer(),
+                arena.getBukkitWorldName()
+            )
 
-        FileUtils.copyDirectory(directory.toFile(), childDirectory, true)
+            FileUtils.copyDirectory(
+                directory.toFile(), childDirectory, true
+            )
+
+            world = Bukkit.createWorld(
+                WorldCreator(directory.toFile().name)
+                    .environment(World.Environment.NORMAL)
+                    .type(WorldType.NORMAL)
+            )
+            world.setGameRuleValue("doMobSpawning", "false")
+        }
 
         engine.gameArena = arena
-
-        world = Bukkit.createWorld(
-            WorldCreator(directory.toFile().name)
-                .environment(World.Environment.NORMAL)
-                .type(WorldType.NORMAL)
-        )
-        world.setGameRuleValue("doMobSpawning", "false")
     }
 
     @Close
