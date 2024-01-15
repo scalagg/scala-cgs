@@ -160,17 +160,17 @@ object CombatLogService
         combatLogEntities.add(entityId)
 
         delayed(relogTimeSeconds * 20L) {
-            val villagerAf = combatLog(entityId)
+            val combatLogZombie = combatLog(entityId)
                 ?: return@delayed
 
-            villagerAf.entity.setMetadata(
+            combatLogZombie.entity.setMetadata(
                 "broadcasted",
                 FixedMetadataValue(CgsGameEngine.INSTANCE.plugin, true)
             )
-            villagerAf.entity.health = 0.0
+            combatLogZombie.entity.health = 0.0
 
             Bukkit.broadcastMessage(
-                "${CC.GRAY}(Combat Log) ${CC.RED}${villagerAf.player.username()}${CC.SEC} was disconnected for too long."
+                "${CC.GRAY}(Combat Log) ${CC.RED}${combatLogZombie.player.username()}${CC.SEC} was disconnected for too long."
             )
         }
     }

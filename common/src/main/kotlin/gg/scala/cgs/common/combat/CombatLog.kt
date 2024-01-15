@@ -1,5 +1,6 @@
 package gg.scala.cgs.common.combat
 
+import net.evilblock.cubed.entity.npc.NpcEntity
 import org.bukkit.entity.Villager
 import org.bukkit.inventory.ItemStack
 import java.time.Instant

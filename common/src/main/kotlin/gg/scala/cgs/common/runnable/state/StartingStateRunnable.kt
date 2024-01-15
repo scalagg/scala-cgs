@@ -90,7 +90,7 @@ object StartingStateRunnable : StateRunnable(
             engine.gameState = CgsGameState.STARTED
 
             engine.sendTitle(currentTitle)
-            engine.playSound(Sound.NOTE_PLING, 2.0f)
+            engine.playSound(Sound.NOTE_PLING, 1.5f)
             engine.sendMessage("${CC.GREEN}The game has started!")
 
             if (engine.gameInfo.gameVersion < 1.0)
