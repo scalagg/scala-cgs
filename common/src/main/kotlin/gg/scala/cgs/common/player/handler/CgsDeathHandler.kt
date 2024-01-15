@@ -8,7 +8,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
-import org.bukkit.entity.Zombie
+import org.bukkit.entity.Villager
 import org.bukkit.event.entity.EntityDamageEvent
 import kotlin.math.ceil
 
@@ -116,7 +116,7 @@ object CgsDeathHandler
 
         val output: String = if (entity is Player || CombatLogService.combatLog(entity) != null)
         {
-            val health = ceil(if (entity is Player) entity.health else (entity as Zombie).health) / 2.0
+            val health = ceil(if (entity is Player) entity.health else (entity as Villager).health) / 2.0
 
             "${entity.displayName}${
                 if (!doNotAddHealth && entity is Player)

@@ -133,7 +133,10 @@ object CgsGameGeneralListener : Listener
                 engine.gameState == CgsGameState.WAITING
                 )
             {
-                event.entity.teleport(engine.gameArena!!.getPreLobbyLocation())
+                event.entity.teleport(
+                    engine.getVotingConfig()?.preStartLobby()
+                        ?: engine.gameArena!!.getPreLobbyLocation()
+                )
             }
         }
     }

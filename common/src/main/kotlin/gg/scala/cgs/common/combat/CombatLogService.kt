@@ -17,7 +17,7 @@ import org.bukkit.Bukkit
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
-import org.bukkit.entity.Zombie
+import org.bukkit.entity.Villager
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent
@@ -131,27 +131,25 @@ object CombatLogService
 
     fun create(player: Player, relogTimeSeconds: Long)
     {
-        val zombie = EntitySpawner.INSTANCE
-            .spawn(player.location, Zombie::class.java) { _ ->
+        val villager = EntitySpawner.INSTANCE
+            .spawn(player.location, Villager::class.java) { _ ->
 
             }
 
-        zombie.maxHealth = player.maxHealth
-        zombie.health = player.health
+        villager.maxHealth = player.maxHealth
+        villager.health = player.health
 
-        zombie.customName = "${CC.GRAY}(Combat Log) ${CC.GREEN}${player.name}"
-        zombie.isCustomNameVisible = true
+        villager.customName = "${CC.GRAY}(Combat Log) ${CC.GREEN}${player.name}"
+        villager.isCustomNameVisible = true
 
-        zombie.isBaby = false
-        zombie.isVillager = false
-        zombie.canPickupItems = false
+        villager.canPickupItems = false
 
-        zombie.equipment.armorContents = player.inventory.armorContents
-        zombie.equipment.itemInHand = player.itemInHand
+        villager.equipment.armorContents = player.inventory.armorContents
+        villager.equipment.itemInHand = player.itemInHand
 
         val combatLog = CombatLog(
             player = player.uniqueId,
-            entity = zombie,
+            entity = villager,
             timestamp = Instant.now(),
             drops = player.inventory.contents.toList(),
             experience = ((player as CraftPlayer).handle).expReward
@@ -162,17 +160,17 @@ object CombatLogService
         combatLogEntities.add(entityId)
 
         delayed(relogTimeSeconds * 20L) {
-            val combatLogZombie = combatLog(entityId)
+            val villagerAf = combatLog(entityId)
                 ?: return@delayed
 
-            combatLogZombie.entity.setMetadata(
+            villagerAf.entity.setMetadata(
                 "broadcasted",
                 FixedMetadataValue(CgsGameEngine.INSTANCE.plugin, true)
             )
-            combatLogZombie.entity.health = 0.0
+            villagerAf.entity.health = 0.0
 
             Bukkit.broadcastMessage(
-                "${CC.GRAY}(Combat Log) ${CC.RED}${combatLogZombie.player.username()}${CC.SEC} was disconnected for too long."
+                "${CC.GRAY}(Combat Log) ${CC.RED}${villagerAf.player.username()}${CC.SEC} was disconnected for too long."
             )
         }
     }

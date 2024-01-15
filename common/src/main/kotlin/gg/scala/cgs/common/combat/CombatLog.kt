@@ -1,6 +1,6 @@
 package gg.scala.cgs.common.combat
 
-import org.bukkit.entity.Zombie
+import org.bukkit.entity.Villager
 import org.bukkit.inventory.ItemStack
 import java.time.Instant
 import java.util.UUID
@@ -11,7 +11,7 @@ import java.util.UUID
  */
 data class CombatLog(
     val player: UUID,
-    val entity: Zombie,
+    val entity: Villager,
     val timestamp: Instant,
     val drops: List<ItemStack>,
     val experience: Int

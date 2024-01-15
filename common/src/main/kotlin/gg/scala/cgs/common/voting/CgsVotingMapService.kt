@@ -5,6 +5,7 @@ import gg.scala.cgs.common.CgsGameEngine
 import gg.scala.cgs.common.alive
 import gg.scala.cgs.common.information.arena.CgsGameArenaHandler
 import gg.scala.cgs.common.states.CgsGameState
+import gg.scala.cgs.common.teams.CgsGameTeamService
 import gg.scala.cgs.common.voting.event.VoteCompletionEvent
 import gg.scala.cgs.common.voting.menu.VoteMenu
 import gg.scala.cgs.common.voting.selection.VoteSelectionType
