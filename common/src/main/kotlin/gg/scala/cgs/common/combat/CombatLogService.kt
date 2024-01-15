@@ -104,6 +104,8 @@ object CombatLogService
                     )
                 }
 
+                CgsGameEngine.CgsCombatLogDeathEvent(combatLog.player).callNow()
+
                 combatLogs.remove(combatLog.player)
                 combatLogEntities.remove(it.entity.entityId)
             }

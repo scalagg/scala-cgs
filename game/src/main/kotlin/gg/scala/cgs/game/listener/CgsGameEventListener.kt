@@ -165,7 +165,6 @@ object CgsGameEventListener : Listener
             cgsParticipantReinstate.callNow()
         } else
         {
-            println("STOP IT")
 
             CgsSpectatorHandler.setSpectator(
                 event.participant, false

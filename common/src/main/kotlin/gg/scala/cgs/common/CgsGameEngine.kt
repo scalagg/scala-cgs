@@ -436,6 +436,10 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
         val deathLocation: Location
     ) : CgsGameEvent()
 
+    class CgsCombatLogDeathEvent(
+        val participant: UUID
+    ) : CgsGameEvent()
+
     class CgsGameSpectatorAddEvent(
         val spectator: Player
     ) : CgsGameEvent()
