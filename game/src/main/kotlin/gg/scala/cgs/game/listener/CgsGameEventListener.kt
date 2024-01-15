@@ -108,19 +108,10 @@ object CgsGameEventListener : Listener
 
             if (engine.gameState == CgsGameState.WAITING)
             {
-                if (engine.getVotingConfig() != null)
-                {
-                    event.participant.teleport(
-                        engine.getVotingConfig()!!.preStartLobby()
-                    )
-                } else
-                {
-                    // We're going to assume the pre-lobby
-                    // location already exists now
-                    event.participant.teleport(
+                event.participant.teleport(
+                    engine.getVotingConfig()?.preStartLobby() ?:
                         engine.gameArena!!.getPreLobbyLocation()
-                    )
-                }
+                )
             }
 
             if (engine.getVotingConfig() == null && engine.gameInfo.requiresNoManualConfiguration)
@@ -174,6 +165,8 @@ object CgsGameEventListener : Listener
             cgsParticipantReinstate.callNow()
         } else
         {
+            println("STOP IT")
+
             CgsSpectatorHandler.setSpectator(
                 event.participant, false
             )

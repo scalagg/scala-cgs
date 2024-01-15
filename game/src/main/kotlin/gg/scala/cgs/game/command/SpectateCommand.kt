@@ -64,7 +64,8 @@ object SpectateCommand : ScalaCommand()
         {
             CgsSpectatorHandler.removeSpectator(player.bukkit())
             player.bukkit().teleport(
-                CgsGameEngine.INSTANCE.gameArena!!.getPreLobbyLocation()
+                CgsGameEngine.INSTANCE.getVotingConfig()?.preStartLobby()
+                    ?: CgsGameEngine.INSTANCE.gameArena!!.getPreLobbyLocation()
             )
         } else
         {

@@ -120,17 +120,18 @@ object CgsPlayerHandler
                         if (CgsGameEngine.INSTANCE.gameState != CgsGameState.STARTED)
                             return@handler
 
+                        var connectedWithinTimeframe = true
                         if (CgsGameEngine.INSTANCE.gameInfo.configureCombatLog)
                         {
                             // someone killed their combat log!!
                             if (CombatLogService.combatLogFor(it.player.uniqueId) == null)
                             {
-                                return@handler
+                                connectedWithinTimeframe = false
                             }
                         }
 
                         val cgsParticipantReconnect = CgsGameEngine
-                            .CgsGameParticipantReconnectEvent(it.player, true)
+                            .CgsGameParticipantReconnectEvent(it.player, connectedWithinTimeframe)
 
                         cgsParticipantReconnect.callNow()
                         calledReconnectEvent = true
