@@ -26,6 +26,7 @@ import net.evilblock.cubed.util.bukkit.Tasks
 import net.evilblock.cubed.util.time.TimeUtil
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
@@ -451,6 +452,11 @@ object CgsVotingMapService : Runnable
         {
             Players.all().forEach {
                 it.sendMessage("${CC.SEC}Map voting will end in ${CC.PRI}${TimeUtil.formatIntoDetailedString(countdown)}${CC.SEC}.")
+                it.playSound(
+                    it.location,
+                    Sound.NOTE_STICKS,
+                    1.0f, 1.0f
+                )
             }
         }
 
