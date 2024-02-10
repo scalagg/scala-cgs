@@ -4,7 +4,6 @@ import gg.scala.basics.plugin.profile.BasicsProfile
 import gg.scala.basics.plugin.settings.defaults.values.StateSettingValue
 import gg.scala.commons.annotations.commands.AutoRegister
 import gg.scala.commons.command.ScalaCommand
-import gg.scala.lemon.Lemon
 import gg.scala.lemon.player.wrapper.AsyncLemonPlayer
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
@@ -17,7 +16,6 @@ import gg.scala.parties.service.PartyInviteService
 import gg.scala.parties.service.PartyService
 import gg.scala.parties.service.PartyService.handlePartyJoin
 import gg.scala.parties.stream.PartyMessageStream
-import io.lettuce.core.api.StatefulRedisConnection
 import gg.scala.commons.acf.CommandHelp
 import gg.scala.commons.acf.ConditionFailedException
 import gg.scala.commons.acf.annotation.*
@@ -59,10 +57,9 @@ object PartyCommand : ScalaCommand()
     @Description("Set a user's role in your party.")
     fun onRole(
         player: Player,
-        target: UUID,
+        target: AsyncLemonPlayer,
         role: PartyRole
-    )
-    {
+    ) = target.validatePlayers(player, false) {
         val existing = PartyService
             .findPartyByUniqueId(player)
             ?: throw ConditionFailedException("You're not in a party.")
@@ -72,7 +69,7 @@ object PartyCommand : ScalaCommand()
             throw ConditionFailedException("You must be the leader of your party to promote others.")
         }
 
-        if (target == player.uniqueId)
+        if (it.uniqueId == player.uniqueId)
         {
             throw ConditionFailedException("You're unable to modify your own party role.")
         }
@@ -83,7 +80,7 @@ object PartyCommand : ScalaCommand()
         }
 
         val member = existing
-            .findMember(target)
+            .findMember(it.uniqueId)
             ?: throw ConditionFailedException(
                 "The player you specified is not a party member."
             )
@@ -91,7 +88,7 @@ object PartyCommand : ScalaCommand()
         member.role = role
 
         val fancy = FancyMessage()
-        fancy.withMessage("$prefix${CC.GREEN}${target.username()}'s ${CC.YELLOW}role has been set to ${role.formatted}${CC.YELLOW}.")
+        fancy.withMessage("$prefix${CC.GREEN}${it.name}'s ${CC.YELLOW}role has been set to ${role.formatted}${CC.YELLOW}.")
 
         PartyMessageStream.pushToStream(existing, fancy)
     }
@@ -100,56 +97,66 @@ object PartyCommand : ScalaCommand()
     @Description("View your party details!")
     fun onInfo(
         player: Player,
-        @Optional target: UUID?
-    ): CompletableFuture<Void>
+        @Optional target: AsyncLemonPlayer?
+    ): CompletableFuture<Any>
     {
-        return PartyService
-            .loadPartyOfPlayerIfAbsent(
-                target ?: player.uniqueId
-            )
-            .thenApply {
-                val username = CubedCacheUtil
-                    .fetchName(
-                        target ?: player.uniqueId
-                    )
-
-                if (it == null)
-                {
-                    throw ConditionFailedException(
-                        if (target == null)
-                            "You're not in a party." else "${CC.YELLOW}${
-                            CubedCacheUtil.fetchName(target)
-                        }${CC.RED} is not in a party."
-                    )
+        if (target != null)
+        {
+            return target
+                .validatePlayers(player, false) {
+                    showPartyDetailsOf(it.uniqueId, true, player).join()
                 }
+                .thenApply { Any() }
+        }
 
-                player.sendMessage("")
-                player.sendMessage("  ${CC.B_PRI}$username's Party:")
-                player.sendMessage("  ${CC.I_GRAY}${it.members.size} members.")
-                player.sendMessage("")
-                player.sendMessage("  ${CC.BL_PURPLE}⚫ ${CC.L_PURPLE}Status: ${it.status.formatted}")
-                player.sendMessage("")
-
-                val moderators = it.members
-                    .filter { member ->
-                        member.value.role == PartyRole.MODERATOR
-                    }
-
-                if (moderators.isNotEmpty())
-                {
-                    player.sendMessage("  ${CC.BD_GREEN}⚫ ${CC.D_GREEN}Moderators:")
-
-                    for (member in moderators)
-                    {
-                        player.sendMessage("   - ${member.value.uniqueId.username()}")
-                    }
-
-                    player.sendMessage("")
-                }
-
-                return@thenApply null
-            }
+        return showPartyDetailsOf(player.uniqueId, false, player)
+            .thenApply { Any() }
     }
+
+    fun showPartyDetailsOf(uniqueId: UUID, isNotSelf: Boolean, player: Player) = PartyService
+        .loadPartyOfPlayerIfAbsent(uniqueId)
+        .thenApply {
+            val username = CubedCacheUtil
+                .fetchName(
+                    uniqueId
+                )
+
+            if (it == null)
+            {
+                throw ConditionFailedException(
+                    if (!isNotSelf)
+                        "You're not in a party." else "${CC.YELLOW}${
+                        CubedCacheUtil.fetchName(uniqueId)
+                    }${CC.RED} is not in a party."
+                )
+            }
+
+            player.sendMessage("")
+            player.sendMessage("  ${CC.B_PRI}$username's Party:")
+            player.sendMessage("  ${CC.I_GRAY}${it.members.size} members.")
+            player.sendMessage("")
+            player.sendMessage("  ${CC.BL_PURPLE}⚫ ${CC.L_PURPLE}Status: ${it.status.formatted}")
+            player.sendMessage("")
+
+            val moderators = it.members
+                .filter { member ->
+                    member.value.role == PartyRole.MODERATOR
+                }
+
+            if (moderators.isNotEmpty())
+            {
+                player.sendMessage("  ${CC.BD_GREEN}⚫ ${CC.D_GREEN}Moderators:")
+
+                for (member in moderators)
+                {
+                    player.sendMessage("   - ${member.value.uniqueId.username()}")
+                }
+
+                player.sendMessage("")
+            }
+
+            return@thenApply null
+        }
 
     @Subcommand("leave")
     @Description("Leave your current party!")
@@ -161,7 +168,7 @@ object PartyCommand : ScalaCommand()
 
         if (player.uniqueId == existing.leader.uniqueId)
         {
-            throw ConditionFailedException("You cannot leave your own party! Use ${CC.BOLD}/party disband${CC.RED} to disband your party.")
+            return onDisband(player)
         }
 
         return PartyService.handlePartyLeave(player.uniqueId)
@@ -171,32 +178,32 @@ object PartyCommand : ScalaCommand()
     @CommandCompletion("@players")
     @Description("Join a public and/or password protected party!")
     fun onJoin(
-        player: Player, target: UUID,
+        player: Player, target: AsyncLemonPlayer,
         @Optional password: String?
-    ): CompletableFuture<Void>
-    {
-        return PartyService.loadPartyOfPlayerIfAbsent(target)
-            .thenAccept {
-                if (it == null)
+    ) = target.validatePlayers(player, false) {
+        PartyService
+            .loadPartyOfPlayerIfAbsent(it.uniqueId)
+            .thenAccept { party ->
+                if (party == null)
                 {
-                    throw ConditionFailedException("${CC.YELLOW}${target.username()}${CC.RED} does not have a party!")
+                    throw ConditionFailedException("${CC.YELLOW}${it.name}${CC.RED} does not have a party!")
                 }
 
-                if (it.includedMembers().size >= it.limit)
+                if (party.includedMembers().size >= party.limit)
                 {
                     throw ConditionFailedException("You cannot join that party as its full!")
                 }
 
-                if (it.status != PartyStatus.PUBLIC)
+                if (party.status != PartyStatus.PUBLIC)
                 {
-                    if (it.status == PartyStatus.PROTECTED)
+                    if (party.status == PartyStatus.PROTECTED)
                     {
                         if (password == null)
                         {
                             throw ConditionFailedException("You need to provide a password to join this party!")
                         } else
                         {
-                            if (it.password != password)
+                            if (party.password != password)
                             {
                                 throw ConditionFailedException("You provided the incorrect password for this party!")
                             }
@@ -209,143 +216,152 @@ object PartyCommand : ScalaCommand()
 
                 handlePartyJoin(player, it.uniqueId)
             }
+            .join()
     }
 
     @Private
     @Subcommand("accept")
-    fun onAccept(player: Player, uniqueId: UUID): CompletableFuture<Void>
-    {
-        val existing = PartyService
-            .findPartyByUniqueId(player)
+    fun onAccept(player: Player, target: AsyncLemonPlayer) = target
+        .validatePlayers(player, false) {
+            val existing = PartyService
+                .findPartyByUniqueId(player)
 
-        if (existing != null)
-        {
-            throw ConditionFailedException("You're already in a party! Please use ${CC.BOLD}/party leave${CC.RED} to join a new one.")
-        }
-
-        return PartyInviteService.hasOutgoingInvite(
-            uniqueId, player.uniqueId
-        ).thenCompose {
-            if (!it)
+            if (existing != null)
             {
-                throw ConditionFailedException("You do not have an invite from this party!")
+                throw ConditionFailedException("You're already in a party! Please use ${CC.BOLD}/party leave${CC.RED} to join a new one.")
             }
 
-            val requestKey =
-                "parties:invites:${player.uniqueId}:$uniqueId"
+            PartyInviteService
+                .hasOutgoingInvite(
+                    it.uniqueId, player.uniqueId
+                )
+                .thenCompose { hasInvite ->
+                    if (!hasInvite)
+                    {
+                        throw ConditionFailedException("You do not have an invite from this party!")
+                    }
 
-            connection.sync().hdel(
-                requestKey, uniqueId.toString()
-            )
+                    val requestKey =
+                        "parties:invites:${player.uniqueId}:${it.uniqueId}"
 
-            handlePartyJoin(player, uniqueId)
+                    connection.sync().hdel(
+                        requestKey, it.uniqueId.toString()
+                    )
+
+                    handlePartyJoin(player, it.uniqueId)
+                }
+                .join()
         }
-    }
 
     @Subcommand("invite")
     @CommandCompletion("@players")
     @Description("Invite a player to your party!")
-    fun onInvite(player: Player, target: UUID): CompletableFuture<Void>
-    {
-        val existing = PartyService
-            .findPartyByUniqueId(player)
+    fun onInvite(player: Player, target: AsyncLemonPlayer) =
+        target.validatePlayers(player, false) {
+            val existing = PartyService
+                .findPartyByUniqueId(player)
 
-        if (target == player.uniqueId)
-        {
-            throw ConditionFailedException("You cannot invite yourself to your party!")
-        }
-
-        if (existing == null)
-        {
-            // we'll automatically create a party for them and then invite
-            return onCreate(player)
-                .thenCompose {
-                    onInvite(player, target)
-                }
-        }
-
-        if (existing.includedMembers().size >= existing.limit)
-        {
-            throw ConditionFailedException("You cannot invite anymore people to your party as its full.")
-        }
-
-        val member = existing
-            .findMember(player.uniqueId)!!
-
-        val allInvite = existing.isEnabled(PartySetting.ALL_INVITE)
-
-        if (!allInvite && !(member.role over PartyRole.MEMBER))
-        {
-            throw ConditionFailedException("You do not have permission to invite members! Your role is: ${member.role.formatted}")
-        }
-
-        if (existing.findMember(target) != null)
-        {
-            throw ConditionFailedException("${CC.YELLOW}${target.username()}${CC.RED} is already in your party.")
-        }
-
-        return PartyInviteService.hasOutgoingInvite(
-            existing.uniqueId, target
-        ).thenCompose {
-            if (it)
+            if (it.uniqueId == player.uniqueId)
             {
-                throw ConditionFailedException("A party invite was already sent out to this user.")
+                throw ConditionFailedException("You cannot invite yourself to your party!")
             }
 
-            handlePostOutgoingInvite(player, target, existing)
+            if (existing == null)
+            {
+                // we'll automatically create a party for them and then invite
+                onCreate(player)
+                    .thenRun {
+                        // some recursive error stuff
+                        player.performCommand("party invite ${it.name}")
+                    }
+                    .join()
+                return@validatePlayers
+            }
+
+            if (existing.includedMembers().size >= existing.limit)
+            {
+                throw ConditionFailedException("You cannot invite anymore people to your party as its full.")
+            }
+
+            val member = existing
+                .findMember(player.uniqueId)!!
+
+            val allInvite = existing.isEnabled(PartySetting.ALL_INVITE)
+
+            if (!allInvite && !(member.role over PartyRole.MEMBER))
+            {
+                throw ConditionFailedException("You do not have permission to invite members! Your role is: ${member.role.formatted}")
+            }
+
+            if (existing.findMember(it.uniqueId) != null)
+            {
+                throw ConditionFailedException("${CC.YELLOW}${it.name}${CC.RED} is already in your party.")
+            }
+
+            PartyInviteService
+                .hasOutgoingInvite(existing.uniqueId, it.uniqueId)
+                .thenCompose { hasInvite ->
+                    if (hasInvite)
+                    {
+                        throw ConditionFailedException("A party invite was already sent out to this user.")
+                    }
+
+                    handlePostOutgoingInvite(player, it.uniqueId, existing)
+                }
+                .join()
         }
-    }
 
     @Subcommand("kick|remove")
     @CommandCompletion("@players")
     @Description("Kick a player from your party!")
-    fun onKick(player: Player, target: UUID): CompletableFuture<Void>
-    {
-        val existing = PartyService
-            .findPartyByUniqueId(player)
-            ?: throw ConditionFailedException("You're not in a party.")
+    fun onKick(player: Player, target: AsyncLemonPlayer) =
+        target.validatePlayers(player, false) {
+            val existing = PartyService
+                .findPartyByUniqueId(player)
+                ?: throw ConditionFailedException("You're not in a party.")
 
-        val selfMember = existing
-            .findMember(player.uniqueId)!!
+            val selfMember = existing
+                .findMember(player.uniqueId)!!
 
-        if (!(selfMember.role over PartyRole.MODERATOR))
-        {
-            throw ConditionFailedException("You do not have permission to kick members! Your role is: ${selfMember.role.formatted}")
-        }
+            if (!(selfMember.role over PartyRole.MODERATOR))
+            {
+                throw ConditionFailedException("You do not have permission to kick members! Your role is: ${selfMember.role.formatted}")
+            }
 
-        val targetMember = existing
-            .findMember(target)
-            ?: throw ConditionFailedException(
-                "${CC.YELLOW}${target.username()}${CC.RED} is not in your party."
+            val targetMember = existing
+                .findMember(it.uniqueId)
+                ?: throw ConditionFailedException(
+                    "${CC.YELLOW}${it.name}${CC.RED} is not in your party."
+                )
+
+            if (it.uniqueId == existing.leader.uniqueId)
+            {
+                throw ConditionFailedException("You do not have permission to kick the party leader!")
+            }
+
+            if (it.uniqueId == player.uniqueId)
+            {
+                throw ConditionFailedException("You cannot kick yourself from your party!")
+            }
+
+            existing.members.remove(
+                targetMember.uniqueId
             )
 
-        if (target == existing.leader.uniqueId)
-        {
-            throw ConditionFailedException("You do not have permission to kick the party leader!")
+            existing.saveAndUpdateParty()
+                .thenRun {
+                    PartyLeaveEvent(
+                        existing, targetMember, true
+                    ).call()
+
+                    existing.sendMessage(
+                        FancyMessage().apply {
+                            withMessage("$prefix${CC.GREEN}${it.name}${CC.YELLOW} was kicked from the party.")
+                        }
+                    )
+                }
+                .join()
         }
-
-        if (target == player.uniqueId)
-        {
-            throw ConditionFailedException("You cannot kick yourself from your party!")
-        }
-
-        existing.members.remove(
-            targetMember.uniqueId
-        )
-
-        return existing.saveAndUpdateParty()
-            .thenRun {
-                PartyLeaveEvent(
-                    existing, targetMember, true
-                ).call()
-
-                existing.sendMessage(
-                    FancyMessage().apply {
-                        withMessage("$prefix${CC.GREEN}${target.username()}${CC.YELLOW} was kicked from the party.")
-                    }
-                )
-            }
-    }
 
     private fun handlePostOutgoingInvite(
         player: Player, target: UUID, party: Party
@@ -526,7 +542,8 @@ object PartyCommand : ScalaCommand()
             {
                 player.sendMessage(
                     "${CC.GREEN}${
-                        value.name.lowercase().capitalize()
+                        value.name.lowercase()
+                            .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
                     }s: ${CC.WHITE}${
                         members.joinToString(", ") {
                             it.uniqueId.username()
