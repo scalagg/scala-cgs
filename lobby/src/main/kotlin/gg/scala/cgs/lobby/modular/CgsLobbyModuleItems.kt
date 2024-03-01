@@ -51,6 +51,12 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
             .glow().build()
     }
 
+    private val enderChestItem by lazy {
+        ItemBuilder(Material.ENDER_CHEST)
+            .name("${CC.PINK}Cosmetics ${CC.GRAY}(Right Click)")
+            .glow().build()
+    }
+
     @Configure
     fun configure()
     {
@@ -63,10 +69,11 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
                         it.player.inventory.setItem(model.position, model.item)
                     }
 
-                it.player.inventory.setItem(4, spectateItem)
-                /*it.player.inventory.setItem(6, spectateItem)
+                it.player.inventory.setItem(4, joinGameItem)
+                it.player.inventory.setItem(6, enderChestItem)
+                it.player.inventory.setItem(7, spectateItem)
 
-                it.player.inventory.setItem(1, recentGamesItem)*/
+                it.player.inventory.setItem(1, recentGamesItem)
 
                 it.player.updateInventory()
             }
@@ -86,6 +93,10 @@ object CgsLobbyModuleItems : HubModuleItemAdapter
                     // just performing command to prevent
                     RecentGamesCommand
                         .onRecentGames(it.player, null)
+                }
+                else if (it.item.isSimilar(enderChestItem))
+                {
+                    it.player.performCommand("cosmetics")
                 }
             }
     }

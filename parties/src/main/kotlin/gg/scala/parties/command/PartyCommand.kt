@@ -182,6 +182,13 @@ object PartyCommand : ScalaCommand()
         player: Player, target: AsyncLemonPlayer,
         @Optional password: String?
     ) = target.validatePlayers(player, false) {
+        if (PartyService.findPartyByUniqueId(player) != null)
+        {
+            throw ConditionFailedException(
+                "You are already in a party!"
+            )
+        }
+
         val party = PartyService
             .loadPartyOfPlayerIfAbsent(it.uniqueId)
             .join()

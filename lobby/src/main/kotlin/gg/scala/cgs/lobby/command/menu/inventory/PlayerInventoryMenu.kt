@@ -6,6 +6,7 @@ import gg.scala.cgs.common.snapshot.wrapped.CgsWrappedGameSnapshot
 import gg.scala.cgs.lobby.command.menu.RecentGamesMenu
 import gg.scala.lemon.util.CubedCacheUtil
 import gg.scala.lemon.util.QuickAccess
+import gg.scala.lemon.util.QuickAccess.username
 import net.evilblock.cubed.menu.Button
 import net.evilblock.cubed.menu.pagination.PaginatedMenu
 import net.evilblock.cubed.util.CC
@@ -53,36 +54,7 @@ class PlayerInventoryMenu(
         player: Player, callback: (Boolean) -> Unit
     )
     {
-        if (coloredUsernames.isNotEmpty())
-        {
-            // We don't want to preload usernames
-            // every time this menu is opened.
-            callback.invoke(true)
-            return
-        }
-
-        CompletableFuture.runAsync {
-            for (key in snapshot.snapshots.keys)
-            {
-                val colored = QuickAccess
-                    .fetchColoredName(key)
-
-                // we're going to default the username
-                // to &aUsername as something may go wrong
-                // in the process of fetching the username
-                coloredUsernames[key] =
-                    "${CC.GREEN}$colored"
-            }
-        }.whenComplete { _, throwable ->
-            if (throwable != null)
-            {
-                throwable.printStackTrace()
-                callback.invoke(false)
-                return@whenComplete
-            }
-
-            callback.invoke(true)
-        }
+        callback.invoke(true)
     }
 
     override fun getAllPagesButtons(player: Player): Map<Int, Button>
@@ -124,7 +96,11 @@ class PlayerInventoryMenu(
 
             return ItemBuilder.of(Material.SKULL)
                 .owner(username)
-                .name(coloredUsernames[snapshot.uniqueId])
+                .name(
+                    QuickAccess
+                        .computeColoredName(snapshot.uniqueId, snapshot.uniqueId.username())
+                        .toString()
+                )
                 .setLore(description)
                 .build()
         }

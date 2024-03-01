@@ -47,62 +47,49 @@ class RecentGamesMenu(
                 }
 
             for (recentGame in sortedGames)
-                it[it.size] = RecentGameButton(recentGame)
+                it[it.size] = ItemBuilder.of(Material.valueOf(recentGame.icon))
+                    .addToLore(
+                        "${CC.D_GRAY}${
+                            TimeUtil.formatIntoCalendarString(recentGame.datePlayed)
+                        }",
+                        "${CC.GRAY}Duration: ${CC.GREEN}${
+                            TimeUtil.formatIntoDetailedString((recentGame.elapsedTime / 1000).toInt())
+                        }",
+                        "",
+                        "${CC.GRAY}Mode: ${CC.GREEN}${
+                            recentGame.gameMode
+                        }",
+                    )
+                    .also {
+                        if (recentGame.mapName != "Random")
+                        {
+                            it.addToLore("${CC.GRAY}Map: ${CC.GREEN}${
+                                recentGame.mapName
+                            }")
+                        }
+                    }
+                    .addToLore(
+                        "",
+                        "${CC.GRAY}Server: ${CC.GREEN}${
+                            recentGame.server
+                        }",
+                        "${CC.GRAY}Players: ${CC.GREEN}${
+                            recentGame.players.size
+                        }"
+                    )
+                    .addToLore(
+                        "",
+                        "${CC.GREEN}Click to view snapshots!"
+                    )
+                    .name("${CC.GREEN}${recentGame.gameName}")
+                    .toButton { _, _ ->
+                        PlayerInventoryMenu(
+                            this@RecentGamesMenu,
+                            recentGame
+                        ).openMenu(player)
+                    }
         }
     }
 
     override fun getPrePaginatedTitle(player: Player) = "Recent Games"
-
-    inner class RecentGameButton(
-        private val recentGame: CgsWrappedGameSnapshot
-    ) : Button()
-    {
-        override fun getButtonItem(player: Player): ItemStack
-        {
-            return ItemBuilder.of(Material.valueOf(recentGame.icon))
-                .addToLore(
-                    "${CC.D_GRAY}${
-                        TimeUtil.formatIntoCalendarString(recentGame.datePlayed)
-                    }",
-                    "${CC.GRAY}Duration: ${CC.GREEN}${
-                        TimeUtil.formatIntoDetailedString((recentGame.elapsedTime / 1000).toInt())
-                    }",
-                    "",
-                    "${CC.GRAY}Mode: ${CC.GREEN}${
-                        recentGame.gameMode
-                    }",
-                )
-                .also {
-                    if (recentGame.mapName != "Random")
-                    {
-                        it.addToLore("${CC.GRAY}Map: ${CC.GREEN}${
-                            recentGame.mapName
-                        }")
-                    }
-                }
-                .addToLore(
-                    "",
-                    "${CC.GRAY}Server: ${CC.GREEN}${
-                        recentGame.server
-                    }",
-                    "${CC.GRAY}Players: ${CC.GREEN}${
-                        recentGame.players.size
-                    }"
-                )
-                .addToLore(
-                    "",
-                    "${CC.GREEN}Click to view snapshots!"
-                )
-                .name("${CC.GREEN}${recentGame.gameName}")
-                .build()
-        }
-
-        override fun clicked(player: Player, slot: Int, clickType: ClickType, view: InventoryView)
-        {
-            PlayerInventoryMenu(
-                this@RecentGamesMenu,
-                recentGame
-            ).openMenu(player)
-        }
-    }
 }
