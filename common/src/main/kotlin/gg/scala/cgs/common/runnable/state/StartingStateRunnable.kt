@@ -74,7 +74,7 @@ object StartingStateRunnable : StateRunnable(
 
         if (PRE_START_TIME <= 0)
         {
-            if (alive.size < engine.gameInfo.minimumPlayers)
+            if (alive.size < engine.gameInfo.minimumPlayers && !hasBeenForceStarted && doWeCareAboutThis)
             {
                 engine.gameState = CgsGameState.WAITING
                 return
