@@ -22,6 +22,7 @@ import gg.scala.commons.acf.annotation.*
 import gg.scala.commons.acf.annotation.Optional
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.issuer.ScalaPlayer
+import gg.scala.lemon.command.annotations.AllowOffline
 import gg.scala.parties.event.PartyLeaveEvent
 import gg.scala.store.controller.DataStoreObjectControllerCache
 import gg.scala.store.storage.type.DataStoreStorageType
@@ -275,7 +276,7 @@ object PartyCommand : ScalaCommand()
     @Subcommand("invite")
     @CommandCompletion("@players")
     @Description("Invite a player to your party!")
-    fun onInvite(player: Player, target: AsyncLemonPlayer) =
+    fun onInvite(player: Player, @AllowOffline target: AsyncLemonPlayer) =
         target.validatePlayers(player, false) {
             val existing = PartyService
                 .findPartyByUniqueId(player)
