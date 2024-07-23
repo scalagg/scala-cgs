@@ -154,7 +154,6 @@ object CgsSpectatorHandler
             }
 
             player.teleport(teleportLocation)
-            player.playerListName = "${CC.GRAY}${player.name}"
 
             player.inventory.setItem(0, spectateMenu)
             player.inventory.setItem(8, returnToLobby)
