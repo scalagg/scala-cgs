@@ -1,6 +1,7 @@
 package gg.scala.cgs.common
 
 import gg.scala.lemon.Lemon
+import gg.scala.lemon.LemonConstants
 import me.lucko.helper.utils.Players
 import net.evilblock.cubed.util.CC
 import net.evilblock.cubed.util.bukkit.FancyMessage
@@ -38,7 +39,7 @@ val startMessage by lazy {
 
         andCommandOf(
             ClickEvent.Action.OPEN_URL,
-            Lemon.instance.lemonWebData.discord
+            LemonConstants.DISCORD_LINK
         )
     }
 }

@@ -44,7 +44,7 @@ subprojects {
     dependencies {
         compileOnly "org.jetbrains.kotlin:kotlin-stdlib"
 
-        compileOnly "gg.scala.lemon:bukkit:1.8.1"
+        compileOnly "gg.scala.lemon:bukkit:1.9.0"
         compileOnly "gg.scala.spigot:server:1.1.0"
 
         compileOnly "gg.scala.store:spigot:0.1.8"
