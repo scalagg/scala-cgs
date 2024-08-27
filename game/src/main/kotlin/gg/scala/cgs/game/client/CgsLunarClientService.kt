@@ -19,17 +19,15 @@ import java.util.concurrent.TimeUnit
  * @author GrowlyX
  * @since 2/24/2022
  */
-@Service
-@IgnoreAutoScan
 object CgsLunarClientService : Runnable
 {
-    private val unreadTeamLeader = UUID.randomUUID()
+    val unreadTeamLeader = UUID.randomUUID()
 
-    private val lunarClientAPI by lazy {
+    val lunarClientAPI by lazy {
         LunarClientAPI.getInstance()
     }
 
-    private val executor = Executors
+    val executor = Executors
         .newSingleThreadScheduledExecutor()
 
     @Configure

@@ -60,10 +60,10 @@ class CgsEnginePlugin : ExtendedScalaPlugin()
 
         CgsInstanceLocator.configure {
             flavor().inject(CgsEngineConfigurationService)
-            if (Bukkit.getPluginManager().getPlugin("LunarClient-API") != null)
+            /*if (Bukkit.getPluginManager().getPlugin("LunarClient-API") != null)
             {
                 flavor().inject(CgsLunarClientService)
-            }
+            }*/
         }
 
         CloudSyncDiscoveryService
