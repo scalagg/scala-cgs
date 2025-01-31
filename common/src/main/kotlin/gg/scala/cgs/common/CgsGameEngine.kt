@@ -20,7 +20,6 @@ import gg.scala.cgs.common.player.visibility.CgsGameVisibilityAdapter
 import gg.scala.cgs.common.rewards.CoinRewardPlatform
 import gg.scala.cgs.common.rewards.impl.CGECoinRewardPlatform
 import gg.scala.cgs.common.rewards.impl.DefaultCoinRewardPlatform
-import gg.scala.cgs.common.rewards.impl.GrapeCoinRewardPlatform
 import gg.scala.cgs.common.runnable.StateRunnableService
 import gg.scala.cgs.common.runnable.state.EndedStateRunnable
 import gg.scala.cgs.common.snapshot.CgsGameSnapshot
@@ -39,9 +38,8 @@ import gg.scala.cgs.common.voting.VotingMapConfiguration
 import gg.scala.commons.ExtendedScalaPlugin
 import gg.scala.commons.agnostic.sync.ServerSync
 import gg.scala.commons.annotations.custom.CustomAnnotationProcessors
-import gg.scala.grape.GrapeSpigotPlugin
-import gg.tropic.game.extensions.cosmetics.CosmeticCommand
-import gg.tropic.game.extensions.cosmetics.CosmeticLocalConfig
+import gg.scala.game.extensions.cosmetics.CosmeticCommand
+import gg.scala.game.extensions.cosmetics.CosmeticLocalConfig
 import me.lucko.helper.Events
 import net.evilblock.cubed.serializers.Serializers
 import net.evilblock.cubed.serializers.impl.AbstractTypeSerializer
@@ -105,11 +103,6 @@ abstract class CgsGameEngine<S : GameSpecificStatistics>(
 
         kotlin.runCatching {
             gameArena = CgsGameArenaHandler.arena
-        }
-
-        if (Bukkit.getPluginManager().getPlugin("Grape") != null)
-        {
-            platform = GrapeCoinRewardPlatform
         }
 
         if (Bukkit.getPluginManager().getPlugin("CoreGameExtensions") != null)

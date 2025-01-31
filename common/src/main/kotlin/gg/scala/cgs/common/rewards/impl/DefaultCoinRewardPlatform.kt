@@ -1,7 +1,6 @@
 package gg.scala.cgs.common.rewards.impl
 
 import gg.scala.cgs.common.rewards.CoinRewardPlatform
-import gg.scala.grape.GrapeSpigotPlugin
 import org.bukkit.entity.Player
 
 /**

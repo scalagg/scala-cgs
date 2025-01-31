@@ -2,6 +2,5 @@ dependencies {
     implementation project(":common")
     compileOnly project(":parties")
 
-    compileOnly "com.solexgames:Grape:1.0.0"
     compileOnly "gg.scala.tangerine:tangerine:1.2.2"
 }

@@ -1,7 +1,7 @@
 package gg.scala.cgs.common.rewards.impl
 
 import gg.scala.cgs.common.rewards.CoinRewardPlatform
-import gg.tropic.game.extensions.profile.CorePlayerProfileService
+import gg.scala.game.extensions.profile.CorePlayerProfileService
 import org.bukkit.entity.Player
 
 /**

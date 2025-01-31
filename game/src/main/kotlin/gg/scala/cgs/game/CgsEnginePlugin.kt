@@ -31,7 +31,6 @@ import org.bukkit.Bukkit
     PluginDependency("Lemon"),
     PluginDependency("Parties"),
     PluginDependency("cloudsync"),
-    PluginDependency("Grape", soft = true),
     PluginDependency("CoreGameExtensions", soft = true),
     PluginDependency("LunarClient-API", soft = true),
     PluginDependency("SlimeWorldManager", soft = true)
